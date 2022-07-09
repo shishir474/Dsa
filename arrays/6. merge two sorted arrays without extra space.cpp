@@ -57,15 +57,14 @@ void merge(int arr1[], int arr2[], int n, int m) {
   }
 }
 
-// solution3 TC:O(m+n) sc:O(m+n);
+
 
 //solution 4: gap method
 // TC: O(n+m)log(n+m)	Sc: O(1)
 
 
 
-// Merging using extra space:
-// TC:O(m+n)
+// solution3 TC:O(m+n) sc:O(m+n);
 
   void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
         vector<int> temp(m+n);

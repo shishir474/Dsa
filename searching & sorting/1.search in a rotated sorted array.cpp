@@ -79,7 +79,7 @@ public:
             
             int mid=lo+(hi-lo)/2;
             if (a[mid]<a[(mid-1+n)%n] and a[mid]<a[(mid+1)%n]) return mid;
-            else if(a[lo] <= a[mid]){
+            else if(a[lo] <= a[mid]){ // always move towards the unsorted half
                 lo = mid+1;
             }
             else{

@@ -90,4 +90,4 @@ public:
 
 TC: O(nlogn), sc: O(n);
 logn bcoz we used binary search to find the latest non conflicting Job
-Binary search could be used bcoz the jobs were sorted on the basis of finish 
+Binary search could be used bcoz the jobs were sorted on the basis of finish time
