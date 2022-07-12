@@ -2,6 +2,18 @@
 
 using namespace std;
 
+solution 1:
+push()
+take two stacks s1 and s2, first transfer all the elements of s1 to s2, insert then into s1 and then again transfer all elements of s2 to s1
+TC of push() is O(n)
+pop() is O(1) 
+peek() is o(1)
+
+can we doo something better. Yes we can
+amortised TC of push() and pop() is O(1)
+
+solution 2:
+
 class myQueue{
   stack<int> input,output;
   

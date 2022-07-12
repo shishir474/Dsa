@@ -35,6 +35,7 @@ struct Node{
 class myStack{
     struct Node* head;
     int cnt;
+    
     public:
     myStack(){
         head = NULL;

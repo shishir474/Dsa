@@ -1,5 +1,7 @@
 Time Compleixty: In the worst case there wiil be n recursive calls & fr each call O(N) insert op is perfromed
 Hence overall TC is O(n^2);
+T(n)=  t(n-1)+O(n);
+problem reduces to n-1 size and insert function has O(n)
 Space complecity: o(n); for the stack
 
 same complexity for sort stack problem
@@ -41,3 +43,5 @@ int main(){
  
 
 }
+
+Sort the stack: Same problem 
