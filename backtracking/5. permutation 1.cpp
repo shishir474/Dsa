@@ -11,6 +11,10 @@ Example 2:
 Input: nums = [0,1]
 Output: [[0,1],[1,0]]
 
+
+TC: O(n!) for n keys n! permutations are possible. Hence O(n!)
+SC: O(n) depth of recursion tree can be O(n) at max
+
 class Solution {
 public:
     void solve(int idx,vector<int>& nums,vector<vector<int>>& res,int n){
@@ -21,7 +25,7 @@ public:
         
         for(int i=idx;i<n;i++){
             swap(nums[i], nums[idx]);
-            solve(i+1,nums,res,n);
+            solve(idx+1,nums,res,n);
             swap(nums[i], nums[idx]);
         }
     }

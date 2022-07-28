@@ -19,7 +19,7 @@ void insert(stack<int>& s, int ele){
     insert(s,ele);
     s.push(top);
 }
-
+`
 void reverseUtil(stack<int>& s){
     if(s.size()==0) return;
     int top = s.top(); s.pop();

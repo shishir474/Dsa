@@ -14,6 +14,12 @@ Explanation:
 6th contiguous subarray = {5 2 3} Max = 5
 7th contiguous subarray = {2 3 6} Max = 6
 
+Complexity Analysis: 
+
+Time Complexity: O(n). 
+It seems more than O(n) at first look. It can be observed that every element of array is added and removed at most once. So there are total 2n operations.
+Auxiliary Space: O(k). 
+Elements stored in the dequeue take O(k) space
 
 vector<int> max_of_subarrays(vector<int> arr, int n, int k) {
     // your code here

@@ -26,8 +26,8 @@ Constraints:
 
 
   bool canJump(vector<int>& a) {
-        if(a.size()==1) return true;
-        if(a[0]==0) return false;
+        if(a.size()==1) return true; // corner case 1
+        if(a[0]==0) return false;  // corner case 2
         
         int jumps=1;
         int mr=a[0];

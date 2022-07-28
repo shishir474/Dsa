@@ -36,3 +36,8 @@ public:
         return res;
     }
 };
+
+
+TC: O(2^n), actually its less than 2^n, bcoz we are not moving in two directions every time, Since we have applied checks the number of recursive calls will be less than 2^n
+
+SC: O(1) considering the fact that we are not taking into account the recursive call stack space, otherwise its O(2*n)-> max depth of the recursion tree
