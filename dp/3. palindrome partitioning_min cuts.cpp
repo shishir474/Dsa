@@ -47,3 +47,56 @@ public:
     
     earlier sols had TC of o(n^3);
 };
+
+
+
+
+
+
+
+O(n^3) solution:
+
+bool isPalindrome(string s,int i, int j){
+        while (i<j){
+            if (s[i]!=s[j]) return false;
+            i++;
+            j--;
+        }
+        
+        return true;
+    }
+    
+    int t[2002][2002];
+    int solve(string s,int i, int j){
+        if (i>j) return 0;
+        if (t[i][j]!=-1) return t[i][j];
+        if (i==j || isPalindrome(s,i,j)){
+            t[i][j]=0;
+            return 0;
+        } 
+       
+        
+        int ans=INT_MAX;
+        for (int k=i;k<j;k++){
+            if (isPalindrome(s,i,k)){
+                int right;
+               if (t[k+1][j]==-1){
+                   right = solve(s,k+1,j);
+                   t[k+1][j] = right;
+               }
+               else{
+                   right = t[k+1][j];
+               }
+              int tempans = 1+right;
+              ans = min(ans,tempans);
+            }
+        }
+        
+        return t[i][j] = ans;
+    }
+        
+int Solution::minCut(string s) {
+       if (s.length()==0 || isPalindrome(s,0,s.size()-1)) return 0;
+        memset(t,-1,sizeof(t));
+        return solve(s,0,s.size()-1);
+}
