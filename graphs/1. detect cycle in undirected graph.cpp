@@ -24,3 +24,11 @@ class Solution {
         return false;
     }
 };
+// SC: O(n) [rec stack space] + O(n) for vis array
+// TC: O(N+2*E) + O(N)
+// For every node you visit all the neighbours/degrees, and the summation of all the adjacent nodes is 2*E + 
+// O(n) for FOR loop. the for loop doesn't call dfs for all the nodes, only unvisited nodes
+
+
+
+

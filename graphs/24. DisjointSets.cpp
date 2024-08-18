@@ -52,7 +52,7 @@ vector<int> findRedundantConnection(vector<vector<int>>& edges){
         int n = edges.size(); 
         dsuf.resize(n+1);
 
-        -- initial config: ith node- parent is i and all nodes rank 0
+        // initial config: ith node- parent is i and all nodes rank 0
         for(int i=0;i<=n;i++){
             dsuf[i].parent = i;
             dsuf[i].rank = 0;
@@ -65,13 +65,13 @@ vector<int> findRedundantConnection(vector<vector<int>>& edges){
             // -- if these nodes are already connected which means has the same parent then it's a redundent edge
             int ultp_a = findParent(a), ultp_b = findParent(b); // -- find ultimate parent of a and b
 
-            if(p1==p2){ // -- both nodes has the same parent -> redundent edge 
+            if(p1==p2){ // -- both nodes has the same ultimate parent -> redundent edge 
                 return {a,b};
             }
 
-            // -- both has different parent which means they both belong to different component and now the component with a lower rank will become the child of the other node
+            // -- both has different ultimate parent which means they both belong to different component and now the component with a lower rank will become the child of the other node
             unionByRank(p1,p2); -- do union of ultimate parents
         }
 
         return {};
-    }
+}

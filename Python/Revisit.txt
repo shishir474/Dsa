@@ -1,0 +1,89 @@
+9/07/24
+1. Find min in a rotated sorted array, search in a rotated sorted array, search in a rotated sorted array2
+2. Counting Bits
+3. Missing Number
+4. Reverse Bits
+5. Combination Sum 1,2   (1,2,3,4)
+6. House Robber2         (1,2,3,4)
+7. Decode Ways           (1,2)
+8. Jump Game             (1,2,3,4,5,6,7)
+9. Alien Dictionary GFG
+10. GroupAnagrams (Optimised version)
+11. Valid parenthesis -> explore similar questions on leetcode
+12. Valid Palindrome (Optimised version)
+13. Longest Palindrome (Optimised version O(n^2)time and O(1) space) -- similar : palindromic substring
+14. Encode and Decode Strings 
+15. sum of two integers 
+
+
+Interval Problems
+10 Insert Interval LC 57
+11.merge Intervals
+12. non overlapping intervals 
+
+LinkedLists
+13. MergeKSortedLists  -- 1. See how to implement pq based solution in python using minheap, 2. Neetcode's divide and conquer based solution 
+14. RemoveNthNodeFromEnd -- single pass solution (use 2ptr)
+15. Reorder list (Iterative solution)
+
+Matrix
+1. set matrix zeroes - inplace solution
+2. Rotate Matrix
+
+Sliding Window (Need to practise more)
+1. Longest Substring without repeating characters  -- explore similar questions on leetcode
+2. MinWindow Substring (Optimised solution)  -- explore similar questions on leetcode
+
+Trees
+1. binary-tree-maximum-path-sum
+2. Serialise and Deserialise Binary Tree  -- similar to encode and decode string 
+    we have to Serialise a binary tree into a string and then Deserialise the string to get the binary Tree
+    DOUBT: How are we so sure that this preorder traversal will produce an umambiguos string?
+3. Subtree of another tree: 
+    solved using 3 different methods: 
+    sol1: not sure why the o(n) solution work with the preorder appraoch 
+    checking isIddentical appraoch is clear but it is O(n^2)
+    finding preorder and checking if it is a substring is not enough. edge case: root = [12] and subroot = [2]
+    To say with guarantee, we need to check both preorder and inorder. Both Preorder and inorder traversals should be substring 
+4. Construct Binary Tree from Preorder and Inorder Traversal
+
+
+Tries:
+1. Trie Implementation
+2. Design Add and Search words Datastructure
+
+
+Graph core concepts 
+
+
+
+Doubts:
+1. Serialise and Deserialise Binary Tree -  DOUBT: How are we so sure that this preorder traversal will produce an umambiguos string?
+2. Subtree of another tree: 
+
+
+
+
+
+Important python functions
+# print(65, str(65), chr(65))
+accumulate(lst, operator.mul) 
+sorted(s) -> takes a string, converts it into list and sorts the list. Returns a list of sorted characters
+''.join(sorted(s)) -> method to sort a string in python
+s == s[::-1] -> checks if s is a Palindrome. s[::-1] reverses s and returns a new string
+ord('A') = 65 -> ord(ch) function returns the ascii value of a char. Takes char as input and returns the ascii value
+s.lower() -> converts the string to lowercase and returns a new string
+s.upper() -> converts the string to uppercase and returns a new string
+s.isalnum() -> checks if the string contains only alphanumeric characters and if its true then returns True
+
+Removing duplicates from a list in python
+lst = [1,1,1,2,3,4,3]
+# create a dict using the list lst
+d = dict.fromkeys(lst)
+print(d) 
+print(list(d))
+print(list(d.keys()))
+
+{1: None, 2: None, 3: None, 4: None}
+[1, 2, 3, 4]
+[1, 2, 3, 4]

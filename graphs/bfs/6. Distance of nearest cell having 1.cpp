@@ -58,3 +58,115 @@ queue wali while loop n*m times chalegi bcoz queue me n*m elements ayenge
 	    return res;
 	   
 	}
+
+
+// Q.6 Distance of nearest cell having 1
+
+// Given a binary grid, you have to compute the shortest distance from 1 for each cell
+
+// Solution 1: uses visited array: This is the recommended solution as it gives more clarity
+vector<vector<int>> nearest(vector<vector<int>>& grid) {
+        // Code here
+        int n=grid.size(), m=grid[0].size();
+        
+        queue<pair<int,pair<int,int>>> q;
+        
+        vector<vector<int>> ans(n, vector<int>(m,0)); // stores the shortest dist from 1
+        vector<vector<bool>> vis(n,vector<bool>(m,false)); // keeps track of vis vertex
+        
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]==1){
+                    q.push({i,{j,0}});
+                    vis[i][j]=true;
+                }
+            }
+        }
+        
+        int X[] = {-1,0,1,0};
+        int Y[] = {0,1,0,-1};
+    
+        
+        while(!q.empty()){
+            int i=q.front().first;
+            int j=q.front().second.first;
+            int dist=q.front().second.second;
+            
+            ans[i][j]=dist;
+            
+            q.pop();
+            
+            for(int k=0;k<4;k++){
+                int newi=i+X[k];
+                int newj=j+Y[k];
+                if(newi>=0 and newi<n and newj>=0 and newj<m and !vis[newi][newj]){
+                    vis[newi][newj] = true;
+                    q.push({newi,{newj,dist+1}});
+                }
+            }
+            
+        }
+        
+        return ans;
+        
+        
+        
+    }
+
+// SOlution 2:
+// without using vis array: Basically intialiase the ans matrix with 1e9 for each cell
+// Insert all the cells with cell value=1 in queue and mark their values in ans cell as 0
+// Now start processing elements from queue. Element will be of form (i,j) coordinates
+// explore its neighbours(valid ones which are within the boundary of the matrix) and check if the 1+cost_curr < cost_nb
+// If the condition is true: update the cost_of_nb and push the cell into the queue
+// if(valid cell + ans[i][j]+1 < ans[newi][newj]){
+    // ans[newi][newj] =  ans[i][j] + 1;
+    // q.push({i,j});
+// }
+// This condition prevents us from revisiting the already vis vertex: why let's see an example: Assume your are coming from cell A to B. Now while standing at B, you wont go back to A. THe new cost for A isn't better than its prev cost and hence we will not go back to already visited vertex
+
+// SOlution 2 : without visited vertex
+    
+    vector<vector<int>> nearest(vector<vector<int>>& grid) {
+        // Code here
+        int n=grid.size();
+        int m=grid[0].size();
+        
+        queue<pair<int,int>> q;
+        
+        vector<vector<int>> ans(n, vector<int>(m,1e9)); // stores the shortest dist from 1
+
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]==1){
+                    q.push({i,j});
+                    ans[i][j]=0;
+                }
+            }
+        }
+        
+        int X[] = {-1,0,1,0};
+        int Y[] = {0,1,0,-1};
+    
+        while(!q.empty()){
+            int i=q.front().first;
+            int j=q.front().second;
+            q.pop();
+            
+            for(int k=0;k<4;k++){
+                int newi=i+X[k];
+                int newj=j+Y[k];
+                if(newi>=0 and newi<n and newj>=0 and newj<m and ans[i][j]+1 < ans[newi][newj]){ // ans[i][j]+1 < ans[newi][newj] THis condition will help us prevent visit the already visited vertex
+                    ans[newi][newj] = 1 + ans[i][j];
+                    q.push({newi,newj});
+                }
+            }
+            
+        }
+        
+        return ans;
+                
+    }
+
+// TC: of both approaches is O(n*m)
+// SC: of both approaches is O(n*m)
