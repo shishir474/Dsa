@@ -48,6 +48,24 @@ Explanation 2:
         
     Note: "_" marks the removed character.
 
+
+SOlution:
+
+LOGIC
+If ith char of s1 is equal to jth char of s2 -> 2 options hai mere paas
+match kradu ya phir skip krdu: t[i][j] = t[i-1][j-1] + t[i-1][j]
+match kradiya toh -> (i-1,j-1) 
+skip krdiya toh -> (i-1,j)
+
+
+if (s1[i-1] != s2[i-2]){  phir toh definitely skip krna padega,I have No option 
+ t[i][j] = t[i-1][j]; (i-1 char me j match krao)
+}
+
+
+
+
+
     
 // int solve(int i, int j, string a, string b, vector<vector<int> >& dp){
 //     if (j==b.length()) return 1;

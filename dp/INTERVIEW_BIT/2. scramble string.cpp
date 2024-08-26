@@ -76,6 +76,10 @@ Input 2:
 Output 2:
     0
 
+
+
+TC: O(2^n) usse kam hij hoga bcoz we have used memoisation:
+
 map<pair<string,string>, int> mp;
 
 int solve(string s1, string s2){

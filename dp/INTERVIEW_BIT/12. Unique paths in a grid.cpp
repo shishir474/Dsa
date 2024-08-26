@@ -38,3 +38,35 @@ int Solution::uniquePathsWithObstacles(vector<vector<int> > &A) {
 //         11 8 5 2 0
 //         3 3 3 2 1
 //         0 0 1 1 1
+
+
+int Solution::uniquePathsWithObstacles(vector<vector<int> > &A) {
+    int n=A.size(), m=A[0].size(); // nrows and m cols
+    if(A[0][0]==1 || A[n-1][m-1]==1) return 0;
+    
+    int t[n][m];
+    memset(t,0,sizeof(t));
+    t[n-1][m-1]=1;
+    // last row
+    for(int i=m-2;i>=0;i--){
+        if(A[n-1][i]==1) break;
+        else t[n-1][i] = 1;
+    }
+    
+    // last colsfor(int i=m-2;i>=0;i--){
+    for(int i=n-2;i>=0;i--){
+        if(A[i][m-1]==1) break;
+        else t[i][m-1] = 1;
+    }
+    
+    for(int i=n-2;i>=0;i--){
+        for(int j=m-2;j>=0;j--){
+            if(A[i][j] != 1){
+                t[i][j] = t[i][j+1] + t[i+1][j];
+            }
+        }
+    }
+    
+    return t[0][0];
+    
+}

@@ -1,3 +1,13 @@
+ex: s1="xaa", s2="xa*"
+
+SOME HINTS: length of both strings should be equal hence 1st col is 0 except t[0][0] 
+For first row we aill have to specailly check for '*'
+
+// ith char matches with j-1 char,considder ith char to be part of the * part and now we have to match i-1,j
+if(s1[i-1]==s2[j-2]|| s2[j-2]=='?'){
+
+}
+
 int Solution::isMatch(const string A, const string B) {
          int m = A.length(), n = B.length(); // m+1 rows and n+1 cols
     int t[m+1][n+1];
