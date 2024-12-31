@@ -116,7 +116,8 @@ for(int i=1;i<=n;i++){
 
 
 // Q.2 Number of Islands : 
-// Create a vis matrix of size n*m. Call dfs on the first unvisited cell which is marked 1. The number of traversal dfs has been done is equivalent to the number of islanda
+// Create a vis matrix of size n*m. Call dfs on the first unvisited cell which is marked 1. 
+// The number of traversal dfs has been done is equivalent to the number of islanda
 // One optimisation that we could do is instead of marking the cell visted in the vis matrix, I can replace 1 with some different character which is not present in the matrix
 
 // PSUEDO code

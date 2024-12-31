@@ -25,6 +25,8 @@
         "unordered_set": "cpp",
         "valarray": "cpp",
         "__locale": "cpp",
-        "ios": "cpp"
-    }
+        "ios": "cpp",
+        "iostream": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }

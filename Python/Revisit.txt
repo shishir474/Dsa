@@ -3,8 +3,8 @@
 2. Counting Bits
 3. Missing Number
 4. Reverse Bits
-5. Combination Sum 1,2   (1,2,3,4)
-6. House Robber2         (1,2,3,4)
+5. Combination Sum 1,2   (1,2,3,4) permutation, nextPermutation, permutations2, permutation_sequence
+6. House Robber2, HouseRobber4         (1,2,3,4)
 7. Decode Ways           (1,2)
 8. Jump Game             (1,2,3,4,5,6,7)
 9. Alien Dictionary GFG
@@ -18,7 +18,7 @@
 
 Interval Problems
 10 Insert Interval LC 57
-11.merge Intervals
+11. merge Intervals
 12. non overlapping intervals 
 
 LinkedLists
