@@ -1,0 +1,97 @@
+1. 2D Dp space optimisations:
+    If the current row value depends on the previous and the current row -> apply space optimisation to reduce the space complexity from O(n*m) to O(m)
+
+Coin Combinations1: 
+    # count no of ways to make target sum. Generally (2,2,3) and (2,3,2) are considered same, but here in this problem they are treated as 2 different Combinations
+
+Coin Combinations2: Treats (2,2,3) and (2,3,2) as one Combination
+ 
+Array Description:
+    Given an array that contains some missing values. Each value of the array lies in range of [1,M] both inclusive and the difference b/w adjacent elements is almost 1
+    We have to count the no of arrays that matches this Description
+
+    Brute force solution : Try backtracking and try to assign values where arr[i] is 0
+    Then think of optimising it via dp 
+
+
+Rectangle Cutting
+    Explore all the possibilites of cutting horizontally and vertically 
+
+Counting Towers [Revisit] -- Tricky recurrence relation
+    Plus some optimisations: like Instead of creating a local dp array, created a global dp array - in order to overcome the runtime error 
+    Precomputed the results for all the test cases beforehand, so that we dont perform the same calculations again and again for each test case
+
+Money Sums: (Intuition not clear)
+    // Solution1
+        We have to generate all possible sums -- but backtracking will not work
+        The size of the tree will n! at first level we have n options, then at the 2nd level n-1 and so on
+        In order to generate distinct sums, we have to process the elements of the array in order (https://www.youtube.com/watch?v=PXdOyrbNr78&ab_channel=NeatlyStructured) 
+        Recursive approach could work, but the tc would be (2^n)
+        So instead we will try to figure out where all can we reach starting from 0. Min sum would be 0 and max would be sum of all elements
+        [2,4,5]
+        create an array of size 12(0 to 11) i.e 0 to max_sum. This will be a boolean array which would indicate all the possible sums that we were able to make
+        we could reach an index i only if (i-val) is reachable
+
+    // Solution2: based on the Intuition of target sum
+    n elements and have we have a target sum s 
+    t[n+1][s+1]
+    first col will be true - we could always make sum 0 by not including any element
+    first row will be false from col 1 to s
+    for(int i=1;i<=n;i++){
+        for(int j=1;j<=s;j++){
+            // we have to make sum j with i elements
+            // now can we take the ith element and make sum j. The ith element can only be taken if we arr[i-1] <= j
+            if(arr[i-1]<=j){ // 2options take it or leave it
+                t[i][j] = t[i-1][j] or t[i-1][j-arr[i-1]]
+            }
+            else{ // only one option to leave 
+                t[i][j] = t[i-1][j]
+            }
+        }
+    }
+
+    At the end you have t matrix which indicates whether certain sum could be acheived or not. if t[i][j] is true, it means we could acheive sum j using first i elements
+    // In our case, check the last row t[n][j]. All those j's where t[n][j] is true, we can acheive all those sums using the n elements
+
+
+Removal Game: based on game theory
+    we have to maximise p1 or in other words maximise p1-p2
+    Greedy solution to pick the max score each time won't work. We will have to try out all possibilites. which mean If I'm considering interval (i,j) right now, then first option is I pick arr[i] and then get the max diff in (i+1,j)
+    Second option is I pick arr[j] and then get the max diff in range(i,j-1)
+    and then take the max of the above 2 options
+    Once we have the max diff for entire array from (0,n-1) we could easily find p1's score. P1-P2 = diff and P1+P2 = sum(arr) which is also known
+    Hence with the help of above 2 equations, we can find p1
+
+Two Sets
+    Count the no of subsets with a given target. Here the target is sum(arr)/2. Basically we have to count the no of ways we can partition the array into 2 equal subsets
+    Obviously the sum(arr) should be divisible by 2 else we wont be able to partition it into 2 equal Sets
+    Getting WA for some cases bcoz of the modulo operation is applied -- [PENDING]
+
+Increasing Subsequence:
+    LIS nlogn solution using binary search
+    Printing LIS in nlogn [PENDING]
+
+Projects
+    N projects - that has some start and end day and has some reward associated with them. We have to return the max reward that can be generated
+    [PENDING]
+
+    Intuition:
+
+    t[i] stores the max profit that can be made in range from [0,i] where i belongs to [0,n-1]
+    idx = findLargestIdxJ(0,i-1,arr[i].start) --> this function calculates the largest index j whose end time < arr[i].start
+    if(idx != -1){ // if such index exists, then I have 2 options: I can take the curr element and idx element, 2nd option: I dont consider the curr element
+    // take max of both the cases
+        t[i] = max(arr[i].reward + t[idx], t[i-1])
+    }
+    else{ // I cannot combine any index idx with the current element coz no such index exists 
+    // 2options again: I take just the current element & that'it. 2nd option dont consider the current element
+        t[i] = max(t[i-1], arr[i].reward)
+    }
+
+    findLargestIdxJ function can be solved brute force in O(n), but we optimsed it to logn by sorting the array on end times and now we can apply binary search
+
+
+
+
+Watch all Kartik arora playlists on DP
+    Normal Dp playlist(29 problems), Dp with bitmask(7 problems) and Dp on trees (13 problems)

@@ -43,10 +43,13 @@ public:
         dp[0]=nums[0];
         q.push_back(0);
         for(int i=1;i<nums.size();i++){
+            // remove index that are out of bound 
             while(!q.empty() and q.front()<i-k){
                 q.pop_front();
             }
+            // q.front() index has the max value
             dp[i]=dp[q.front()]+nums[i];
+            // store the elements in strictly decreasing order
             while(!q.empty() and dp[i]>=dp[q.back()]){
                 q.pop_back();
             }

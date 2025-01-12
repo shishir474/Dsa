@@ -1,0 +1,2 @@
+1. Minimum to flip monotonically increasing
+    Variation: 2712. Minimum Cost to Make All Characters Equal [Pending]

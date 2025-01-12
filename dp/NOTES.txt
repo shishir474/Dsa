@@ -1,0 +1,119 @@
+1. palindrome partitioning variations -> 
+    palindrome partitioning 1, 
+    palindrome partitioning 2, 
+    Number of Great Partitions,
+    2472. Maximum Number of Non-overlapping Palindrome Substrings
+    1745. Palindrome Partitioning IV
+
+2. Count all Palindromic subsequences: Tricky Recurrence relation - Try to understand the logic via some youtube video behind this recurrence 
+    Recurrance Relation:
+
+If s[i] == s[j], the number of palindromic subsequences is: count(i, j) = 1 + count(i + 1, j) + count(i, j – 1).
+The “+1” counts the new palindrome formed by s[i] and s[j].
+If s[i] != s[j], the relation becomes: count(i, j) = count(i + 1, j) + count(i, j – 1) – count(i + 1,j – 1)
+We subtract count(i + 1, j – 1) because it is counted twice.
+
+3.Jump game: Start from the i=n-2 and check if you can reach your target from this i. If you can, then your next step should be to check if you can reach this i(update the target to i) 
+    bcz if you can reach target from your current pos, then now the updated target for you is to reach your current pos becaue you already know that you can reach n-1 from here
+variations:
+    Jump Game 2: determine the min no of jumps to reach end of array
+    Take a window initially l=0,r=0 and try to expand each window. Traverse from l to r in the window and determine the farthest you can go in that window. That will be your r and update l = r+1 for the next iteration
+    Jump Game 3,4 -> Done
+    Jump Game 5 Pending
+    Jump Game 6: Uses deque concepts
+
+4. Integer Replacement
+    1D dp problem, but since n is huge, we can't use arrays to memoise. Hence using map
+
+5. 1043. Partition Array for Maximum Sum
+    given an array you've to partition the array into contiguous subarrays of size atmost k. After partitioning, each subarray has their values changed to max element of that subarray
+    You have to return the max sum of the array after partitioning
+    First of all: we have to return the max sum value not the Partitions. We can track the sum value using a dp array
+    Process first k elements
+    for index 0: max element is arr[0], value changed to arr[0]
+    for index1: mx = max(arr[0],arr[1]) sum = mx*(i+1)
+    Then from the kth index, go back k steps and determine which one gives the max sum ending at this index
+    n <= 500 -> Hence we can go upto n^3
+    Simple O(n*k) solution from TC and O(n) from SC perspective
+
+6. Check Arithmatic Subarrays (doesn't involve DP)
+    Given an array you have to check if it is an arithmatic sequence. First solution is sort the array and then check adjacent elements. This is nlogn
+    Second solution involves no sorting. Instead find the min and max element. If the given subarray is an arithmatic sequence then the diff will be (max-min)/(n-1)
+    Obviously this diff should be an integer. If not it's not an arithmatic sequence. Next step is to check if we have all the elements from min to max like min+diff, min+2*diff and so on until min+k*diff <= max
+    We could check this using hashset
+    Overall time complexity reduced to O(n)
+
+Variation:
+    Count the number of arithmatic subarrays (Optmised using linear DP)
+    Can use the above mentioned approach to check if the given subarray is an arithmatic sequence, but that will cost O(n^3) overall, since there are O(n^2) subarrays
+    Can use O(n^2) approach to count the no of subarrays that forms an arithmatic seq ending at index i.
+    Method 2 can be optimised to work in O(n). t[i] = (t[i] - 1) -> recurrence 
+    for(int i=2;i<n;i++)
+    if(arr[i]-arr[i-1] == arr[i-1]-arr[i-2])
+        t[i] = t[i-1] + 1
+    else t[i]=  0;
+
+    446. Arithmetic Slices II - Subsequence -> Pending
+
+7. 1031. Maximum Sum of Two Non-Overlapping Subarrays (Linear Dp)
+    We have to find the maximum sum of two non overlapping subarrays of size m1 and m2
+    t1 is is built from left to right and gives us the max sum of a subarray of length x ending at index i
+    t1[i] stores the max sum of a subarray of length x ending at index i
+    Similary, t2 gives us the max sum of subarray of length y starting at index i and built from right to left
+    Our ans would be max(t1[i] + t2[i+1]) for i in range(x-1,n-y-1)
+
+
+8. LIS (longest increasing subsequence)
+    O(nlogn) approach : used lower_bound because we need strictly increasing subsequence
+    
+    Variation:
+    1. Find the no of Longest increasing Subsequences 
+        maintain basic t[] that tracks the length of LIS & updates like t[i] = max(t[i], t[j]+1) -- TC of brute force LIS solution is O(n^2)
+        In addition to this maintain cnt[] that tracks the count of LIS ending at index i
+        if(t[i] < t[j]+1){
+            // update t[i] and cnt[i] = cnt[j]
+        }
+        else if(t[i]==t[j]+1){
+            // t[i] will not update but cnt[i] sure will
+            cnt[i] += cnt[j]
+        }
+    
+    2. Longest Continouos increasing subarray
+        If the current element is greater than the previous increase the cnt as t[i] = t[i-1]+1 else reset the count t[i] = 1
+    
+    3. 2407. Longest Increasing Subsequence II [Pending]
+
+
+9. 1027. Longest Arithmetic Subsequence
+    Getting WA for my solution -> Debug this
+    
+    Variation:
+    Longest Arithmetic Subsequence With a Given Difference D
+        maintain a map of value, vector of positions
+        Instead of iterating over all the positions with this we would be iterating only valid values
+
+    Maximum alternating subsequence sum
+        Now depending on if we are considering picking the current element & if it an even index eleement of our subsequence, we will add that element or if it's an odd index element, we will subtract that element
+        If we are considering dropping the current element, just move on to the next one 
+        In order to find out the if the current element is an even or odd index element, we will use a flag. flag 0 means it's an even index element and 1 means odd index element in our subsequence
+
+    Maximum alternating subarray sum [Pending]
+
+
+10. Matrix DP
+    Variation:
+        1. Count Submatrices With All Ones
+            Preprocessing: Count the no of consecutive 1's horizontally for each cell
+            Counting Submatrices:
+            •	Iterate through each cell (i, j) in the matrix.
+            •	For each starting cell (i, j), consider it as the top-left corner of possible submatrices.
+            •	Use the preprocessed array to calculate the number of submatrices with all 1s that can end in column j for rows starting from i to m.
+            •	Track the minimum width (x) across rows i to k for column j (ensuring all elements in the submatrix are 1).
+            •	Add x to the result (res) for each row.
+
+        2. Count Submatrices With Equal Frequency of X and Y
+            Maintain prefix sum for X and Y 
+            xCount[i][j] represents the no of X in matrix from cell (0,0) to cell(i,j)
+            Similary yCount[i][j] represents the no of Y in matrix from cell (0,0) to cell(i,j)
+            At a particular cell, we need to determine the no of X and Y that lies in the matrix from (0,0) to (i,j) .
+            We need Equal no X and Y 

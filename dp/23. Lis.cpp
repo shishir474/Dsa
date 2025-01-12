@@ -1,3 +1,4 @@
+// TC: O(n^2) solution brute force
 class Solution {
 public:
     int lengthOfLIS(vector<int>& a) {
@@ -19,7 +20,13 @@ public:
 
 TC: O(nlogn)
 SC: O(n)
-soluiton: Heve written the intuition in Leetcode DP nb-2
+// INTUITION: 
+
+// This solution uses a greedy approach with binary search O(nlogn) tc
+// 1. v vector does not represent a valid LIS at all times but ensures that its length is always equal to length of the LIS
+// 2. replacing elements in v ensures that we are greedy in keeping v as tight as possible. This is critical because a smaller v allows us to build longer LIS for subsequent elements
+// 3. Length of the v represents the length of the LIS
+// 4. Replacing elements in v ensures that future elements have the maximum opportunity to extend the LIS.
 class Solution {
 public:
     int lengthOfLIS(vector<int>& a) {
@@ -27,10 +34,11 @@ public:
         vector<int> v;
         for(int i=0;i<a.size();i++){
             auto it=lower_bound(v.begin(),v.end(),a[i]);
+             // If new element is greater, append to `v`
             if(it==v.end())
-                v.push_back(a[i]);
+                v.push_back(a[i]); 
             else
-                *it=a[i];
+                *it=a[i];  // Replace the element to maintain smallest possible sequence
         }
         
         return v.size();
@@ -41,9 +49,8 @@ public:
 
 
 
-Print LIS: TC: O(n^2)
-SC: O(n);
-
+// Print LIS: TC: O(n^2)
+// SC: O(n);
 class Solution {
 public:
     int lengthOfLIS(vector<int>& a) {

@@ -1,0 +1,5 @@
+1. Degree of an Array
+    mp to keep track of freq -> max freq will be your Degree
+    occurence map to keep track of the first and the last occurence of an element
+    I'm only concerned with elements whose freq equals Degree
+    For all those elements check which has the min length(end-begin+1)
