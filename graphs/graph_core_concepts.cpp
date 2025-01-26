@@ -54,7 +54,9 @@ for(int i=1;i<=n;i++){
 // O(N) for vis array 
 
 // TC for BFS
-// while loop will run N times, each node will be processed exaclty once and the inside for loop run for total of all its degrees which is 2*E
+// while loop will run N times, each node will be processed exaclty once and the inside for loop run for total of all its degrees. Basically each edge will be processed exactly twice 
+// which is 2*E
+// For ex: assume there is an edge b/w node a and b. So first node a will process the edge e and then later node b will process the same edge. hence the factor 2*E
 // Total Deg = 2*E
 // TC; O(N)+O(2*E)
 
@@ -173,6 +175,7 @@ public:
         N=n;
         M=m;
         int oc = image[sr][sc];
+        if(oc == color) return image; // original color and new color are same, no need to do anything. We can directly return the input as it is 
         dfs(sr,sc,image,ans,oc,color);
         return ans;
     }
@@ -210,7 +213,7 @@ public:
     vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
         int n=image.size(), m = image[0].size();
         int oc=image[sr][sc];
-        if(oc!=color)
+        if(oc!=color) // if the original color is not equal to the new color, then only call dfs. 
             dfs(sr,sc,image,oc,color);
         return image;
     }
@@ -235,11 +238,13 @@ public:
 
         queue<pair<int,int>> q;
 
+        // grid[i][j] = 2 represents rotten orange, 1 represents fresh oragne
+
         bool ones_found=false;
 
         for(int i=0;i<n;i++){
             for(int j=0;j<m;j++){
-                if(grid[i][j]==2){
+                if(grid[i][j]==2){ 
                     q.push({i,j});
                 }
                 else if(grid[i][j]==1)
@@ -258,7 +263,8 @@ public:
         int timer=0;
         while(!q.empty()){
             int sz = q.size();
-            while(sz--){
+            // process all the nodes at this level
+            while(sz--){ // level by level processing 
                 int i = q.front().first;
                 int j = q.front().second;
                 q.pop();
@@ -271,10 +277,10 @@ public:
                     }
                 }
             }
-            timer++;
+            timer++; // for the last node, we will not have any valid neighbours but the timer will still be incremented by 1. hence returning timer-1 in the end
         }
 
-
+        // If any fresh orange remains unvisited / unaffected return -1
         for(int i=0;i<n;i++){
             for(int j=0;j<m;j++){
                 if(grid[i][j]==1 and !vis.count({i,j})) return -1;
@@ -322,6 +328,7 @@ int orangesRotting(vector<vector<int>>& grid) {
             int dist = q.front().second.second;
             q.pop();
 
+            // keep track of the max dist
             ans = max(ans, dist);
 
             for(int k=0;k<4;k++){
@@ -345,6 +352,13 @@ int orangesRotting(vector<vector<int>>& grid) {
         return ans;
 }
 
+// Both the approaches are quite similar - atleast the intuition is same. In both the cases the nodes are processed levely by level
+// In the first case where we are using timer, we have an extra while loop that processes all the nodes at the current level and then the timer is incremented
+// For the last level, the while loop will still be executed but we wont find any valid neighbour. In this case as well the timer is incremented by 1. Due to which there is 1 extra increment in the timer
+
+// In the dist based approach, we are maintaining 3 things, (x,y,dist) for a cell. For each cell we process all its neighbours and add them into the queue(if not visited) with dist as dist+1
+// And then we track the max dist amongst all the nodes that were processed. For the last level of nodes, we wont find any valid neigbours and thus nothing will be pushed into the queue. & thus we would direclty exit the loop 
+// Thus we can directly return the ans. No need to do -1 here
 
 
 
@@ -465,7 +479,7 @@ vector<vector<int>> nearest(vector<vector<int>>& grid) {
         // Code here
         int n=grid.size(), m=grid[0].size();
         
-        queue<pair<int,pair<int,int>>> q;
+        queue<pair<int,pair<int,int>>> q; // {i, j, dist}
         
         vector<vector<int>> ans(n, vector<int>(m,0)); // stores the shortest dist from 1
         vector<vector<bool>> vis(n,vector<bool>(m,false)); // keeps track of vis vertex
@@ -879,7 +893,7 @@ public:
 
         
         // graph may not be connected: all the componnents must be bipartite to call the entire graph bipartite
-        vector<int> color(n,-1); 
+        vector<int> color(n,-1);  // color array can be used to keep track of the visited vertices. No need to explicitly create vis array
 
         // Don't need vis array, color array will compensate the need of vis.
         // if a node is not colored, it means it is not visited. Else it would have been colored
@@ -999,41 +1013,57 @@ public:
 // If we reach a dead end, we remove the node from recstack indicating that it is no longer part part of the path, and return false. Not removing from vis, bcoz the vertex will remain visited, no matter what. It's just that since it is no longer a priority for us, we are removing it from the recstack 
 
 
+//  undirected graph logic will not work here. We also need to track if the vertex which is visited is it part of the current path. Then only it forms a cycle
+// If the nb vertex is visited and is not equal to parent -> this condition is not sufficient
+// consider this graph: 1 -> 0 
+// 0 was already visited 
+// Now when we start dfs from 1, 0 was already visited, and is not part of the current path. But here nb 0 is not eqaul to parent of 1 i.e -1. Hence the undirected graph algo was returning true ehich is wrong
+
+
+// NOTE: 
+    // For vis and path vector, we can also use set. We just need to check if ith node is visited or if it is part of the current path
+    // Same can be acheived via sets (unordered_set) as well. If the node is present in the set, then it is visited/part of current path
+
 class Solution {
   public:
-    // Function to detect cycle in a directed graph.
-    bool isCyclicUtil(int src, unordered_set<int>& vis, unordered_set<int>& recstack, vector<int> adj[], int V){
-        vis.insert(src);
-        recstack.insert(src);
-        for(auto nb: adj[src]){
-            if(vis.count(nb)==0){
-                // if nb not visited, call recursion
-                if(isCyclicUtil(nb,vis,recstack,adj,V)) return true;
+    bool isCyclicUtil(int sv, vector<int> &vis, vector<int>& path, vector<vector<int>> &adj){
+        vis[sv] = 1; // mark the current node visited
+        path[sv] = 1; // add the current node in the path
+        // check all neighbours
+        for(auto nb: adj[sv]){
+            // if nb not vis call recursion
+            if(!vis[nb]){ 
+                if(isCyclicUtil(nb, vis, path, adj)) return true;
             }
-            else if(recstack.count(nb)==1)
-            // if nb is visited and nb is part of recstack as well, return true
+            // else -> the nb is visited and if it is also part of the curr path -> return true
+            else if(vis[nb]==1 and path[nb]==1) // the nb is visited, check if it not equal to parent
                 return true;
         }
         
-        // remove the src node, it is no longer a part 
-        recstack.erase(src);
-        return false;
+        path[sv] = 0; // remove the node from the current path - This step is imp bcoz we dont want to consider this vertex in the next path 
+        return false; 
+        
     }
-    bool isCyclic(int V, vector<int> adj[]) {
+    bool isCyclic(int V, vector<vector<int>> adj) {
         // code here
-        unordered_set<int> vis, recstack;
-        for(int i=0;i<V;i++){
-            if(vis.count(i)==0){
-                // if this component has a cycle return true
-                if(isCyclicUtil(i,vis,recstack,adj,V)) return true;
+        vector<int> vis(V, 0), path(V, 0); // both are boolean vectors
+        // vis[i] = 1 -> indicates ith node is visted
+        // path[i] = 1 -> indicates ith nodes is part of the current path
+        
+        for(int i=0;i<V;i++){ // check all the components
+            if(!vis[i]){ // if any component returns true -> return true
+                if(isCyclicUtil(i, vis, path, adj)) return true;
             }
         }
         
-        // No components have cycle
+        // checked all components, no cycle present
         return false;
-
+        
     }
 };
+
+
+
 
 // TC: Processed all nodes and edges which is O(V+E)
 // SC: O(V) for color + O(V) for recursive stack space which is approx O(V)

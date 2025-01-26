@@ -1,0 +1,28 @@
+DFS, BFS logic
+TC: DFS & BFS
+    Each node is processed exactly once and for a particular node, we are processing all its neighbours which is basically equivalent to the degree of that node
+    So if we consider the amount of work for all the nodes, it is basically equivalent to processing the sum of degree of all the nodes which equals 2*e
+    Hence O(V) + O(2*E)
+    The 2*E factor is true for undirected graph. For directed graphs this factor might change
+
+Space optimisation for visited array by modifying the input 
+    In order to mark a node/cell visited, replace it with a value that doesn't exist in the graph.
+    the only problem with this is it causes the change in the input which is generally not desired, but here it is helping us to optimise the space for the visited array
+    No need to backtrack the changes made. This changes must persist then only we will be able to keep track of the visited cells
+
+We always have to assume that the graph is disconnected, hence we need to check for all the connected components
+
+Checking cycle in a directed graph:
+    - We could not apply the same logic that we did in case of an undirected graph. Take this graph for instance 1 -> 0
+    - We dont have any cycle but the undirected graph algo will return true which is incorrect.
+    - That's why we have a different algo for directed graph
+
+Count no of distinct islands (graphs_core_concepts - under graphs section)
+    - Main trick here is to track the shape of the island. We have to return the count of unique islands.
+    - The starting point of your dfs would be your base coord. Store all the coord (x - ox, y - oy) in a vector. This vector will track the shape
+    - Inssert this vector into a set that will help us to track the unique shapes
+
+Find eventual safe states   (Good question)
+    -- Direct application of detect cycle in directed graph
+    -- was initially thinking of reversing the edges of the graph and performing dfs(but we wont acheived anything)
+    -- For directed graph questions, think along the lines of detecting cycle in DG
