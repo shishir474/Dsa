@@ -1,0 +1,20 @@
+LCM(x,y) is the smallest positive integer that is divisible by both x and y
+GCD(x,y) is the greatest positive divisor of both x and y
+
+https://codeforces.com/contest/1358/problem/A
+For printing val1+val2, its always better to break the expression into different parts and then print it. 
+Printing it directly is gives WA for huge numbers
+int val1 = ((m-1)/2) * n;
+int val2 = ceil(n/(2*1.0));
+cout<<val1+val2<<endl;
+
+https://codeforces.com/contest/1371/problem/A
+Instead of printing the expression directly, first capture the value in a variable and then print it.. Gives WA for large values of n
+int val = ceil(n/(2*1.0));
+cout<<val<<endl;
+cout<<ceil(n/(2*1.0));;
+
+10%4 = 2
+13%9 = 4 ,5
+100%13 = 9, 4
+12%5 = 2, 3

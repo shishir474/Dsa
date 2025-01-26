@@ -16,7 +16,7 @@ OPTIMISED:
 SINCE we are interested in pos that has a[i]-d, why dont we maintain map<int,vector<int>> pos
 which stores element and its position. So that we can directly jump on to that index.
 
-unordered_map<int,vector<int> > mp;
+unordered_map<int,vector<int> > mp; // value -> vector of positions
         for (int i=0;i<arr.size();i++){
             mp[arr[i]].push_back(i);
         }
@@ -28,6 +28,8 @@ unordered_map<int,vector<int> > mp;
         for (int i=1;i<arr.size();i++){
             int b=  arr[i]-difference;
             dp[i]=1;
+            // Instead of iterating over each elements before index i and see if the difference is D, we will directly explore elements that has got difference D
+            // This can be acheived if we maintain a positions map that tracks elements and its vector of postions
             if (mp.count(b)){// direclty jump to index which has a[i]-d
                 for (int j=0;j<mp[b].size();j++){
                     if (mp[b][j]<i)

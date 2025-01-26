@@ -1,3 +1,10 @@
+// Recurrance Relation:
+
+// If s[i] == s[j], the number of palindromic subsequences is: count(i, j) = 1 + count(i + 1, j) + count(i, j – 1).
+// The “+1” counts the new palindrome formed by s[i] and s[j].
+// If s[i] != s[j], the relation becomes: count(i, j) = count(i + 1, j) + count(i, j – 1) – count(i + 1,j – 1)
+// We subtract count(i + 1, j – 1) because it is counted twice.
+
 class Solution{
     public:
     /*You are required to complete below method */

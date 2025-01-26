@@ -33,7 +33,7 @@ Constraints:
 
 
 
-USES CONCEPT OF SLIDING WINDOW MAXIMUM TO DETERMINE THE MAX OF LAST K VALUES SEEN -> FOR THIS USE DEQUE
+USES CONCEPT OF SLIDING WINDOW MAXIMUM  -> FOR THIS USE DEQUE
 class Solution {
 public:
     int maxResult(vector<int>& nums, int k) {
@@ -43,10 +43,13 @@ public:
         dp[0]=nums[0];
         q.push_back(0);
         for(int i=1;i<nums.size();i++){
+            // remove index that are out of bound 
             while(!q.empty() and q.front()<i-k){
                 q.pop_front();
             }
+            // q.front() index has the max value
             dp[i]=dp[q.front()]+nums[i];
+            // store the elements in strictly decreasing order
             while(!q.empty() and dp[i]>=dp[q.back()]){
                 q.pop_back();
             }
@@ -56,3 +59,36 @@ public:
         return dp[n-1];
     }
 };
+
+
+
+/// @brief  Using heap
+class Solution {
+public:
+// iterative O(n^2) solution toh likh lunga
+// optimised using heap, instead of checking every j for every i, keep track of the the largest dp[i] values in a heap and calculate dp[i] from right to left. 
+// When the largest value is out of bounds of the current index, remove it and keep checking.
+    int maxResult(vector<int>& nums, int k) {
+        int n = nums.size();
+        int dp[n]; // dp[i] = max score that one can acheive starting from index i and ending at index n-1
+        dp[n-1] = nums[n-1];
+        
+        priority_queue<pair<int,int>> pq; // max heap
+        pq.push({dp[n-1], n-1});
+
+        for (int i=n-2;i>=0;i--){
+            while(!pq.empty() and pq.top().second > i + k)
+                pq.pop();
+            int mx = pq.top().first;
+            dp[i] = nums[i] + mx;
+            pq.push({dp[i], i});
+        }
+
+        return dp[0];
+
+        
+    }
+};
+
+// TC: O(nlogn)
+// SC: O(n)
