@@ -26,3 +26,24 @@ Find eventual safe states   (Good question)
     -- Direct application of detect cycle in directed graph
     -- was initially thinking of reversing the edges of the graph and performing dfs(but we wont acheived anything)
     -- For directed graph questions, think along the lines of detecting cycle in DG
+
+
+Monsters CSES revisit [Not solved yet]
+
+
+Shortest Routes1 CSES [Solved but Revist]
+Shortest Routes1 CSES [Solved but Revist]
+    Shortest path algorithms
+         - Djkstra ->(Single Source, both UG and DG, TC: O(ELogV)) You use a min heap (dist,node) and dist & vis array. 
+         - Bellmann Ford - (Single Source, DG, TC: O(E*V)) used when you have -ve edge weights or -ve edge wt cycle. Relax all the edges N-1 times. Perform relaxation 1 more time: if the weights are still getting updated then you have a -ve edge weight cycle 
+         - FloydWarshall - (Multi Source, both UG and DG, adjMatrix, helps you to detect -ve edge wt cycle as well, TC: O(V^3)) cost matrix is generated at the end that gives the shortest cost b/w any 2 vertices
+                -- cost of a node from itself i.e cost[i][i] ideally should be 0, but if for any vertex this cost[i][i] < 0 it means the graoh contains a -ve wt cycle 
+                -- If the graph contains -ve wt cycle, then finding the shortest path doesn't make any sense(the weights will keep on reducing)
+                -- Remember: you can acheive the same output by applying Djkstra V times considering each node as the src node TC would be O(V * ElogV) which is better than Floyd Warshall O(V^3)
+                -- But Floyd Warshall has a unique prospect that it works on graphs with -ve edge wts. Djkstra fails in this scenario
+                -- The graph needs to be stored in the form of an adj Matrix for processing purposes
+
+
+High Score - Implement Later
+
+In Djkstra, can we also find the path

@@ -17,6 +17,12 @@ int main(){
         adj[s].push_back({f,wt});
     }
 
+    // we need visited array we cannot discard it any case
+    // Imagine a case where you reached node 3 with 10 cost and you processed all its neighbours and then later you again get node 3 but with 15 cost
+    // Processing node 3 again at a higher cost will not lead to anything
+    // and since you are using a min heap, you will always get a higher cost node at a later stage
+    // The base factor is you've processed a node a lower cost, you don't need to process it again a higher cost
+    // Hence checkinf if the node is not visited, then only we visit it and process it
     bool visited[n];
     int key[n];
 
@@ -34,16 +40,20 @@ int main(){
         int u = pq.top().second;
         pq.pop();
 
-        visited[u] = true;
+        // process the node only if it is not visited yet
+        if(!visited[u]){
+            visited[u] = true;
 
-        for(auto it: adj[u]){
-            int v=it.first;
-            int wt=it.second;
-            if(!visited[v] and key[u]+wt<key[v]){
-                key[v]=key[u]+wt;
-                pq.push({key[v],v});
+            for(auto it: adj[u]){
+                int v=it.first;
+                int wt=it.second;
+                if(!visited[v] and key[u]+wt<key[v]){
+                    key[v]=key[u]+wt;
+                    pq.push({key[v],v});
+                }
             }
         }
+        
     }
 
 
@@ -55,6 +65,9 @@ int main(){
 
 
 }
+
+// pq is used because this will give us the lowest code node each time
+// if a node is processed(means its neighbours are explored) at a lower cost, then it makes no sense to process the same node again at a higher cost in the pq
 
 
 INPUT: 
