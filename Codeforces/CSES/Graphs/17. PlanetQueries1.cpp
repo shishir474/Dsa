@@ -13,7 +13,7 @@ using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,  tree_order_statist
 #define ff              first
 #define ss              second
 #define pb              push_back
-#define mp              make_pair
+// #define mp              make_pair
 #define pii             pair<int,int>
 #define vi              vector<int>
 #define mii             map<int,int>
@@ -64,22 +64,24 @@ struct cmp {
 	}
 };
 
-// use bellmann ford to check if the -ve cycle exists in the graph
+// 1e5 queries: for each query you have a starting point and you can take k steps -> determine which node will you reach
+vector<vector<int>> adj;
 
 signed main() {
-	initcode();
-	int n,m;
-	cin>>n>>m;
-	vector<vector<pii>> adj(n+1); // [1..n] vertices
-    forn(i,m){
-        int u,v,wt;
-        cin>>u>>v>>wt;
-        adj[u].pb({v,wt}); // it's a one way flight - i.e unidirectional edge
+    initcode();
+    int n,q; cin>>n>>q;
+    adj.resize(n+1); // nodes are [1..n]
+    forn(i,n){
+        int x; cin>>x; // directed edge from i+1 to x
+        adj[i+1].push_back(x);
     }
 
-    // implement later
-    
+    while(q--){
+        int sv, k; cin>>sv>>k;
+        
 
-
+    }
+  
 }
+
 
