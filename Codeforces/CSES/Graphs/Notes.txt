@@ -46,4 +46,8 @@ Shortest Routes1 CSES [Solved but Revist]
 
 High Score - Implement Later
 
+***Flight Routes(Djkstra Variation) -> Usually we find single path, but in this problem we are supposed to find k shortest path. This problem talks about how to find single source k shortest paths from src to dest
+
 In Djkstra, can we also find the path
+
+**Revisit all questions 1 more time after the first round** 
