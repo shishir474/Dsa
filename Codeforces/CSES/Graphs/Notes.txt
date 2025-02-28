@@ -74,6 +74,131 @@ In Djkstra, can we also find the path
     Hence while applying bellman, we have to take min edge wt into consideration. This is an unusual edge case
 Investigation CSES -- Pending
 
+
+Planet queries 1 [https://www.youtube.com/watch?v=oib-XsjFa-M&ab_channel=ErrichtoAlgorithms]
+    - Binary Lifting concept: Given a node, find kth ancestor/child of that node
+    - since every no can be writting in base 2, we will use this to find the kth ancestor of the node in O(logK) time instead of doing it in a brute force O(K)
+    - so far each node, I will compute 2^i th ancestor/child
+
+    How can you improve complexity from O(n) to O(logn)
+        a. Divide by 2 (Binary Search, Divide and conquer)
+        b. Powers of 2 appears in (binary lifting, sparse tables and segment trees)
+
+    int up[N][logN] - max depth of the tree, or let's just say logN
+    up[V][j] - 2^jth ancestor of V
+    for v=0,1,2,...N-1 
+        up[v][0] = parent[v]
+        up[v][1] = up[ up[v][0] ][0]
+        up[v][2] = up[ up[v][1] ][1]
+        up[v][3] = up[ up[v][2] ][2]
+
+    recurrence relation: t[i][j] = t[t[i][j-1]][j-1]
+    fill the first column first(we know parent of each node), & then we start filling the next columns
+
+    Note: Binary Lifting can be applied to find 2^ith parent/child for a given node. Finding child or parent depends upon what is asked in the question
+    Also learned an optimisation trick, without which the code was giving TLE. In cpp, no of column are always preffered to be more than the no of rows 
+    We can store the matrix in any fashion, but the above mentioned method is more optimal  
+
+
+Planet Queries 2, Planet Cycles  --> Hard Problems 
+    both these questions use basically the same logic
+    here we have to find the distance of each node from the cycle and size of the cycle
+    For planet cycles question, the nodes which are already a part of a cycle, their ans is cycle.size(). Here the cycle is that cycle of which they are a part of 
+    if a node is not a part of a cycle, here we will need to know it's distance from the nearest cycle 
+    
+    [Implementation pending for both problems ]
+
+
+Road Reparation
+    kruskal's algo (Union find algo)
+
+Road construction
+    Union find algo 
+
+FlightRoutesCheck, PlanetsAndKingdoms
+    Strongly connected components(SCC) [Kosaraju algo]
+    In a SCC, every pair of vertex is reachable to each other 
+    Count the no of SCC & Print the SCC
+    Assume you have 4 scc's
+    
+    Intuition  Striver [ https://www.youtube.com/watch?v=R6uoSjZ2imo&ab_channel=takeUforward ]
+    scc1 -> scc2 -> scc3 --> scc4
+    If I start dfs from any node in scc1, it will endup visiting all the nodes in the graph
+    But now If I reverse the edges in the graph 
+
+    scc1 <- scc2 <- scc3 <- scc4
+    If I start dfs from any node in scc1, I'll only be able to visit the nodes in scc1. I cannot move out of scc1 
+
+    reversing the edges in an scc won't change anything. It'll pretty much be in the same state
+    Hence we reverse the edges of the entire graph, so that dfs happens in invidual scc's
+
+    But what happens when node 0 which is the starting point of our dfs traversal lies in scc4. After reversal of edges, I would end up covering all the vertices 
+    This is where starting time and ending time comes into picture
+
+    3steps process:
+    1. sort all the edges according to the finishing time - perform dfs and store all the nodes in a stack while backtracking 
+    2. Reverse all the edges in the graph
+    3. perform dfs 
+
+
+    The node which finishes the last(i.e st.top()) in the dfs, belongs to scc1. 
+    
+    Now you reverse the edges of the graph
+        scc1 <- scc2 <- scc3 <- scc4
+
+    Again start dfs from the node at stack's top. This node belongs to scc1 & since we have reversed the edges of the graph we won't be able to move out of scc1
+    
+    That is why sorting the edges based on end time and reversing the edges of the graph was important 
+
+
+
+Giant Pizza [ Hard Problem ]
+    2-SAT problem, Graph Construction
+    how can we model this problem : x1, x2, x3, x4 represents we want to take this toppings. Similary, x1bar, x2bar, x3bar indicates we dont want this 
+    Test case 1: 
+    3 5
+    + 1 + 2
+    - 1 + 3
+    + 4 - 2
+
+    Eqn: (x1 U x2) intersection (x1bar U x3) intersection (x4 U x2bar)
+    We want to make every person happy, hence taking intersection of all 
+    x1=1, x2=1, x3=1, x4=1
+    These values make the eqn true
+
+     Test Case 2 
+    L = (x1 U x2) intersection (x1 U x2bar) intersection (x1 U x3) intersection (x2bar U x3bar)
+    We neither can assign x1=1 nor x1=0. Hence no solution is possible for this case
+
+    edge from a ---> b represents: if a is true then b is also true
+    
+    x2 U x1bar
+    if x2 is not set(means x2 bar is set ), then x1 bar must be set which means there is an edge from x2bar to x1bar
+    Similarly if x1bar is not set(means x1 is set) then x2 must be set which means there is an edge from x1 to x2
+
+    x1bar U x2bar
+    if x1bar is unset(means x1 is set), then x2bar must be set which means there is an edge from x1 to x2bar
+    if x2bar is unset(means x2 is set), then x1bar must be unset which means there is an edge from x2 to x1bar
+
+    adj:
+    x1 -> x2, x2bar
+    x2 -> x1bar
+    x1bar -> 
+    x2bar -> x1bar
+
+    These way we can construct the graph.
+    Now if I try to find out the strongly connected components 
+
+    If xi and xibar are part of the same connected component, then ans is impossible since we cannot satisfy both the elements simaltaneously
+
+
+    Strongly connected component 
+    Implementation Pending 
+
+
+
+
+
 Usecase:
 1. Find the min cost path - Djkstra  (Investigation CSES)
 2. Find the no of min cost path       (Investigation CSES)  
