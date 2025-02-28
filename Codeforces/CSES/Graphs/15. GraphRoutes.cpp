@@ -13,7 +13,7 @@ using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,  tree_order_statist
 #define ff              first
 #define ss              second
 #define pb              push_back
-#define mp              make_pair
+// #define mp              make_pair
 #define pii             pair<int,int>
 #define vi              vector<int>
 #define mii             map<int,int>
@@ -64,22 +64,49 @@ struct cmp {
 	}
 };
 
-// use bellmann ford to check if the -ve cycle exists in the graph
+vector<vector<int>> adj;
+vector<int> dp;
+int N;
+
+
+// dp[sv] = -1 means ans is not computed for this sv yet
+// Initlly dp will be -1 for all sv
+// dp[sv] >= 0, 0 in case if there exists no path
+
+int dfs(int sv){
+    if(sv == N) return 1;
+    if(dp[sv] != -1) return dp[sv];
+
+    int ans = 0;
+    for(auto nb: adj[sv]){
+        int val = dfs(nb);
+        ans = (ans + val)%mod;   
+    }
+
+    // if(ans == 0) return dp[sv] = -1; // dp[sv] = -1 means there is no path from sv to dest n
+    // else return dp[sv] = ans;
+
+    // ans 0 means there is no path from sv to dest
+    return dp[sv] = ans;
+}
+
+
+
+// In this problem, we have to count the no of paths from src to dest.
+// If there exists no path return 0
 
 signed main() {
 	initcode();
-	int n,m;
-	cin>>n>>m;
-	vector<vector<pii>> adj(n+1); // [1..n] vertices
+    int n,m; cin>>n>>m;
+    N = n;
+    adj.resize(n+1);
+    dp.resize(n+1, -1);
     forn(i,m){
-        int u,v,wt;
-        cin>>u>>v>>wt;
-        adj[u].pb({v,wt}); // it's a one way flight - i.e unidirectional edge
+        int u,v; cin>>u>>v;
+        adj[u].push_back(v);
     }
 
-    // implement later
-    
-
-
+    cout<<dfs(1)<<endl;
 }
+
 

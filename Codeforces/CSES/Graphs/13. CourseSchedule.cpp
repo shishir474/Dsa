@@ -64,22 +64,15 @@ struct cmp {
 	}
 };
 
-// use bellmann ford to check if the -ve cycle exists in the graph
+// simple topological sort
 
 signed main() {
 	initcode();
 	int n,m;
 	cin>>n>>m;
-	vector<vector<pii>> adj(n+1); // [1..n] vertices
-    forn(i,m){
-        int u,v,wt;
-        cin>>u>>v>>wt;
-        adj[u].pb({v,wt}); // it's a one way flight - i.e unidirectional edge
-    }
 
     // implement later
-    
-
+	
 
 }
 

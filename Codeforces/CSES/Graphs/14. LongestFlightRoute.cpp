@@ -13,7 +13,7 @@ using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,  tree_order_statist
 #define ff              first
 #define ss              second
 #define pb              push_back
-#define mp              make_pair
+// #define mp              make_pair
 #define pii             pair<int,int>
 #define vi              vector<int>
 #define mii             map<int,int>
@@ -64,22 +64,95 @@ struct cmp {
 	}
 };
 
-// use bellmann ford to check if the -ve cycle exists in the graph
+vector<vector<int>> adj;
+vector<int> dp;
+vector<bool> vis;
+map<int,int> mp;
+vector<int> path;
+int N;
+
+void constructPath(){
+    int curr = 1;
+    while(curr != N){
+        path.push_back(curr);
+        curr = mp[curr];
+    }
+    path.push_back(curr);
+}
+
+int dfs(int sv){
+    if(sv == N){ // destination
+        return 1;
+    }
+    if(dp[sv] != -1) return dp[sv];
+
+    int ans = 0;
+    
+    //  analysed all the neighbours and picked the one that has best value
+    for(auto nb: adj[sv]){
+        int val = dfs(nb);
+        if(val > ans){
+            ans = val;
+            mp[sv] = nb;
+        }
+        // ans = max(ans, dfs(nb));
+    }
+
+    // If the ans is still 0 it means we have reached a dead end
+    // and there exists no path from this sv to N
+
+    if(ans == 0) return dp[sv] = -1; // cannot reach dest from this sv (edge case)
+    else return dp[sv] = 1 + ans; 
+}
+
+void isConnected(int sv){
+    vis[sv]=true;
+    for(auto nb: adj[sv]){
+        if(!vis[nb]){
+            isConnected(nb);
+        }
+    }
+}
+
+// observation points
+// 1. node 1 and n must be connected. If not connected return impossible
+// 2. Once it is guaranteed that the nodes 1 and n are connected, we have to find the longest path from 1 to n
+// 3. For finding longest path:
+//     a. considering a sv, we will check all its neighbours and get the longest path from them. Now here is 1 edge case where you can''t reach destination from the nb. If no path exists return -1
+//     b. Out of all the nb's we pick the nb that gives us the longest path and also save the path in map 
+//     c. we didn't used vis array in the dfs function-> reason is in the first dfs call the node would be marked vis but there might exist a different path that is the longest and passes through this node.
+//     d. Used dp array to store the length of the longest path
+
 
 signed main() {
 	initcode();
 	int n,m;
 	cin>>n>>m;
-	vector<vector<pii>> adj(n+1); // [1..n] vertices
+	N = n;
+    adj.resize(n+1);
+    dp.resize(n+1, -1);
+    vis.resize(n+1,false);
+
     forn(i,m){
-        int u,v,wt;
-        cin>>u>>v>>wt;
-        adj[u].pb({v,wt}); // it's a one way flight - i.e unidirectional edge
+        int u,v; cin>>u>>v;
+        adj[u].push_back(v);
+    }
+    
+    isConnected(1);
+
+    if(vis[n]==true){
+        cout<<dfs(1)<<endl;
+        constructPath();
+        forn(i,path.size()) 
+            cout<<path[i]<<" ";
+    }
+    else{
+        cout<<"IMPOSSIBLE"<<endl;
     }
 
-    // implement later
-    
 
+    
+	
 
 }
 

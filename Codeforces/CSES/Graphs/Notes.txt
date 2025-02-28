@@ -44,7 +44,7 @@ Shortest Routes1 CSES [Solved but Revist]
                 -- The graph needs to be stored in the form of an adj Matrix for processing purposes
 
 
-High Score - Implement Later
+High Score, Flight Score - Implement Later
 
 ***Flight Routes(Djkstra Variation) -> Usually we find single path, but in this problem we are supposed to find k shortest path. This problem talks about how to find single source k shortest paths from src to dest
 
@@ -72,3 +72,13 @@ In Djkstra, can we also find the path
     In this question it's not mentioned that we could have atmost one edge b/w 2 cities
     Generally this is the assumption, but here in this problem we can have more than 1 edges b/w 2 cities. 
     Hence while applying bellman, we have to take min edge wt into consideration. This is an unusual edge case
+Investigation CSES -- Pending
+
+Usecase:
+1. Find the min cost path - Djkstra  (Investigation CSES)
+2. Find the no of min cost path       (Investigation CSES)  
+3. Find the shortest & longest length of the min cost from src to dest      (Investigation CSES)        
+4. count the no of paths from src to dest.                     (GraphRoutes CSES)
+5. Find the length of the longest path and also the path from src to dest     (LongestFlightRoute CSES)
+6. Detecting the Starting and ending point in a cycle       {RoundTrip2 CSES}
+
