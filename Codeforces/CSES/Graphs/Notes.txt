@@ -51,3 +51,24 @@ High Score - Implement Later
 In Djkstra, can we also find the path
 
 **Revisit all questions 1 more time after the first round** 
+
+
+1. Count the no of components
+2. Find the shortest path from src cell to dest cell in the matrix. Print its length and also the path  
+    - shortest path --> use bfs 
+    - to keep track of the path(ie. the direction from which we landed on the current cell) --> temp matrix
+    -- temp matrix will help in the path construction when we reach the destination
+4. Shortest path --> use bfs and with the help of map you can construct the path
+    if you have to determine min cost path -> then use Djkstra
+    Shortest path(in terms of length from src to dest)
+    min cost path(in terms of minimum cost from src to dest)
+5. Bipartite graph: check if you can divide the nodes of the graph in 2sets such that no vertices in a set are connected to each other
+6. Monsters: 
+    first find the min time a monster takes to reach a certain cell - can be done using Djkstra
+    perform bfs to find the shortest path
+7. Shortest Routes1: Djkstra implementation (DV): need dist & vis array for Djkstra 
+8. Shortest Routes2: shortest route b/w any 2 nodes --> bellmann O(n^3)
+                    single source to all nodes shortest path -> Djkstra(O(elogv))
+    In this question it's not mentioned that we could have atmost one edge b/w 2 cities
+    Generally this is the assumption, but here in this problem we can have more than 1 edges b/w 2 cities. 
+    Hence while applying bellman, we have to take min edge wt into consideration. This is an unusual edge case
