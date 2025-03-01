@@ -184,7 +184,7 @@ Giant Pizza [ Hard Problem ]
     x1 -> x2, x2bar
     x2 -> x1bar
     x1bar -> 
-    x2bar -> x1bar
+    x2bar -> x1bar   
 
     These way we can construct the graph.
     Now if I try to find out the strongly connected components 

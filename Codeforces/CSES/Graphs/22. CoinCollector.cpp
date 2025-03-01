@@ -67,10 +67,152 @@ struct cmp {
 	}
 };
 
+void print_graph(vector<vector<int>> adj){
+	forn(i,adj.size()){
+		cout<<i<<": ";
+		forn(j,adj[i].size()){
+			cout<<adj[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+}
+
+// Find the strongly connected components
+// Create a condensed graph using the above info
+// This condensed graph will always be acyclic in nature. Why --> bccoz if it was cyclic then the nodes would have been part of the same component and we did not have got 2 different nodes
+
+vector<vector<int>> adj; 	 // original graph
+vector<vector<int>> rev_adj; // reverse graph
+vector<vector<int>> red_adj; // reduced graph formed using SCCs
+vector<bool> vis;
+stack<int> s;
+vector<int> coins;
+unordered_map<int,int> component_ids;  // node -> component_id
+vector<int> component_coins; 	// stores the total coins for each component
+vector<int> dp;
+int N;
+
+void dfs(int sv){
+	vis[sv] = true;
+	for(auto nb: adj[sv]){
+		if(!vis[nb]){
+			dfs(nb);
+		}
+	}
+	s.push(sv);
+}
+
+void rev_dfs(int sv, int comp_id){
+	vis[sv] = true;
+	component_ids[sv] = comp_id;
+	for(auto nb: rev_adj[sv]){
+		if(!vis[nb]){
+			rev_dfs(nb, comp_id);
+		}
+	}
+}
+
+// computes the max amount of coins that can be obtained, given that we start from sv
+// recurrence: component_coins[sv] + max amount of coins that can be obtained amongst all its neighbours
+// we will be iterating over the reduced graph 
+int obt(int sv){
+	// if already precomputed
+	if(dp[sv] != -1) return dp[sv];
+
+	int ans = component_coins[sv];
+	int val = 0;
+	for(auto nb: red_adj[sv]){
+		val = max(val, obt(nb));
+	}
+
+	return dp[sv] = ans + val;
+
+}
+
+int kosaraju(){
+	// sort the nodes based on their end timings
+	vis.resize(N+1),false;
+	fore(i,1,N){
+		if(!vis[i]) dfs(i);
+	}
+
+	// reset vis array
+	forn(i,N+1) vis[i] = false;
+
+	// stack contains vertices in the order of their end times i.e the vertex at the top is the last to finish in the dfs 
+	int comp_id = 0;
+	while(!s.empty()){
+		int t = s.top();
+		s.pop();
+		if(!vis[t]){
+			rev_dfs(t,++comp_id); // perform dfs on the reversed graph to get the SCCs
+		}
+	}
+
+	// create the condensed_graph using the compoenent_id information
+	red_adj.resize(comp_id+1);
+	component_coins.resize(comp_id+1);
+
+	// check all the vertices
+	fore(i,1,N){
+		// check all its edges
+		for(auto nb: adj[i]){
+			// if i and nb are part of different components -> create an edge
+			if(component_ids[i] != component_ids[nb]){
+				red_adj[component_ids[i]].push_back(component_ids[nb]);
+			}
+		}
+		component_coins[component_ids[i]]+=coins[i];
+	}
+
+	// for(auto it: component_ids){
+	// 	cout<<it.first<<" "<<it.second<<endl;
+	// }
+	// print_graph(red_adj);
+	// fore(i,1,comp_id) cout<<component_coins[i]<<" ";
+
+
+	// dp[i] stores the max amount of coins that can be obtained given that we start from ith vertex
+	// in the question it is stated that we can start from any node 
+	// hence ans would be max(all dp[i]) 
+	// initialising dp array with -1 indicating that ans is not computed 
+	dp.resize(comp_id+1, -1);
+
+	// obt() would calculate the max no of coins that we could have obtained given that our starting point is ith vertex
+
+	// obt(1);  
+	fore(i,1,comp_id){ // the reduced graph could be disconnected as well, hence computing the value by iterating over each node which is not yet computed
+		if(dp[i] == -1) obt(i);
+	}
+
+	int ans = 0;
+	fore(i,1,comp_id){
+		// cout<<dp[i]<<endl;
+		ans = max(ans, dp[i]);
+	}
+
+	return ans;
+
+}
+
 
 signed main() {
     initcode();
-    
+	int n,m; cin>>n>>m;
+	N = n;
+	coins.resize(n+1);
+	adj.resize(n+1);
+	rev_adj.resize(n+1);
+	fore(i,1,n) cin>>coins[i];
+	forn(i,m){
+		int u,v; cin>>u>>v;
+		adj[u].push_back(v);
+		rev_adj[v].push_back(u);
+	}
+
+	cout<<kosaraju()<<endl;
+	
+	return 0;
 }
 
 
