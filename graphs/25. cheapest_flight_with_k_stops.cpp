@@ -82,3 +82,5 @@ Hence TC: O(flights.size())
 // SC: O(V+E) for adj list + O(V) for dist array + O(V) for queue
 // V is n 
 // E is flights.size()
+
+

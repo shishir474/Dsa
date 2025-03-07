@@ -89,6 +89,7 @@ stack<int> s;
 vector<int> coins;
 unordered_map<int,int> component_ids;  // node -> component_id
 vector<int> component_coins; 	// stores the total coins for each component
+vector<int> indegree;
 vector<int> dp;
 int N;
 
@@ -152,6 +153,7 @@ int kosaraju(){
 	// create the condensed_graph using the compoenent_id information
 	red_adj.resize(comp_id+1);
 	component_coins.resize(comp_id+1);
+	indegree.resize(comp_id+1,0);
 
 	// check all the vertices
 	fore(i,1,N){
@@ -160,6 +162,7 @@ int kosaraju(){
 			// if i and nb are part of different components -> create an edge
 			if(component_ids[i] != component_ids[nb]){
 				red_adj[component_ids[i]].push_back(component_ids[nb]);
+				indegree[component_ids[nb]]++;
 			}
 		}
 		component_coins[component_ids[i]]+=coins[i];
@@ -182,13 +185,24 @@ int kosaraju(){
 
 	// obt(1);  
 	fore(i,1,comp_id){ // the reduced graph could be disconnected as well, hence computing the value by iterating over each node which is not yet computed
-		if(dp[i] == -1) obt(i);
+		// if(dp[i] == -1) obt(i);
+		if(indegree[i] == 0){
+			// i could be the potential starting point 
+			obt(i);
+		}
 	}
+
+	// we dont actually need to compute obt(i) for all the vertices in the reduced graph
+	// The way we will be able to make max coins is only if we start from vertices that has an indegree 0. Starting from a vertex in the middle wont make much sense bcoz then we would be loosing out the coins of the previoous components
+	// so instead of computing obt(i) for all vertices, compute it only for those that have indegree 0. 
+	// This can reduce the overall tc  
+
+
 
 	int ans = 0;
 	fore(i,1,comp_id){
 		// cout<<dp[i]<<endl;
-		ans = max(ans, dp[i]);
+		ans = max(ans, dp[i]);  // taking the max of all dp[i]
 	}
 
 	return ans;

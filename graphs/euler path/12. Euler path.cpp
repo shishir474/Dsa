@@ -19,6 +19,11 @@ Graph will be Euler iff Euler circuit is present. If Euler circuit is not presen
 If Euler circuit is not present but Euler Path is present then the graph is semi-euler
 if Graph is Euler or semi-euler then there exists a walk which visits each edge exaclty once
 
+1. So in order for a graph to be a euler graph, euler circuit must be present & euler circuit is only present if all the nodes that have some edges are part of 1 single connected component i.e there should not exist multi edged components 
+2. To check if the graph contains a euler circuit, the starting and ending points must be same & all the edges must be traversed exactly once. 
+   In this case, there could be just one single component or if there are multiple components then only 1 compnenent must have all the edges and rest of the components comprise of only 1vertex
+3. To check if the graph contains a euler path, the starting and ending points could be different, but we must cover all the edges exactly once. The graphs could be disconnected, we just need to ensure that we are able to traverse all the edges exactly once 
+
 
 #include<bits/stdc++.h>
 using namespace std;

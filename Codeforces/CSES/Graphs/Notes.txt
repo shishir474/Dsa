@@ -197,6 +197,107 @@ Giant Pizza [ Hard Problem ]
 
 
 
+Coin Collector {SCC + DP}
+    Very good problem 
+    Condense the original graph into graph of connected components(basically each connected component represents 1 node) 
+    While condensing also compute the total coins for each SCC
+    Use DP to compute the max no of coins that can be obtained. We could start from any node(but starting from the node whose indegree=0 makes more sense, bcoz that node would give us the best starting point)
+    obt(sv) -> returns the max coins that can be collected given that our starting point is sv
+    recurrence: obt(sv) = coins[sv] + max coins from all its neigbhours
+    for instance, assume sv has 3 nb: a,b,c 
+    obt(sv) = coins[sv] + max({obt(a), obt(b), obt(c)})
+    i.e get the max coins from all its neigbhours
+    for the sink node, there would be no neigbhours, hence dp[sink_node] = coins[i]
+    Note: here coins[i] represents the total coins of that ith component 
+    So instead of using coins[i], use component_coins[i]
+
+
+Mail Delivery [New Algo]
+    Euler circuit
+    Given a starting point, we have to determine a route that traverses each edge exactly once and returns back to the starting point 
+    basically we have to find if there exists a Euler circuit.
+    For Euler circuit to exist, the degree of all nodes should be even. 
+    In Euler circuit, we need to ensure that each edge is traversed exactly once and we cover all the edges and return back to the starting point. 
+    During this, we could visit a vertex more than once
+
+Teleporter's path 
+    Euler Path 
+
+
+Hamiltonian Flights 
+    DP + bitmasking + Graphs
+    Implementation Pending  -- Getting TLE 11/20 Passed
+
+Knights Tour [Warnsdorff’s heuristic]
+    - Not a graph problem 
+    - normal brute force backtrack solution will not work, since we have multiple combinations and checking each one of them will cause stack overflow
+    -- instead we use warnsdorff's heuretics to explore those positions firt that have a fewer onward moves
+    -- so we sort all the possible positions, based on it's heuretics value in the ascending order which means the positions which have fewer onward moves will be processed first 
+    -- and call dfs on the sorted positions. If any of the position, returns true you have your ans, else you backtrack(while backtracking unmark/unvisit the cell) and return false
+    -- this way we will then explore the next best possible option 
+    -- Overall Wanderdorrfs heuretics reduces the complexity dratically by allowing us to explore the possible options based on its heurestic value
+
+
+Download Speed
+    Max Flow Algorithm
+    New Topic -- see tutorials on youtube
+
+Download Speed 
+    Network Flow / Max Flow Algorithm
+        In order to understand the concept of Network flow, we must first identify the max flow of the graph 
+        max flow is the maximum flow we can push through the network given that each edge has a certain capacity  
+        each edge has a flow & capacity associated with it 
+        initially the flow is 0 for all the edges 
+        There are 2 special nodes the source and the sink node 
+        Max Flow Algo helps us to calculate -> with an infinite input source, what is the max flow can we push through the network given that each edge has a certain capacityu
+        Effectively, max flow is the bottleneck value 
+        The max flow for a network is the sum of the flows entering the sink node . 
+        That's the most we can push through the network 
+        To find the maximum flow (and min-cut as a bu product), the ford fulkerson method repeateadly finds augmenting paths through the residual graph and augments the flow until no more augmenting paths can be found
+        Every augmenting path will have a bottleneck value and the sum of the bottlenecks found in each augmenting path is equal to the max flow!
+        The ford fulkerson algo continues finding augmenting paths and augments the flow until no more augmenting paths from source to sink exists 
+
+    implmentation https://www.youtube.com/watch?v=RppuJYwlcI8&ab_channel=WilliamFiset
+        Edmond Karps - uses a bfs to finding augmenting paths 
+            The idea Edmond Karps is instead of using a DFS, we can use BFS to find augmenting paths which yields an arguably better TC of O(V*E*E)
+            THe major difference in this approach is that the TC no longer depends on the capacity value of any edge 
+            This algo repeateadly finds the shortest augmenting path from s->t in terms of the no of edges used each iteration 
+            Do a BFS from the source and end at the sink. While exploring the flow graph, remember that we can only reach a node if the capacity of the edge to get there is > 0
+        TC: O(E*E*V)
+        Ford fulkerson - uses dfs to finding the augmenting paths 
+            At a high level, this algo states that all we want to do is repeateadly find augmenting paths from s->t in the flow graph , augment the flow and repeat until no more paths exists
+            The key takeaway here is that this algo does not specify how to actually find the augmenting paths. This is where optimisations come into play.
+            This algo uses a DFS to find augmenting paths and takes O(E*f) where E is the no of edges and f is the max flow of the network. 
+            However the pitfall is TC depended on the capacity value of the edges in the graph
+            DFS traversal chooses the edges in a random order, so it is possible to pick the middle edge every time when finding an augmenting path 
+            [Referring to an example graph from the video]
+        TC: O(F*E)
+        Summary:
+            A DFS will sometimes find long windy paths from source to the sink. 
+            THis is Usually undesirable because the longer the path, the smaller the bottleneck value, which results in a longer runtime.
+            Edmond Karp's tries to resolve this problem by finding the shortest path from the source to the sink using a BFS 
+            More importantanly, the big achievement of Edmond Karp is that its TC of O(V*E*E) is independent of the max flow 
+
+
+Distinct Routes
+    -- problem is based on maxflow concept
+    -- Doubt: Why are we using a separate dfs() to construct the path. Using the parent vector populated during bfs is giving WA
+    Below is the sample test case:
+        8 9
+        1 2
+        2 3
+        3 8
+        1 4
+        4 5
+        5 3
+        2 6
+        6 7
+        7 8
+
+
+School Dance:
+    Doubt: Not sure on the approach 
+
 
 
 Usecase:
@@ -207,3 +308,81 @@ Usecase:
 5. Find the length of the longest path and also the path from src to dest     (LongestFlightRoute CSES)
 6. Detecting the Starting and ending point in a cycle       {RoundTrip2 CSES}
 
+
+Neetcode Revise:
+Graphs: 
+    Clone Graph   -- dfs 
+Advanced Graph:
+    Reconstruct Itenary
+    Swim in rising water
+    Alien Dictionary
+    Cheapest Flights within K Stops  -- djkstra variation
+
+
+TODO:
+Why the parent logic works only in UG for detecting cycles? or why can't we use the parent logic in detecting cycles for DG?
+Why are we using pq in djkstra and not a normal queue? or why can't we use a normal queue in djkstra
+
+Apply this tags on LC and practise : Union Find, Shortest Path
+
+
+Cheapest Flight within K Stops
+    1. There might exist a path that has a higher cost but satisfies the stops requirement. Djkstra will only focus on the lowest cost path which might not even satisfy the no of stops allowed
+    2. Hence using cost as the deciding factor is not feasible. We will also have to consider the no of stops taken
+    NOTE: There might exist a path with a higher cost which satisfies the no of stops in contrary to the lowest cost path which might not
+    3. We can use queue & priority_queue both in the djkstra kind of problems. 
+    4. Here in this problem we are choosing no of stops as our deciding factor and since the increase in stops from each node to other is constant i.e 1, we can leverate queue here instead of priority queue
+    If the increase is not constant lets say in case of edge weights, then priority_queue would have made more sense 
+    So the use queue or priority_queue depends upon the problem scenario, we can use either of this 
+    By using Queeu we are saving on logarithmic factor that would have been applicable in case priority_queue
+    NOTE: Problems where you can use queue for DJkstra, you can also use priority_queue, but the reverse is not true 
+    Priority queue just helps you to get the best of all in terms of the lowest cost/any other factor in O(1),  but when all the nodes have equal weightage, using priority_queue wont make much sense 
+
+    Need Vis array for finding Shortest Path?
+        No, We dont need a vis array in case of finding the lowest cost path because let's say there are 2 routes to reach dest the first routet costs more and marks the dest visisted, now the second route though it costs less, 
+        we won't be able to explore that option since the vis is already visited.
+        Hence in order to allow other prospective path which can cost less we don't keep track visited vertices
+
+    Will a normal Queue work in Djkstra based problems?
+        Yes, we can a normal queue if the rise in the decidiing factor is constant. Using a normal queue gives us the most optimal solution 
+
+    BFS vs Djkstra
+        BFS works for unweighted graphs or graphs where the edge weight is constant. 
+        priority_queue needs to be used when the edge weights is not constant and we need the lowest cost path. 
+        BFS is guranteed to give the shortest path(works in case of unweighted graph), but since the graph is weighted, it may not produce the lowest cost path
+        That's why we use Djkstra --> shortest cost path from src to all nodes. the only extra condition here is we can take atmost k intermediate stops
+        If the edge weights are constant, we can use BFS to get the shortest path 
+        but if the weights are not constant, we will have to use a priority_queue bcoz this will give priority to the lower cost edges and will help us to get the cheapest path 
+
+    When to stop shortest path Algorithms
+        This is a valid question that should we stop at the first encounter of dest or should we continue processing the vertices.
+        In some problems we stopped at the very first encouter of dst, whereas in this problem we will have to continue processing coz there is a possibility that in fuutre we could reacch at a better price
+
+
+
+
+
+
+
+Core Algorithms: https://blog.algomaster.io/p/master-graph-algorithms-for-coding
+1. Detect Cycle
+    1.1 for UG
+    1.2 for DG
+2. Topological Sort 
+3. Union Find 
+4 Shortest Path Algorithms
+    4.1 Kruskals
+    4.2 Prims
+    4.3 Djkstra 
+        TC: O(ElogV)/O(E) depending upon the implementation via using queue or priority_queue  -- can use queue or priority_queue both depending on the problem statement {Refer Cheapest Flight Within K Stops problem}
+        SC: O(V+E) for adj list + O(V) for dist array + O(V) for queue/priority_queue
+    4.4 Bellman Ford    
+    4.5 Floyd Warshall
+5. Euler circuit (Hierholzer's Algo)
+6. Strongly Connected Algo (Kosaraju)
+7. Hamiltonian path 
+8. Bipartite
+9. Kahn's Algo
+10. Max Flow Algorithm 
+
+    

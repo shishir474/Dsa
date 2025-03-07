@@ -75,10 +75,63 @@ struct cmp {
 	}
 };
 
+vector<vector<int>> adj;
+vector<bool> vis;
+vector<int> matched;
+
+bool matchPossible(int boy){
+    for(auto girl: adj[boy]){
+        // if any girl is not matched
+        if(!matched[girl]){
+            matched[girl] = boy;
+            return true;
+        }
+        else if(!vis[girl]){
+            // try assigning a different partner to that boy, and if you are able to assign a different partner to that boy, then you can match the curr girl with the curr boy
+            vis[girl] = true;
+            if(matchPossible(matched[girl])){
+                matched[girl] = boy;
+                return true;
+            }
+        }
+    }
+    
+    // you will try matching all the girls with the curr boy, and if you're not able to match with any of them 
+    // then return false
+
+    return false;
+    
+}
+
 
 signed main() {
     initcode();
+    int n,m,k;
+    cin>>n>>m>>k;
+    adj.resize(n+1); // n boys and m girls
+    vis.resize(m+1,false); // to check if the ith girl has been visited or not
+    matched.resize(m+1,0);
+    forn(i,k){
+        int u,v; cin>>u>>v;
+        adj[u].push_back(v); // boy --> girls
+    }
     
+    int ans = 0;
+    
+    for(int boy=1;boy<=n;boy++){
+        
+        forn(i,vis.size()) vis[i]=false; // reset the vis array before matching each boy
+        
+        if(matchPossible(boy)){
+            ans++;
+        }
+    }   
+
+    cout<<ans<<endl;
+    for(int i=1;i<=m;i++){
+        cout<<matched[i]<<" "<<i<<endl;
+    }
+
 }
 
 

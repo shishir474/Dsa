@@ -1,0 +1,14 @@
+Ashish's LeetCode Resources 
+    https://github.com/ashishps1/awesome-leetcode-resources?tab=readme-ov-file
+
+LLD 
+    https://github.com/ashishps1/awesome-low-level-design?tab=readme-ov-file
+
+    All Standard Problems are covered in Java/CPP/Python
+        Behavioural
+        Creational
+        Structural
+
+Behavioural interviews  
+    https://github.com/ashishps1/awesome-behavioral-interviews - 50 questions
+    Amazon LeaderShip Principles: https://www.amazon.jobs/content/en/our-workplace/leadership-principles

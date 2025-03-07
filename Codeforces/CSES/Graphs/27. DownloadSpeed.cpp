@@ -76,13 +76,87 @@ struct cmp {
 };
 
 
-signed main() {
-    initcode();
+vector<vector<int>> adj;
+vector<int> parent;
+vector<vector<int>> capacity;
+
+// returns the min flow of the augmenting path if possible 
+// else returns 0;
+int bfs(int s, int t){
+    // reinitialise the parent array:
+    //  parent -1 indicates that the vertex is not visited yet and parent -2 indicates that the vertex has no parent i.e it is a source vertex
+    fill(all(parent),-1);
+    parent[s] = -2;
+
+    queue<pair<int,int>> q; // (vertex,flow) here flow is the min curr flow found on this path till now
+    q.push({s,INF});   
     
+    while(!q.empty()){
+        int cur = q.front().first;  // curr vertex
+        int flow = q.front().second;  // min flow that we have obtained till now on this path
+        q.pop();
+
+        for(auto next: adj[cur]){ // check nb's
+            // if nb is not visited and capacity[curr][nb] > 0
+            if(parent[next]==-1 and capacity[cur][next]){
+                // set the parent
+                parent[next] = cur;
+                // update the flow by taking the min
+                int new_flow = min(flow, capacity[cur][next]);
+                if(next == t)
+                    return new_flow;
+                // push the nb,new_flow into the queue
+                q.push({next,new_flow});
+            }
+        }
+    }
+
+    return 0;
+
 }
 
+// computes the max flow between the src and dest vertex
+int max_flow(int s, int t){
+    int flow = 0;
+    int new_flow;
 
+    // until no more augmenting paths are available 
+    while(new_flow = bfs(s,t)){ 
+        flow += new_flow;
+        // update the capacity 
+        int cur = t;
+        while(cur != s){
+            int prev = parent[cur];
+            capacity[prev][cur] -= new_flow;
+            capacity[cur][prev] += new_flow;
+            cur = prev;
+        }
+    }
 
+    return flow;
+}
 
+// Intuition Behind the Max Flow Algorithm
+// 	•	The algorithm finds augmented paths from the source to the sink.
+// 	•	It pushes as much flow as possible through these paths while respecting capacity limits.
+// 	•	It keeps adjusting the residual capacities and iterates until no more flow can be pushed.
 
+signed main() {
+    initcode();
+    int n,m; cin>>n>>m;
+    adj.resize(n+1);
+    parent.resize(n+1);
+    capacity.assign(n+1, vector<int>(n+1,0));
 
+    forn(i,m){
+        int u,v,cap; cin>>u>>v>>cap;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+        capacity[u][v]+=cap;
+    }
+
+    cout<<max_flow(1,n)<<endl;
+
+    
+    
+}

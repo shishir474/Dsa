@@ -1,5 +1,5 @@
 Graph will be connected. Hamiltonian path doesnt make sense if the graph is disconneted, bcoz we cannot visit every vertex
-
+–
 Ex:Following graph is hamiltonian,if we start from 1st vertex, but starting from other vertex will not give hamiltonaina path. So we need to check from every vertex, which one gives hamiltonian path
 1--2--3--4--5--6--8
    |           |
