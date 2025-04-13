@@ -2,7 +2,12 @@ Implement a phone directory
 Difficulty: HARD
 
 Problem Statement
-You are given a list/array of strings which denotes the contacts that exist in your phone directory. The search query on a string ‘str’ which is a query string displays all the contacts which are present in the given directory with the prefix as ‘str’. One special property of the search function is that when a user searches for a contact from the contact list then suggestions (contacts with prefix as the string entered so for) are shown after the user enters each character.
+You are given a list/array of strings which denotes the contacts that exist in your phone directory.
+The search query on a string ‘str’ which is a query string displays all the contacts which are present in the 
+given directory with the prefix as ‘str’. One special property of the search function is that when a user 
+searches for a contact from the contact list then suggestions (contacts with prefix as the string entered so for) 
+are shown after the user enters each character.
+
 Sample Input 1 :
 2
 5
