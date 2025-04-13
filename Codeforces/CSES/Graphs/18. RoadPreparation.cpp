@@ -77,6 +77,9 @@ struct node{
 };
 vector<node> dsuf;
 
+// returns absolute parent of u
+// also applies path compression, meaning it directly connects all nodes in the path to their root, flattening the structure.
+// The amortized time complexity of findPar is O(α(N)), where α(N) (inverse Ackermann function) grows very slowly and is nearly constant for practical values of N.
 int find(int v){
     if(dsuf[v].parent==-1){
         return v;
@@ -84,6 +87,9 @@ int find(int v){
     return dsuf[v].parent = find(dsuf[v].parent);
 }
 
+// O(1) 
+// The smaller tree is always merged under the larger tree, keeping the depth small.
+// The total complexity of N union and find operations is O(N * α(N)), which is nearly O(N) in practice.
 void union_op(int fromP, int toP){
     
   if (dsuf[fromP].rank > dsuf[toP].rank){
@@ -98,6 +104,7 @@ void union_op(int fromP, int toP){
   }
   
 }
+
 
 bool compare(edges a, edges b){
     return a.wt < b.wt;

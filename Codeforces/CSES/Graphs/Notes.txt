@@ -1,3 +1,85 @@
+*****************************************************   Graphs Problem Category     ******************************************
+
+Understand the TC & SC of each core algo mentioned below with proper reasoning
+
+1. Cycle Detection {UG & DG}
+2. Shortest Distance 
+    2.1. SSSP Djkstra - ElogV
+        Using Pq and Queue
+    2.2. SSSP Bellmann Ford - EV 
+        Detecting and retrieving -ve wt cycle 
+    2.3. Floyd Warshall - V*V*V
+        Finding shortest distance b/w every pair of vertices 
+3. Euler Tour  
+    Find start and end time for each node using DFS. Can have multiple usecases like representing a treee in a linear fashion based on the entry and exit time of nodes 
+4. Topological Sort 
+    DAG (Directed Acyclic graph)
+    Linear ordering of vertices such that if there is an edge from U to V, then vertex U appears before V in the topo sort 
+5. Union Find Algorithm
+    int findParent(int sv)
+    void unionByRank()
+    This algo helps us to construct MST(minimum spanning tree) - Kruskals Algorithm 
+    Basically we sort all the edges based on their edge weights and start analysing them 
+    Consider dealing with an edge b/w u and v If U and V  are part of the same components(have same parents)-- we'll not add this edge 
+    Constructing MST is about considering those set of edges which will give us the minimal weight + also ensures that all the nodes are connected (1 single component)
+
+6. Bipartite Graphs
+    Uses DFS -> check if we can divide vertices into a set of 2 vertices such that all the edges exist b/w vertices of different sets 
+7. Strongly Connected Component (Kosaraju Algorithm)
+    Basically it is way we identify graph as a set of strongly connected components
+    SCC1 -> SCC2 -> SCC3 -> SCC4 
+    All the vertices part of a strongly connected component are reachable from/to each other 
+8. DFS Recursion based Problems + Memoisation
+9. Binary Lifting 
+    Precompute 2^ith parent of each node. This will help us find kth parent in O(logN) or I can say O(logK)
+10. Network flow / Max Flow algorithm - Ford fulkerson method
+11. Eulerian Tour/Circuit/Path 
+    Traverse all the edges exactly once. 
+    ALl the edges should be part of 1 single component. 
+    To check if euler path(all the edges traversed exactly once) exists from 1 to N
+        Necessary prerequisites:
+        a. 1 and N should be part of 1 single component. For this you can run a dfs from 1 and see if vis[N]==true
+        b. All the edges should be part of 1 single component. Any vertex which is unvisited in the 1st step dfs call, if has adj[i].size() > 0, then it means all the edges are not part of a single component
+        c. For euler path, all the vertices will have indegree == outdegree except the starting(1) and ending(N) vertices
+        Starting and ending vertices will have abs(outdegree[i] - indegree[i]) == 1 
+        So there will be exactly 2 vertices with this condition. If there are more than 2 vertices or if there exists a vertex whose difference is not 1, then euler path does not exist
+    If all these prerequisites are getting fulfilled, it means euler path exists.
+    
+    Steps to generate euler path:
+        call dfs function on the starting point. 
+
+        void dfs(sv){
+            while(adj[sv].size() > 0){ /// while it has some neighbours, remove one edge and call dfs on the neigbouring vertex.
+                int nb = adj[sv].back(); // picking the last neighbour  
+                adj[sv].pop_back();       // delete the edge 
+                dfs(nb);
+            }
+            stack.push(sv); // If no neighbours exists, push the vertex in the stack and return
+        }
+    
+    Euler Circuit:
+     To check if euler circuit(all the edges traversed exactly once) exists 
+        Necessary prerequisites:
+        a. All the edges should be part of 1 single component. Any vertex which is unvisited in the 1st step dfs call, if has adj[i].size() > 0, then it means all the edges are not part of a single component
+        c. For euler path, all the vertices will have indegree == outdegree 
+    
+    You can use the same dfs function to generate euler circuit. 
+    Call dfs from any vertex. Since it is now guranteed that euler circuit exists 
+
+NOTE: So if you have been given an UG and it is given that euler circuit exists for this graph. 
+    If you find the eulerian circuit --> this will give you the orientation of the edges for a SCC 
+    which means a component for which euler circuit exists is a Strongly connnected component 
+
+    {https://www.youtube.com/watch?v=eQL_LLvAdtY&t=981s&ab_channel=Codenzyme}
+
+    So if someone gives you an UG and tells you to assign directions to the edges, and you have to assign edges such that whole graph becomes strongly connected 
+    Solution: You'll have to check if the UG has a eulerian circuit or not(all the vertices must have even degree and all the edges must be part of 1 component)
+    and if it has a eulerian circuit, then you can try orienting the edges in this way. This graph is known as eulerian oriented graph.
+    This is a DG and it represents one single strongly connected component
+
+
+
+
 DFS, BFS logic
 TC: DFS & BFS
     Each node is processed exactly once and for a particular node, we are processing all its neighbours which is basically equivalent to the degree of that node
@@ -28,13 +110,181 @@ Find eventual safe states   (Good question)
     -- For directed graph questions, think along the lines of detecting cycle in DG
 
 
-Monsters CSES revisit [Not solved yet]
+Monsters CSES       {Excellent Problem}
+    Tags: Multisource BFS, path construction, 
+
+Labyrinth:
+    you have to find a shortest path, given the source and the destination in the matrix.
+    Since we have to find a shortest path, use BFS
+
+Building Roads:
+    Let's say you have C components, so you will need C-1 edges to connect those components
+    Which edges to add: select any one vertex from c1, c2 and c3 and add an edge b/w c1-c2 and c2-c3
+
+Message Route:
+    you have to find a shortest path from the src node to dest node in a graph
+    Use BFS
+    In order to be able to construct the path, track parent for each node. Levarage this parent array later to construct the shortest path 
+
+Building Teams:
+    Classic question of bipartite graphs
+
+Round Trip:
+    Undirected Graph - cycle detection and cycle retrieval
+    NOtE: Generally if it not mentioned in the problem, about the direction of edges, assume them to be bidretional
+    You just have to design a round trip, which can start at any city, goes through 2 or more cities and finally returns back to the starting city
+        Need not be a Hamiltonian circuit - in this it is compulsory to visit each city exaclty once 
+        you have to print the path if such trip is possible  else print impossible
+    
+    Perform cycle detection and if a cycle if found, construct that cycle and return it 
+
+Shortest Route1:
+    Simple Djkstra
+    Understanding why don't we need vis array in djkstra implementation using pq is the important part.
+    ACTION ITEM: WATCH STRIVER'S DJKSTRA VIDEO  
+
+
+Shortest Route2: N<=500 so n^3 will work 
+    Direct implementation of Floyd Warshall O(V^3) solution to find shortest path b/w each pair of vertices 
+    DOUBT / Pending : Why can't we follow u -> v -> k order in the for loop processing. Can get the test case from CSES where the code is failing
+    ACTION ITEM: WATCH STRIVER'S VIDEO
+
+High Score:
+    Bellmann ford: it is stated that edge wt could be +ve and -ve in the problem and we have to find shortest path from 1 to N
+    actually we have to find maximum cost, but since bellmann gives us minimal cost, we store the edge weights by negating it(i.e multiple it with -1)
+    and then apply bellmann (relax all the edges n-1 times --> this will give you sssp)
+    relax the edges 1 more time --> if the dist array is still getting updated, it means we've -ve wt cycle(i.e a +ve wt cycle in the original graph since we negated the edge). Check if we can reach the dest N from vertex V
+    assuming u -> v was the edge and dist[v] was getting updated. Since the dist[v] is getting updated and if we also are able to reach N from V(check using simple BFS), it means the cost N will be infinite 
+    since it is a +ve wt cycle, the cost of v will always get on being updated. In this situation, answer only exists if N is not reachable from V
+
+Flight Discount:
+    Djkstra:
+    Not a conventional SSSP
+    You have to compute shortest path from 1 to N, but you have one coupon which allows you reduce any edge weight to half it's value
+    Try considering each edge and reduce its weight by half. for instance if you pick an edge u -> v with weight wt 
+    cost =  dist[u] + wt/2 + dist1[v]
+    where dist[u] is the minimum cost from 1 to U
+    and dist1[v] is the minimum cost from V to N 
+    a simple djkstra would give you dist[u] considering 1 as the source node 
+    and djkstra on the reversed graph gives you dist1[] where dist1[v] is the minimal cost of v from N
+
+    In the reversed graph dist1[V] is the minimal dist of V from N(src vertex), the cost would be the same in the actual graph 
+    Summary:
+    Apply djkstra on original graph and get the dist array(computes shortest path 1 to all other nodes)
+    Apply djkstra on reversed graph and get the dist1 array( computes shortest path from N to all other nodes)
+    Iterate over each edge and find the best possible cost
+
+    Djkstra (ElogV)  NlogN
+    Bellaman (E*V)   N*N
+    Floyd warshall (V*V*V)  N*N*N
+
+
+Cycle Finding [Pending -- getting Runtimer error for my implmentation]
+    Bellman Ford
+    Task is to retrieve a -ve wt cycle if exists.
+    Not a conventional SSSP 
+    Relaxation in the Nth iteration --> the relaxed vertx is of the following 2 forms   
+        a. Vertex belongs to a negative cycle
+        b. There is a -ve cycle leading to this particular vertex
+    We need to ensure that we capture a vertex that is part of the negative cycle and not the type 2, bcoz then we'll not be able to retrieve the cycle
+    WHy do we need this vertex to be part of -ve cycle?
+        If a vertex is part of the -ve cycle, we can simply cycle through and print the cycle 
+
+    step1: capture the parent
+    dist[u] + edger_dist(u,v) < dist[v]
+        => dist[v] = dist[u] + edger_dist(u,v)
+           parent[v] = u;
+    step2: we traceback parents to arrive at vertex of type 1
+        How many tracebacks ? N-1
+          we have to traceback enough to land in the cycle
+          worst case scenario: consider a linear graph with n vertices and n edges(1 self edge with -ve wt). In this we'll have to traceback n-1/n steps
+          min n-1 steps required, to land in the cycle 
+    The max length is n-1, hence n-1 tracebacks
+    NOTE: We dont need to add dist[u] != INF condition
+    You will perform N-1 iterations and then in the Nth iteration you'll get to know if there is a -ve wt cycle 
+    Now in order to detect cycle you, need to land on a vertex that is a part of cycle. In order to land on a vertex that is part of the cycle, backtrack N-1 times using parents array
+    We will track the parents each time we update the dist array
+
+
+Flight Routes
+    djkstra extended 
+    Not a conventional SSSP
+    Generally djkstra is about finding SSSP(single source shortest path), but this problem talks about finding k best path(minimal cost) 
+    So instead of maintiaining just 1 best dist / node, we will maintain k best distances for each node 
+    hence the dist array of n*k size 
+
+
+Round Trip 2
+    Directed Graph -- Cycle detection and cycle retrieval 
+    In round trip 1, we have UG, here we have DG. Task is same we need to retrieve a cycle if exists
+
+Course Schedule
+    Classic Topological Sort problem
+
+Longest Flight Schedule {DOUBT: why can't we use djkstra, considering each edge with -1 wt.}   [Good Problem]  
+
+    Sol1: Recursion + memoisation (Working)  
+
+    -- this problem involved finding the longest path from 1 to N, not just the length but the actual path as well( in order to track the longest path, we used a map)
+    -- Later we leveraged this map to construct the path
+
+    1 and N must be connected, then only ans is possible
+    We have to find longest path from 1 to N, give an unweighted DG
+    Recursive sol:    One solution could be you can apply a simple dfs. call dfs on the neighbours and consider the one which gives the longest path
+    base case would be when sv == N return 1;
+    assume you got the best path len as ans, so you will return ans+1 
+    and then you can optimise this further by checking if we have computed for the same vertex earlier. if we have we could straight away return the ans 
+
+    Sol2: Using Djkstra (Not Working)
+    Can;t we use djkstra? we have to find the longest path, 
+    djkstra gives us the shortest path. If we consider all edge weight as -1 and then apply djkstra the minimal cost would be for the longest path. hence -ve edge wt 
+    and since all the edges have an equal wt, we can further reduce the TC by using a queue instead of a priority queue 
+    GETTING WA for 4test cases: 21/25 Passed
+
+
+Game Routes:
+    Classic recusion + memoisation problem
+    We have to count the no of ways(obviously unique paths) from 1 to N
+
+
+Investigation
+    Djkstra extended(lot of things to track apart from the dist array)
+    Have to find minimum cost from 1 to N, count of minimum price paths, length of shortest path with minimum price, length of longest path with minimum price 
+
+Planet Queries 1
+    Binary Lifting 
+    Calculate 2^i th parent for each node
+    We will be given q queries, in each query you will have a starting node and K. You have to determine the kth child for that node
+ 
+Road Reparation
+    DSU, Kruskals
+    Sort the edges based on their weights and add them. Ensure that we need minimal connectivity ie n-1 roads to connect n cities
+
+Road Construction
+    DSU variation: Generally we keep rank as 0 during initialisation, but here we will track each components size via it's rank
+
+Flights Routes Check
+    Strongly Connected components
+    Find all the strongly connected components.
+
+Planets And Kingdoms
+    Strongly Connected components
+    print the no of sccs
+
+Coin Collector [Excellent Problem]
+    Strongly Connected components
+    If we start from any node in scc1, we'll be able to cover max no of coins
+    scc1 --> scc2 --> scc3
+
+    convert the original graph to reduced graph of the SCCs
+    We know the total no of coins for each SCC
+    Apply recursion to compute the best path to take that'll make us to max amount of coins. Added memoisation to ensure that the same subproblem is not computed multiple times
 
 
 Shortest Routes1 CSES [Solved but Revist]
 Shortest Routes1 CSES [Solved but Revist]
     Shortest path algorithms
-         - Djkstra ->(Single Source, both UG and DG, TC: O(ELogV)) You use a min heap (dist,node) and dist & vis array. 
+         - Djkstra ->(Single Source, both UG and DG, TC: O(ELogV)) You use a min heap (dist,node) and dist array. 
          - Bellmann Ford - (Single Source, DG, TC: O(E*V)) used when you have -ve edge weights or -ve edge wt cycle. Relax all the edges N-1 times. Perform relaxation 1 more time: if the weights are still getting updated then you have a -ve edge weight cycle 
          - FloydWarshall - (Multi Source, both UG and DG, adjMatrix, helps you to detect -ve edge wt cycle as well, TC: O(V^3)) cost matrix is generated at the end that gives the shortest cost b/w any 2 vertices
                 -- cost of a node from itself i.e cost[i][i] ideally should be 0, but if for any vertex this cost[i][i] < 0 it means the graoh contains a -ve wt cycle 
@@ -64,7 +314,7 @@ In Djkstra, can we also find the path
     min cost path(in terms of minimum cost from src to dest)
 5. Bipartite graph: check if you can divide the nodes of the graph in 2sets such that no vertices in a set are connected to each other
 6. Monsters: 
-    first find the min time a monster takes to reach a certain cell - can be done using Djkstra
+    first find the min time a monster takes to reach a certain cell - can be done using Djkstra -- infact: we dont need pq to implement djkstra logic here, since all the edge weights are equal 
     perform bfs to find the shortest path
 7. Shortest Routes1: Djkstra implementation (DV): need dist & vis array for Djkstra 
 8. Shortest Routes2: shortest route b/w any 2 nodes --> bellmann O(n^3)
@@ -75,7 +325,11 @@ In Djkstra, can we also find the path
 Investigation CSES -- Pending
 
 
-Planet queries 1 [https://www.youtube.com/watch?v=oib-XsjFa-M&ab_channel=ErrichtoAlgorithms]
+Planet queries 1 
+    Tags: Binary Lifting
+    
+    [https://www.youtube.com/watch?v=oib-XsjFa-M&ab_channel=ErrichtoAlgorithms]
+
     - Binary Lifting concept: Given a node, find kth ancestor/child of that node
     - since every no can be writting in base 2, we will use this to find the kth ancestor of the node in O(logK) time instead of doing it in a brute force O(K)
     - so far each node, I will compute 2^i th ancestor/child
@@ -106,14 +360,8 @@ Planet Queries 2, Planet Cycles  --> Hard Problems
     For planet cycles question, the nodes which are already a part of a cycle, their ans is cycle.size(). Here the cycle is that cycle of which they are a part of 
     if a node is not a part of a cycle, here we will need to know it's distance from the nearest cycle 
     
-    [Implementation pending for both problems ]
+    [Implementation pending for Planet Queries 2]
 
-
-Road Reparation
-    kruskal's algo (Union find algo)
-
-Road construction
-    Union find algo 
 
 FlightRoutesCheck, PlanetsAndKingdoms
     Strongly connected components(SCC) [Kosaraju algo]
@@ -197,8 +445,9 @@ Giant Pizza [ Hard Problem ]
 
 
 
-Coin Collector {SCC + DP}
-    Very good problem 
+Coin Collector                                          {Excellent Problem}
+    Tags: {SCC + DP}  
+
     Condense the original graph into graph of connected components(basically each connected component represents 1 node) 
     While condensing also compute the total coins for each SCC
     Use DP to compute the max no of coins that can be obtained. We could start from any node(but starting from the node whose indegree=0 makes more sense, bcoz that node would give us the best starting point)
@@ -212,21 +461,40 @@ Coin Collector {SCC + DP}
     So instead of using coins[i], use component_coins[i]
 
 
-Mail Delivery [New Algo]
-    Euler circuit
+Mail Delivery [New Algo]                                {Excellent Problem}
+    Tags: Euler circuit       
+    
+    USES MODIFIED DFS ALGO to generate euler circuit
+
     Given a starting point, we have to determine a route that traverses each edge exactly once and returns back to the starting point 
     basically we have to find if there exists a Euler circuit.
     For Euler circuit to exist, the degree of all nodes should be even. 
     In Euler circuit, we need to ensure that each edge is traversed exactly once and we cover all the edges and return back to the starting point. 
     During this, we could visit a vertex more than once
+    
+    Insane optimisation techniques used in implementation
+
 
 Teleporter's path 
     Euler Path 
 
 
-Hamiltonian Flights 
-    DP + bitmasking + Graphs
-    Implementation Pending  -- Getting TLE 11/20 Passed
+Hamiltonian Flights                                     {Excellent Problem}
+    Tags: DP + bitmasking + Graphs
+
+    We have to count the # of paths from 1 to N that covers all vertices exaclty once 
+    I'll start traversal from 1 and will try to visit as many vertices as possible
+    Base case: if sv == n, check if we were able to visit all the vertices(this condition is non negotiable, we must visit all vertices) --> if yes, then we found 1 path 
+    best way to check if all the vertices are visited is by using masks -- O(1) time 
+    if mask == (1<<n)-1  --> all visited 
+    sv varies from 1 to N
+    mask varies from 0 to (1<<N)-1 
+    In total N * (1<<N) states and since N = 20
+    2^20 is approx 1e6
+    
+    For memoisation always prefer DP vector over maps. Accessing and updating map<pii, int> is slow compared to using a vector especially when you’re dealing with up to 2^n * n states (for n=20, it becomes 20 million+ states in worst case).
+
+    
 
 Knights Tour [Warnsdorff’s heuristic]
     - Not a graph problem 
@@ -253,7 +521,7 @@ Download Speed
         Effectively, max flow is the bottleneck value 
         The max flow for a network is the sum of the flows entering the sink node . 
         That's the most we can push through the network 
-        To find the maximum flow (and min-cut as a bu product), the ford fulkerson method repeateadly finds augmenting paths through the residual graph and augments the flow until no more augmenting paths can be found
+        To find the maximum flow (and min-cut as a by product), the ford fulkerson method repeateadly finds augmenting paths through the residual graph and augments the flow until no more augmenting paths can be found
         Every augmenting path will have a bottleneck value and the sum of the bottlenecks found in each augmenting path is equal to the max flow!
         The ford fulkerson algo continues finding augmenting paths and augments the flow until no more augmenting paths from source to sink exists 
 
@@ -263,7 +531,7 @@ Download Speed
             THe major difference in this approach is that the TC no longer depends on the capacity value of any edge 
             This algo repeateadly finds the shortest augmenting path from s->t in terms of the no of edges used each iteration 
             Do a BFS from the source and end at the sink. While exploring the flow graph, remember that we can only reach a node if the capacity of the edge to get there is > 0
-        TC: O(E*E*V)
+        TC: O(E*E*V)            -- doubtful regarding the way TC is calculated -- check again
         Ford fulkerson - uses dfs to finding the augmenting paths 
             At a high level, this algo states that all we want to do is repeateadly find augmenting paths from s->t in the flow graph , augment the flow and repeat until no more paths exists
             The key takeaway here is that this algo does not specify how to actually find the augmenting paths. This is where optimisations come into play.
@@ -279,9 +547,36 @@ Download Speed
             More importantanly, the big achievement of Edmond Karp is that its TC of O(V*E*E) is independent of the max flow 
 
 
-Distinct Routes
+Distinct Routes                     [PENDING]                               {Excellent Problem}
     -- problem is based on maxflow concept
-    -- Doubt: Why are we using a separate dfs() to construct the path. Using the parent vector populated during bfs is giving WA
+
+    DOUBT: Only doubt now is what is the use of parent[], since we can't use that to construct the paths anyway?
+
+
+    One impotant thing to note here is bfs() will give you only the max flow. If you want paths as well, you cannot use the parent array for constructing paths.
+    We'll have to run a separate DFS() to generate all the paths. In this dfs, we only look for edges, which are fully utilised(i.e its capacity is now 0) and not yet visited 
+    So we'll need a vis[] of size m where m is the no of edges to track if an edge is visited yet or not. vis[] is used in the DFS() 
+
+    BFS() only gives you the maxFlow. You cannot use the parent[] to construct the paths. You will need a separate DFS() at the end to find all the possible paths
+    
+    Perform DRY RUN on the below case, you'll get the clarity. The trick here is choosing always the shortest path does not guarantee maximum flow. 
+
+    FINDINGS regarding the MAX FLOW Algorithm:
+    Also, while taking input, add bidirectional edges (u to v and v to u), but set only the cap of (u to v) as 1. In the problem statement, the edges are mentioned to be unidirectional (only u to v)
+    but in order to compute the max flow correctly we'll add both the edges (u to v and v to u), but set the cap for only u to v. v to u's capacity will be 0
+    
+    obviously cap[][] is a N X N vector which is initailised with 0. and only for the input edges we increase the capacity
+
+    Also while updating the capcities after the BFS(), it's Necessary to update both capacities(forward & backward) decrease cap[prev][curr] -= new_flow and increase cap[curr][prev] += new_flow.
+    Both decreasing and increasing the capacity of the forward and backward edges is important. 
+
+    To initialise th e parent[] during each BFS() u can use either fill() or assign() 
+        fill(all(parent),-1) or parent.assign(N+1, -1)
+    
+        fill is not a native vector method. it expects the range that you want to fill and the value with which you want to fill this range
+        assign() on the other hand is a native vector method, which takes the size you want to assign & the value you want to initialise with
+
+
     Below is the sample test case:
         8 9
         1 2
@@ -295,8 +590,166 @@ Distinct Routes
         7 8
 
 
-School Dance:
+School Dance:                     {Excellent Problem}
+    Tags: Matching algo             {The approach used to solve this question is not a standard approach }
+
+    There are some potential matchings given to you b/w boys and girls. out of this, you have to determine the maximum no of matchings that you can make 
+    N boys[1-N] and M[1-M] girls.
+    In the absolute best case, # of matchings <= min(N,M)
+    assuming N >= M
+    lets have a matched[] of size M which will tell us the boy ith girl is matched to. Initialising it with 0 indicating the girl is not matched to any boy 
+    lets also have a vis[] of size M which will tell us if the girl is available. Initally all the girls are available, hence marking all vis[i] = false
+            If vis[i] = true, then it means ith girl is not available for matching
+
+    Now lets start matching boys
+        call dfs on boy, traverse through its potential matches, if the ith girl is not matched, set matched[i] = boy and return true (boy was successfully matched to a girl)
+        if the ith girl is matched, it will be matched it this boy matched[i]. Try assigning a different girl to matched[i] by blocking this ith girl (set vis[i]=true)
+        so when dfs is called on matched[i], while traversing the ith girl is already matched and is also marked vis, so you will try for another girl. If you were able to match it with another girl --> return true 
+        if the recursive call returns true, it match ith girl with boy i.e set matched[i] = boy and return true 
+
     Doubt: Not sure on the approach 
+
+
+
+
+Planet Queries 2              {Excellent Problem}         4 test cases Failing 
+
+    Tags: Functional Graphs(graphs in which each node has exactly one outgoing edge)
+
+    In this problem, we are given a functional graph and asked q queries for the minimum distance between two vertices u and v.
+
+    Important point about the nature of graph
+        NOTE: Notice that all functional graphs can be broken down into a bunch of "components". 
+    Each of these components consists of many trees directed towards the root, and a single cycle composed of said roots and some other nodes.
+
+    1. Determine the cycle_id of each node. cycle_id can be either of these three values {0,-1,-2} 
+        cycle_id 0  means -- node is part of a cycle,
+        cycle id -1 means -- node is part of a tree
+        cycle id -2 means -- node hasn't been processed yet 
+
+    Determing the cycle id is an important step. Here we are also storing all the cycles in a vector<map<int,int>> cycles, where each cycle is represented by a map
+    Map stores node -> index in that cycle 
+    Essentially,  there should be only 1cycle. but if there are more than 1 cycles and u and v are leading to different cycles(after we make a sufficient large jump, then ans wont exist in that case)
+    
+    2. Compute the distnace of each node from the cycle. You can use bfs for this. Start bfs from the node which is leading into the cycle and perform this on the reversed graph.
+    The starting node's distance will be 1 and then with the help of bfs you will be able to find the distance of all the children nodes. But note, we are using reversed graph here 
+
+    3. Also preprocess the 2^ith parent of each node using binary lifting 
+
+    NOTE: It's assumed that both u and v are part of the same component, i.e if we take a sufficiently large jump from u and v, we'll land on the same cycle.
+    If we are landing on a different cycle --> ans is not possible 
+    
+    4. Now there can be 3 scenario:
+        a. both u and v aren't part of the cycle. In this case if dist[v] > dist[u] ans is not possible. dist[v]<=dist[u]
+        equal in the case, if u and v overlap. thus on making a jump of (dist[u]- dist[v]) from u, check if we land on v. If not ans does not exist, else print the diff in their depths
+
+        b. both u and v lie on the cycle(obviously their cycle_id should be same.) find the index of u and v, lets call them ui and vi.
+        If ui < vi ans is (vi - ui) else if (ui > vi) cycle_len - (ui - vi)
+
+        c. If either of them lie on the cycle and other one lie on the tree. Here we can have 2 scenarios, u on the cycle and v on tree and vice-versa
+        ans is only possible if u is on tree and v on cycle. Only in this case, we will be able to reach v from u. 
+            You know the dist[u] from the cycle. Take a jump from u of length dist[u].. This will land you on the cycle and then you can follow the b's approach(since both nodes now lie on the cycle)
+
+
+
+
+Planet Cycles                                             
+    similar to Planet Queries 2
+    compute the cycle id of each node. 
+    Compute the depth of each node from the cycle 
+    
+    All the nodes that are part of the cycle -- their ans would be cycle len 
+    Tree node's ans would be depth[node] + cycle len 
+
+
+    
+Police Chase:           {Implementation Pending}
+    Tags: Max-Flow Min-Cut Theorem
+    
+    You can find the max flow using edmond karps in O(V*E*E). Max flow min cut theorem states that max flow of a graph = min cut of the graph 
+    ✅ Key Idea:
+
+    This is a classic Minimum Cut problem.
+
+    More formally:
+        •	Given an undirected graph, you want to find the minimum number of edges whose removal disconnects node 1 from node n.
+
+    🔧 How to solve:
+    We can solve this using Max-Flow Min-Cut Theorem:
+        In a flow network, the maximum amount of flow that can go from source to sink is equal to the minimum cut capacity that separates source from sink.
+
+    So:
+        •	Convert the graph into a flow network.
+        •	Use Edmonds-Karp (BFS-based Ford-Fulkerson) to compute maximum flow from node 1 to node n.
+        •	Then extract the minimum cut edges.
+
+    ⸻
+    ✅ Implementation Overview:
+        1.	Treat each undirected edge as two directed edges with capacity 1.
+        2.	Run Edmonds-Karp from source = 1 to sink = n.
+        3.	After flow is computed:
+        •	Do a BFS/DFS from source in the residual graph.
+        •	Mark all reachable nodes.
+        •	Any edge (u,v) such that:
+        •	u is reachable
+        •	v is not reachable
+        •	and (u,v) had **capacity used up (i.e., flow == 1)`,
+        •	then it’s part of the minimum cut.
+
+
+        
+    How is Max flow associated with min cut ?
+
+        ⸻
+        💡 Max-Flow Min-Cut Theorem
+
+            In a flow network, the maximum amount of flow from a source s to a sink t is equal to the minimum capacity of an s-t cut.
+
+        ✅ Definitions First
+
+        1. Flow Network
+
+        A directed graph with:
+            •	A source s and sink t
+            •	Each edge (u → v) has a capacity c(u, v)
+            •	A flow f(u, v) that satisfies:
+            •	Capacity constraint: 0 ≤ f(u, v) ≤ c(u, v)
+            •	Flow conservation: total inflow = total outflow (except at s and t)
+
+        2. Max Flow
+        The maximum total amount of flow that can be sent from s to t through the network without violating capacity constraints.
+
+        3. Cut
+        A cut in the graph is a partition of the vertices into two disjoint sets S and T such that:
+            •	s ∈ S (source in set S)
+            •	t ∈ T (sink in set T)
+        The capacity of the cut is the sum of the capacities of all edges going from S to T:
+        \text{cut}(S, T) = \sum_{u \in S, v \in T} c(u, v)
+
+        4. Min Cut
+        The minimum of all possible cut capacities — i.e., the smallest total capacity of edges that, if removed, would disconnect s from t.
+
+        💥 Max-Flow = Min-Cut: Why?
+        Intuition:
+            •	Flow from s to t is constrained by bottlenecks (edges crossing from S to T).
+            •	The maximum flow can’t exceed the capacity of any cut — because everything has to pass through the cut.
+            •	So: Max Flow ≤ Min Cut
+        But here’s the cool part:
+            •	Using residual graphs, augmenting paths, and flow pushing, we can prove that there exists a flow that exactly equals the capacity of the minimum cut.
+        Thus:
+            ✅ Max Flow = Min Cut
+
+
+        💡 Practical Use of Min Cut
+
+        Once you’ve found the max flow, you can get a min cut by:
+            1.	Running a BFS/DFS in the residual graph starting from s
+            2.	Mark all reachable nodes from s as S
+            3.	All edges from S to T (unreachable nodes) in the original graph form the min cut
+
+    
+
+
 
 
 
@@ -326,7 +779,7 @@ Why are we using pq in djkstra and not a normal queue? or why can't we use a nor
 Apply this tags on LC and practise : Union Find, Shortest Path
 
 
-Cheapest Flight within K Stops
+Cheapest Flight within K Stops                              {Excellent Problem}
     1. There might exist a path that has a higher cost but satisfies the stops requirement. Djkstra will only focus on the lowest cost path which might not even satisfy the no of stops allowed
     2. Hence using cost as the deciding factor is not feasible. We will also have to consider the no of stops taken
     NOTE: There might exist a path with a higher cost which satisfies the no of stops in contrary to the lowest cost path which might not

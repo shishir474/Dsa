@@ -1,3 +1,4 @@
+/* Shishir Singh */
 #include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,7 +14,7 @@ using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,  tree_order_statist
 #define ff              first
 #define ss              second
 #define pb              push_back
-#define mp              make_pair
+// #define mp              make_pair
 #define pii             pair<int,int>
 #define vi              vector<int>
 #define mii             map<int,int>
@@ -22,7 +23,7 @@ using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,  tree_order_statist
 #define setbits(x)      __builtin_popcountll(x)
 #define zrobits(x)      __builtin_ctzll(x)
 #define mod             1000000007
-#define inf             1e18
+#define INF             1e18
 #define ps(x,y)         fixed<<setprecision(y)<<x
 #define mk(arr,n,type)  type *arr=new type[n];
 #define w(x)            int x; cin>>x; while(x--)
@@ -39,134 +40,162 @@ void initcode() {
 	// freopen("cpp/output.txt", "w", stdout);
 	// #endif // ONLINE_JUDGE
 }
-int gcd(int a, int b)
-{
-	if (b == 0)
-		return a;
-	return gcd(b, a % b);
-}
-int lcm(int a, int b) {
-	return (a / gcd(a, b) * b);
-}
-
-int modularBinaryExponentitation(int base, int exponent) {
-	if(exponent==0) return 1;
-	int val = modularBinaryExponentitation(base, exponent/2);
-	if(exponent%2)
-		return ((val*val)%mod*base)%mod;
-	else
-		return (val*val)%mod;
-}
-
+int gcd(int a, int b) { return b == 0 ? a : gcd(b, a % b); }
+int lcm(int a, int b) { return (a / gcd(a, b)) * b; }
+int modularBinaryExponentitation(int base, int exp) { return exp == 0 ? 1 : (modularBinaryExponentitation(base, exp / 2) * modularBinaryExponentitation(base, exp / 2) % mod * (exp % 2 ? base : 1)) % mod; }
+int modinv(int b, int c){ return modularBinaryExponentitation(b, c-2);}
+int log_a_with_base_b(int a, int b) { return log2(a) / log2(b); }
+// int expo(int a, int b, int mod) {int res = 1; while (b > 0) {if (b & 1)res = (res * a) % mod; a = (a * a) % mod; b = b >> 1;} return res;}
+// void extendgcd(int a, int b, int*v) {if (b == 0) {v[0] = 1; v[1] = 0; v[2] = a; return ;} extendgcd(b, a % b, v); ll x = v[1]; v[1] = v[0] - v[1] * (a / b); v[0] = x; return;} //pass an arry of size 3
+// int mminv(int a, int b) {int arr[3]; extendgcd(a, b, arr); return arr[0];} //for non prime b
+// int mminvprime(int a, int b) {return expo(a, b - 2, b);}
+// vector<int> sieve(int n) {int*arr = new int[n + 1](); vector<int> vect; for (int i = 2; i <= n; i++)if (arr[i] == 0) {vect.push_back(i); for (int j = 2 * i; j <= n; j += i)arr[j] = 1;} return vect;}
+void print_graph( vector<vector<int>> adj) { forn(i, adj.size()) { cout << i << ": "; forn(j, adj[i].size()) cout << adj[i][j] << " "; cout << endl; } }
 struct cmp {
 	bool operator()(const pii& p1, const pii& p2) {
 		return p1.second < p2.second;
 	}
 };
 
+vector<vector<char>> mat;
+vector<vector<int>> dist;
+vector<vector<bool>> vis;
+
 int X[] = {-1,0,1,0};
 int Y[] = {0,1,0,-1};
 
-bool dfs(int i, int j, int timer, vector<vector<char>> &mat, vector<vector<bool>> &vis, vector<char> &path, vector<vector<int>> &time){
-    int n = mat.size(), m = mat[0].size();
-    
-    vis[i][j] = true;
-    
-    if(i==0 or i==n-1 or j==0 or j==m-1) { // reached the boundary cell
-		return true;
-	}
-			
-    for(int k=0; k<4; k++) {
-		int newi = i+X[k], newj = j+Y[k];
-		// we will land at the new cell at time timer+1, hence checking if timer+1 < time[newi][newj]
-		if(newi>=0 and newi<n and newj>=0 and newj<m and mat[newi][newj]!='#' and !vis[newi][newj] and timer + 1 < time[newi][newj]) {
-			if(k==0) path.push_back('U');
-			else if(k==1) path.push_back('R');
-			else if(k==2) path.push_back('D');
-			else path.push_back('L');
+int n, m; 
 
-			if(dfs(newi, newj, timer+1, mat, vis, path, time)) return true;
-        
-		}
+// NOTEs: 
+// apart from basic conditions like the cell should be within matrix, should not contiain #, it must also satisfy condition curr_dist(d) + 1 < monster's distance from that cell(dist[newx][newy])
+// Edge to consider: When no monsters are present, A will always be there 
+// To check if there exists a path that ends at boundary, can also be implemented via bfs
 
-	}
-	
-	path.pop_back();
-	return false;
+
+// Here d + 1 < dist[newx][newy] condition was ensuring that
+//  I always land on that cell which the monster hasn't visited yet + it was also working to track the cells that I have visisted till now in my path. 
+// if d + 1 was greater than dist[newX][newY], then it means we have already vis that cell. But it fails in one condition where there are no monsters in the matrix and all the cells will contain inf.
+// In this case we will get stuck in an infinite cycle of visiting already visited vertices 
+// bool dfs(int x, int y, int d, string &s){
+//     if(x==0 or x==n-1 or y==0 or y==m-1){
+//         return true;
+//     }
+
+//     cout<<x<<" "<<y<<" "<<endl;
+
+//     for(int k=0;k<4;k++){
+//         int newx = x + X[k];
+//         int newy= y + Y[k];
+//         if(newx >=0 and newx<n and newy>=0 and newy < m and mat[newx][newy] != '#' and d + 1 < dist[newx][newy]){
+//             if(k==0) s+= "U";
+//             else if(k==1) s+="R";
+//             else if(k==2) s+="D";
+//             else if(k==3) s+="L";
+//             if(dfs(newx, newy, d+1, s)) return true;
+//             s.pop_back();
+//         }   
+//     }
+    
+//     return false;
+
+// }
+
+
+// Everything is same, just added vis[][] to track the visited cells. Marking vis[][] false while backtracking is important, becuae there might exist a path that leads to the boundary, but uses a part of the path that we just explored.
+// Thus in order to handle those scenarios, we need to mark the cell unvisited while backtracking, in order to allow future paths to use those cells in its path
+// call from main -- dfs(startR, startC, 0, s)  [starting cell, curr_dist, path string]
+bool dfs(int x, int y, int d, string &s){
+    if(x==0 or x==n-1 or y==0 or y==m-1){
+        return true;
+    }
+    vis[x][y] = true;
+
+    for(int k=0;k<4;k++){
+        int newx = x + X[k];
+        int newy= y + Y[k];
+        // cell should be within boundary of the matrix, should not contain # and should be reachable before Monster reaches there plus should 
+        if(newx >=0 and newx<n and newy>=0 and newy < m and mat[newx][newy] != '#' and d + 1 < dist[newx][newy] and !vis[newx][newy]){
+            if(k==0) s+= "U";
+            else if(k==1) s+="R";
+            else if(k==2) s+="D";
+            else if(k==3) s+="L";
+            if(dfs(newx, newy, d+1, s)) return true;
+            s.pop_back();           // backtrack
+        }   
+    }
+    
+    vis[x][y] = false;      // backtrack
+    return false;
 
 }
 
+// edge cases:
+// 1. No monsters present
 
 
 signed main() {
-	initcode();
-	int n,m;
-	cin>>n>>m;
-	vector<vector<char>> mat(n, vector<char>(m)); // 1 to n vertices
+   initcode();
+   int N,M; cin>>N>>M;
+   n = N;
+   m = M;
+   mat.resize(n, vector<char>(m));
+   dist.resize(n, vector<int>(m,INF));
+   queue<pii> q;        // stores monsters initial position
+   int startR = -1, startC = -1;
+   forn(i,n){
+    forn(j,m){      
+        cin>>mat[i][j];         // ., #, M, A
+        if(mat[i][j] == 'A'){
+            startR = i; startC = j;
+        }
+        else if(mat[i][j] == 'M'){
+            q.push({i,j});
+            dist[i][j] = 0;
+        }
+    }
+   }
 
-	int sx = -1, sy = -1; // starting x and starting y
-
-	vector<vector<int>> time(n,vector<int>(m,INT_MAX));
-	queue<pii> q;
-
-	forn(i,n) {
-		forn(j,m) {
-			cin>>mat[i][j];
-			if(mat[i][j] == 'A') {
-				sx = i;    // ths is my starting point
-				sy = j;
-			}
-			else if(mat[i][j] == 'M') {
-				time[i][j] = 0;
-				q.push({i,j});
-			}
-		}
-	}
-
-	// monsters bfs to track the min time a monster takes to reach a certain cell
-	while(!q.empty()) {
-		int i= q.front().first;
-		int j = q.front().second;
-		q.pop();
-
-		for(int k=0; k<4; k++) {
-			int newi = i+X[k], newj = j+Y[k];
-			if(newi>=0 and newi<n and newj>=0 and newj<m and mat[newi][newj]!='#' and time[i][j] + 1 < time[newi][newj]) {
-				time[newi][newj] = 1 + time[i][j];
-				q.push({newi,newj});
-			}
-		}
-
-	}
-	
-// 	forn(i,n){
-// 	    forn(j,m){
-// 	        cout<<time[i][j]<<" ";
-// 	    }
-// 	    cout<<endl;
-// 	}
+    // Multi source BFS 
+    // perform bfs to find the shortest dist of each cell from the monsters
+   while(!q.empty()){
+        int x = q.front().first, y = q.front().second;
+        q.pop();
+        for(int k=0;k<4;k++){
+            int newx = x + X[k];
+            int newy= y + Y[k];
+            if(newx >=0 and newx<n and newy>=0 and newy < m and mat[newx][newy] != '#' and dist[x][y] + 1 < dist[newx][newy]){
+                dist[newx][newy] = dist[x][y] + 1;
+                q.push({newx,newy});
+            }   
+        }
+   }
 
 
-	// BFS of A: A cannot visit a cell marked '#' + plus cell which has time 0 for monster
-	// we cannot use bfs to construct the path -> Hence will have to go with DFS
-	int timer = 0;
+//   forn(i,n){
+//     forn(j,m){
+//         cout<<dist[i][j]<<" ";
+//     }
+//     cout<<endl;
+//   }
 
-    vector<char> path;
-    vector<vector<bool>> vis(n, vector<bool>(m,false));
-    
-	bool ans = dfs(sx,sy,timer,mat,vis,path,time);
+    vis.resize(n,vector<bool>(m,false));            // understanding why vis is required here is the heart of the problem 
 
-	if(ans) {
-		cout<<"YES"<<endl;
-		cout<<path.size()<<endl;
-		forn(i,path.size()) cout<<path[i];
-		cout<<endl;
-	}
-	else {
-		cout<<"NO"<<endl;
-	}
+    string s = "";
+    if(dfs(startR, startC, 0, s)){      // starting cell, curr_dist, path string
+        cout<<"YES"<<endl;
+        cout<<s.length()<<endl;
+        cout<<s<<endl;
+    }
+    else{
+        cout<<"NO"<<endl;
+    }
 
-
-
+   
+	return 0;
 }
+
+
+
+
+
 

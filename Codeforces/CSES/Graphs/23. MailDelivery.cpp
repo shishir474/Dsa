@@ -8,7 +8,7 @@ using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,  tree_order_statist
 // ordered_set is a pbds which is similar to set and has 2 extra functionalities set.find_by_order(idx) -> returns the element at this index
 // and set.order_by_key(k) -> returns the index of the key k
 // ordered set data structure => adds indexing functionality to sets
-
+ 
 #define int             long long int
 #define ff              first
 #define ss              second
@@ -30,7 +30,7 @@ using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,  tree_order_statist
 #define forn(i,n)      for(int i=0;i<n;++i)
 #define fore(i, l, r)   for(int i = l; i <= r; ++i)
 #define all(v)          v.begin(), v.end()
-
+ 
 mt19937                 rng(chrono::steady_clock::now().time_since_epoch().count());
 void initcode() {
 	FIO;
@@ -68,99 +68,140 @@ int modularBinaryExponentitation(int base, int exponent) {
 	else
 		return (val*val)%mod;
 }
-
+ 
 struct cmp {
 	bool operator()(const pii& p1, const pii& p2) {
 		return p1.second < p2.second;
 	}
 };
-
-
-vector<vector<int>> adj;
+ 
+ 
+vector<vector<pii>> adj;
 vector<int> degree;
-vector<bool> vis;
+vector<bool> vis, seen;
 stack<int> s;
 int N;
-
+ 
 void dfs(int sv){
     vis[sv] = true;
-    for(auto nb: adj[sv]){
+    for(auto it: adj[sv]){
+        int nb = it.first;
         if(!vis[nb]) dfs(nb);
     }
 }
-
+ 
 // this function ensures that all the edges are part of the 1 single component
 // i.e there exists no multi edged components 
 // There could be more than 1 component, but only 1 component will have all the edges and the rest of them will be 1 single node
 bool isConnected(){
     vis.resize(N+1,false);
-    int starting_node = -1;
-    // get the first node that has some edges 
-    fore(i,1,N){
-        if(adj[i].size() > 0){
-            starting_node = i; break;
-        }
+    dfs(1);
+    for(int i=1;i<=N;i++){
+        if(!vis[i] and degree[i] > 0) return false;
     }
-
-    // now the task is to check if all the edges are part of the component of the starting node
-    dfs(starting_node); // this dfs will visit all the nodes that are connected to the starting node 
-    
-    // Now if there exists any node that is not yet visited, then that node should be 1single node 
-    fore(i,1,N){
-        if(!vis[i] and adj[i].size() > 0) 
-            return false;
-    }
-
-    if(!vis[1]) return false;  // edge case : we need 1 to be part of the component that contains all the edges
-
     return true;
 }
-
-
+ 
+ 
 void dfs_to_generate_euler_circuit(int sv){
-    // Intead of modifying the adj lit while iterating, we always process the last element (similar to stack behaviour)
-    while(!adj[sv].empty()){
-        int nb = adj[sv].back();
-        adj[sv].pop_back(); // delete the sv-> nb edge
-        adj[nb].erase(find(all(adj[nb]),sv)); // delete the nb-> sv edge
+    // METHOD 1: RUNTIME ERROR
+    // for(int i=1;i<=N;i++){
+    //     if(adj[sv][i]){
+    //         adj[sv][i]--;
+    //         adj[i][sv]--;
+    //         dfs_to_generate_euler_circuit(i);
+    //     }
+    // }
+    // s.push(sv);
 
-        dfs_to_generate_euler_circuit(nb);
-    }
-    
-    s.push(sv);
 
-
-    // for(auto nb: adj[sv]){
-    //     // delete the sv -> nb and nb -> sv edge & call dfs on the adj node
-    //     adj[sv].erase(find(all(adj[sv]),nb));
-    //     adj[nb].erase(find(all(adj[nb]),sv));
-    //     dfs_to_generate_euler_circuit(nb);
+    // we have to process all the edges of sv
+    // for(int i=0;i<adj[sv].size();i++){       // erasing element this way could cause problems
+    //     int nb = adj[sv][i];
+    //     adj[sv].erase()
     // }
 
+
+// METHOD 3: TLE for 1 test case   
+// we dont actually need to delete the nb vertex from adj[sv], seen[] will ensure that we process only a unvisited edge
+// but after a certain point, all the edges for a vertex will be seen and we will unnecesarily loop on them. So if we remove the vertex nb from adj[sv] and mark the edge seen, this will reduce the size of adj[sv] and later we wont have to iterate over all the unnecessary edges 
+    // for(auto i: adj[sv]){
+    //     int nb = i.first;                                // this is the nb we will process 
+    //     int id = i.second; 
+        
+    //     if(seen[id]) continue;
+    //     seen[id] = true;
+ 
+    //     dfs_to_generate_euler_circuit(nb);
+        
+    // }
+
+// METHOD 4:
+     while(!adj[sv].empty()){
+        int nb = adj[sv].back().first;                                // this is the nb we will process 
+        int id = adj[sv].back().second; 
+        adj[sv].pop_back();                                          // delete the sv-> nb edge - remove nb from adj[sv]
+                                        // NOTE that deletion of this edge is not necessary, just doing it for the optimisation purpose
+        if(seen[id]) continue;
+        seen[id] = true;
+ 
+        dfs_to_generate_euler_circuit(nb);
+    }
+ 
+    
+    // METHOD 2: TLE for 1 test case    
+    // This is the best way to erase -- erase from the last 
+    // // Intead of modifying the adj lit while iterating, we always process the last element (similar to stack behaviour)
+    
+    // while(!adj[sv].empty()){
+    //     int nb = adj[sv].back().first;                                // this is the nb we will process 
+    //     int id = adj[sv].back().second; 
+    
+    //     adj[sv].pop_back();                                          // delete the sv-> nb edge - remove nb from adj[sv]
+    
+    //      vector erase accepts only iterator (single element / range of eleemnts)    
+    // Below line is O(degree of nb) because find is linear in a vector, and erase is also linear because it has to shift the elements.
+    // •	In the worst case (dense graph), you’re repeatedly searching and erasing, making the complexity worse than expected.
+    // •	If each node has a high degree, you’re paying that penalty every time — leading to Time Limit Exceeded.
+
+    //     adj[nb].erase(find(all(adj[nb]),sv));                        // delete the nb-> sv edge  - remove sv from adj[nb]
+
+    //     if(seen[id]) continue;
+    //     seen[id] = true;
+ 
+    //     dfs_to_generate_euler_circuit(nb);
+    // }
+    
+    s.push(sv);
+ 
 }
-
-
+ 
+ 
 // Code is giving TLE on 1 case: 
     // Try using adj matrix instead of adj list as used in cp algo's code
 signed main() {
     initcode();
     int n,m; cin>>n>>m;
     N = n;
-    adj.resize(n+1); // 1 to N nodes are given in the problem statement 
+    // adj.resize(n+1, vector<int>(n+1,0)); // 1 to N nodes are given in the problem statement 
+    adj.resize(n+1);
     degree.resize(n+1,0);
     forn(i,m){
         int u,v; cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+        adj[u].push_back({v ,i});           // nb node, edge_id
+        adj[v].push_back({u, i});
+        // adj[u][v]++; 
+        // adj[v][u]++;
         degree[u]++;
         degree[v]++;
     }
-
+ 
     if(!isConnected()){ // all the edges should be a part of one single component and (1 should be part of this component) -> this reason is in accordance to problem requirements
         cout<<"IMPOSSIBLE"<<endl;
         return 0;
     }
-
+    
+ 
     // for euler circuit, all degree must be even
     fore(i,1,n){
         if(degree[i]%2){
@@ -172,9 +213,10 @@ signed main() {
     // Now it is confirmed that all the nodes have even degree
     // Now the task is to find a euler circuit
     // In euler circuit, we need to ensure that each edge is traversed exactly once and we cover all the edges and return back to the starting point. During this, we could visit a vertex more than once
-
-
+ 
+ 
     // starting point is given as 1 in the problem statement
+    seen.resize(m, false);                                              // used to track edges that have been processed
     dfs_to_generate_euler_circuit(1);
     
     vector<int> res;
@@ -184,11 +226,97 @@ signed main() {
         s.pop();
         res.push_back(t);
     }
-
+ 
     forn(i,res.size()) cout<<res[i]<<" ";
-
-
+ 
+ 
 }
+
+
+NOTES regarding implementation optimisations:
+Why I was getting TLE on removing the element from the adj list 
+using pop_back() is O(1)
+But adj[nb].erase(find(all(adj[nb]),sv));
+	This line is O(degree of nb) because find is linear in a vector, and erase is also linear because it has to shift the elements.
+	•	In the worst case (dense graph), you’re repeatedly searching and erasing, making the complexity worse than expected.
+	•	If each node has a high degree, you’re paying that penalty every time — leading to Time Limit Exceeded.
+
+Instead maintain seen array for edges, and don’t erase edges at all, which means:
+    	Adjacency list stays intact
+	•	Every edge is only visited once
+	•	No O(N) erasures → only constant time operations
+	•	Efficient even for dense graphs
+
+To fix your code:
+	•	Represent edges with an index   (0 to m-1)
+	•	Store edge IDs in the adjacency list
+	•	Use a seen[] array to avoid re-visiting edges
+
+
+🔑 What’s the difference between pop_back() vs erase(find(...))?
+
+Operation               Time Complexity                     Notes
+pop_back()                 O(1)                             Removes the last element in a vector â€” constant time, very fast.
+erase(find(...))           O(N)                             Searches for the element and then shifts all elements â€” slow for large vectors.
+
+Even removing the 1 edge is also not necessary, but this is causing TLE for 1 test case. To optimise, we will remove that one edge
+    you don’t even need to pop_back() just to “remove” the edge — the seen[] array already handles whether an edge has been used or not, so the edge can safely remain in the adjacency list.
+
+    🔁 So why does USACO still do pop_back()?
+
+    It’s just for efficiency — not correctness.
+
+    By always processing and removing the last edge from the adjacency list with pop_back():
+        •	You don’t reprocess the same unused edges again.
+        •	You save time by not scanning over edges that are already used (seen[] == true).
+        •	Think of it like: “only consider each edge once” — and pop_back() helps clean up as you go.
+
+    🧠 But it’s still safe not to remove the edge at all
+
+    You could keep all edges and just do this:
+
+    for (auto [nb, idx] : adj[sv]) {
+        if (!seen[idx]) {
+            seen[idx] = true;
+            dfs(nb);
+        }
+    }
+
+    …but the runtime will suffer if you don’t pop_back() or filter used edges, because you’re repeatedly scanning over already-used ones.
+
+✅ Best of both worlds
+
+Use pop_back() to process each edge once, and use seen[] to skip already-used edges when you encounter them again from the other side. This gives you:
+	•	Fast edge access
+	•	No expensive find() or erase()
+	•	Efficient memory usage
+	•	TLE-proof Euler circuit DFS 🚀
+
+
+✅ Fix: Either use pop_back() with a while loop OR iterate with for loop properly.
+
+Option 1: Use while loop with pop_back() like USACO
+    
+    while (!adj[sv].empty()) {
+        auto [nb, id] = adj[sv].back();
+        adj[sv].pop_back();
+
+        if (seen[id]) continue;
+        seen[id] = true;
+
+        dfs_to_generate_euler_circuit(nb);
+    }
+
+Option 2: Proper for loop
+
+    for (auto [nb, id] : adj[sv]) {
+        if (seen[id]) continue;
+        seen[id] = true;
+
+        dfs_to_generate_euler_circuit(nb);
+    }
+
+
 
 
 

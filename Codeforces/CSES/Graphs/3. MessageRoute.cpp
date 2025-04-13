@@ -62,22 +62,73 @@ struct cmp{
     }
 };
 
-void dfs(int sv, vector<vector<int>> &adj, vector<bool> &vis){
-    vis[sv] = true;
-    for(auto nb: adj[sv]){
-        if(!vis[nb]){
-            dfs(nb, adj, vis);
-        }
-    }
-}
+vector<vector<int>> adj;
+vector<bool> vis;
+int N;
 
 
 // Perform simple BFS and find the shortest path from 1 to n
 // We also need to construct the path - use map to track from which vertex we reached a certain vertex
 
+void bfs(int src, int dest){
+    queue<int> q;
+    q.push(src);
+    vis[src]=true;
+
+    bool found = false;
+    vector<int> path;
+    vector<int> parent(N+1,-1); 
+    parent[src] = -2; // -2 indicates src does'nt have a parent
+
+    while(!q.empty()){
+        int sz = q.size();
+        while(sz--){
+            int f = q.front();
+            q.pop();
+            if(f == dest){
+                found=true; break;
+            }
+            for(auto nb: adj[f]){
+                if(!vis[nb]){
+                    parent[nb] = f;
+                    vis[nb]=true;
+                    q.push(nb);
+                }
+            }
+        }
+    }
+
+    if(parent[dest] != -1){
+        int curr = dest;
+        while(curr != src){
+            path.push_back(curr);
+            int par = parent[curr];
+            curr = par;
+        }
+        path.push_back(src);
+        reverse(all(path));
+        
+        cout<<path.size()<<endl;
+        for(auto i: path) cout<<i<<" ";
+        cout<<endl;
+    }
+    else{
+        cout<<"IMPOSSIBLE"<<endl;
+    }
+
+}
 signed main(){
     initcode();
-   
+    int n,m; cin>>n>>m;
+    N = n;
+    adj.resize(n+1);
+    vis.resize(n+1,false);
+    forn(i,m){
+        int u,v; cin>>u>>v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
     
+    bfs(1,n);
 }
 

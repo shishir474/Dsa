@@ -93,6 +93,7 @@ void dfs(int sv){
 }
 
 // checks if all the edges are part of 1 single component
+// plus also ensures that 1 and N are part of the same component
 bool isConnected(){
     vis.resize(N+1,false);
 
@@ -198,3 +199,21 @@ signed main() {
 
 }
 
+// Checks
+// 1 and n are connected
+// All the edges are part of 1 component
+// Exactly 2 vertices(1 and N) will have odd degreee, rest all will have even degree(i.e indegree==outdegree)
+// if (abs(indegree[i]-outdegree[i]) != 1 ){
+//     cout<<"IMPOSSIBLE"<<endl;
+// }
+// else{
+//     cnt++;
+// }
+
+// if(cnt > 2){
+//     cout<<"IMPOSSIBLE"<<endl;
+//     return 0;
+// }
+
+// Now once we have performed this 3 checks (1 and N are connected, all the edges are part of 1 single component, & exactly 2 vertices have abs(outdegree[i]-indegree[i]) == 1)
+// it is guaranteed that such path exists 

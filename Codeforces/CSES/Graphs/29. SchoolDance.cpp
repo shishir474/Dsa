@@ -107,7 +107,11 @@ bool matchPossible(int boy){
 signed main() {
     initcode();
     int n,m,k;
-    cin>>n>>m>>k;
+    cin>>n>>m>>k;       // n boys, m girls 
+    if(m > n) swap(n,m);        // below code assumes that n >= m
+    // i.e # of boys >= # of girls
+    // # max no of dance pairs <= m
+
     adj.resize(n+1); // n boys and m girls
     vis.resize(m+1,false); // to check if the ith girl has been visited or not
     matched.resize(m+1,0);
@@ -129,7 +133,8 @@ signed main() {
 
     cout<<ans<<endl;
     for(int i=1;i<=m;i++){
-        cout<<matched[i]<<" "<<i<<endl;
+        if(matched[i] != 0)
+            cout<<matched[i]<<" "<<i<<endl;
     }
 
 }

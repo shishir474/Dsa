@@ -4,187 +4,130 @@
 using namespace __gnu_pbds;
 using namespace std;
 template <typename T>
-using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,  tree_order_statistics_node_update>;  // policy based data structure
-// ordered_set is a pbds which is similar to set and has 2 extra functionalities set.find_by_order(idx) -> returns the element at this index
-// and set.order_by_key(k) -> returns the index of the key k
-// ordered set data structure => adds indexing functionality to sets
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
 
-#define int             long long int
-#define ff              first
-#define ss              second
-#define pb              push_back
-// #define mp              make_pair
-#define pii             pair<int,int>
-#define vi              vector<int>
-#define mii             map<int,int>
-#define pqb             priority_queue<int>
-#define pqs             priority_queue<int,vi,greater<int> >
-#define setbits(x)      __builtin_popcountll(x)
-#define zrobits(x)      __builtin_ctzll(x)
-#define mod             1000000007
-#define inf             1e18
-#define ps(x,y)         fixed<<setprecision(y)<<x
-#define mk(arr,n,type)  type *arr=new type[n];
-#define w(x)            int x; cin>>x; while(x--)
-#define FIO             ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0)
-#define forn(i,n)      for(int i=0;i<n;++i)
-#define fore(i, l, r)   for(int i = l; i <= r; ++i)
-#define all(v)          v.begin(), v.end()
+#define int long long int
+#define ff first
+#define ss second
+#define pb push_back
+#define pii pair<int, int>
+#define vi vector<int>
+#define mii map<int, int>
+#define pqb priority_queue<int>
+#define pqs priority_queue<int, vi, greater<int>>
+#define setbits(x) __builtin_popcountll(x)
+#define zrobits(x) __builtin_ctzll(x)
+#define mod 1000000007
+#define INF 1e18
+#define ps(x, y) fixed << setprecision(y) << x
+#define mk(arr, n, type) type *arr = new type[n];
+#define w(x) int x; cin >> x; while (x--)
+#define FIO ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0)
+#define forn(i, n) for (int i = 0; i < n; ++i)
+#define fore(i, l, r) for (int i = l; i <= r; ++i)
+#define all(v) v.begin(), v.end()
 
-mt19937                 rng(chrono::steady_clock::now().time_since_epoch().count());
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 void initcode() {
-	FIO;
-	// #ifndef ONLINE_JUDGE
-	// freopen("cpp/input.txt", "r", stdin);
-	// freopen("cpp/output.txt", "w", stdout);
-	// #endif // ONLINE_JUDGE
-}
-int gcd(int a, int b)
-{
-	if (b == 0)
-		return a;
-	return gcd(b, a % b);
-}
-int lcm(int a, int b) {
-	return (a / gcd(a, b) * b);
+    FIO;
 }
 
-int modularBinaryExponentitation(int base, int exponent) {
-	if(exponent==0) return 1;
-	int val = modularBinaryExponentitation(base, exponent/2);
-	if(exponent%2)
-		return ((val*val)%mod*base)%mod;
-	else
-		return (val*val)%mod;
-}
-
-struct cmp {
-	bool operator()(const pii& p1, const pii& p2) {
-		return p1.second < p2.second;
-	}
+// Structure to represent a cell in the priority queue
+struct cell {
+    int distance, node, len;
+    cell(int d, int sv, int length) {
+        distance = d;
+        node = sv;
+        len = length;
+    }
 };
 
-vector<vector<pii>> adj;
-vector<int> dp, minFlights, maxFlights;
-int N;
+// Comparator for the priority queue to prioritize cells with smaller distance
+struct cmp {
+    bool operator()(const cell &c1, const cell &c2) {
+        return c1.distance > c2.distance;
+    }
+};
 
-// returns the min cost from 1 to n
-int djkstra(){
-    vector<int> dist(N+1, 1e18);
-    vector<bool> vis(N+1, false);
-    dist[1] = 0;
-    priority_queue<pii, vector<pii>, greater<pii>> pq;
-    pq.push({0,1}); // dist node;
+vector<vector<pii>> adj; // Adjacency list to store the graph
+int N, total_dist, total_paths, minLen = INF, maxLen = 0;
+
+void djkstra() {
+    // Arrays to store:
+    // dist[v]: Shortest distance from node 1 to node v
+    // count[v]: Number of shortest paths from node 1 to node v
+    // minLenArr[v]: Minimum length of the shortest path from node 1 to node v
+    // maxLenArr[v]: Maximum length of the shortest path from node 1 to node v
+    vector<int> dist(N + 1, INF), count(N + 1, 0), minLenArr(N + 1, INF), maxLenArr(N + 1, 0);
     
-    while(!pq.empty()){
-        int d = pq.top().first;
-        int u = pq.top().second;
+    // Initialize distance, count, minLenArr, and maxLenArr for the starting node (node 1)
+    dist[1] = 0;
+    count[1] = 1; // There is exactly one way to be at the starting node
+    minLenArr[1] = 0; // Length of the path to the starting node is 0
+    maxLenArr[1] = 0; // Length of the path to the starting node is 0
+
+    // Priority queue to process nodes in order of increasing distance
+    priority_queue<cell, vector<cell>, cmp> pq;
+    pq.push(cell(0, 1, 0)); // Push the starting node with distance 0 and length 0
+
+    while (!pq.empty()) {
+        // Extract the node with the smallest distance
+        cell c = pq.top();
+        int d = c.distance;
+        int u = c.node;
+        int len = c.len;
         pq.pop();
 
-        if(!vis[u]){
-            for(auto it: adj[u]){
-                int v = it.first;
-                int d = it.second;
-                if(!vis[v] and dist[u] + d < dist[v]){
-                    dist[v] = dist[u] + d;
-                    pq.push({dist[v], v});
-                }
+        // If the extracted distance is greater than the current known distance, skip
+        if (d > dist[u]) continue;
+
+        // Explore all neighbors of the current node
+        for (auto it : adj[u]) {
+            int v = it.first, wt = it.second;
+
+            // If a shorter path to v is found
+            if (d + wt < dist[v]) {
+                dist[v] = d + wt; // Update the shortest distance
+                count[v] = count[u]; // Reset the count of shortest paths
+                minLenArr[v] = minLenArr[u] + 1; // Update the minimum length
+                maxLenArr[v] = maxLenArr[u] + 1; // Update the maximum length
+                pq.push(cell(dist[v], v, len + 1)); // Push the updated node into the queue
+            }
+            // If another path with the same distance is found
+            else if (d + wt == dist[v]) {
+                count[v] += count[u]; // Increment the count of shortest paths
+                if (count[v] >= mod) count[v] -= mod; // Handle large counts to prevent overflow
+                minLenArr[v] = min(minLenArr[v], minLenArr[u] + 1); // Update the minimum length
+                maxLenArr[v] = max(maxLenArr[v], maxLenArr[u] + 1); // Update the maximum length
             }
         }
-
-        vis[u] = true;
-    
     }
 
-    return dist[N];
+    // Store the results for the destination node (node N)
+    total_dist = dist[N];
+    total_paths = count[N];
+    minLen = minLenArr[N];
+    maxLen = maxLenArr[N];
 
+    // Output the results
+    cout << total_dist << " " << total_paths << " " << minLen << " " << maxLen << endl;
 }
-
-// returns the no of min price routes
-int countPaths(int sv, int curr_cost, int &min_cost){
-    if(curr_cost > min_cost) return 0;          
-    if(sv == N){
-        return curr_cost == min_cost;           // base case: when sv==N i.e dest and if curr_cost == min_cost return 1 else return 0
-    }
-    if(dp[sv] != -1) return dp[sv];             // if already computed, return dp[sv]
-
-    int ans = 0;
-    for(auto it: adj[sv]){
-        int nb = it.first;
-        int d = it.second;
-        int val = countPaths(nb, curr_cost+d, min_cost);
-        ans = (ans + val)%mod;
-    }
-
-    // if there are no paths then dp[sv] will be 0
-    return dp[sv] = ans;
-
-}
-
-// returns the min no of flights in a min price route;
-int countMinFlights(int sv){
-    if(sv == N){
-        return 0;
-    }
-    if(minFlights[sv] != -1) return minFlights[sv];
-
-    int ans = 1e18;
-    for(auto it: adj[sv]){
-        int nb = it.first;
-        int d = it.second;
-        int val = countMinFlights(nb);
-        ans = min(ans, val);
-    }
-
-    if(ans == 1e18) return minFlights[sv] = 0;
-    else return minFlights[sv] = 1 + ans;
-}
-
-// returns the max no of flights in a min price route;
-int countMaxFlights(int sv){
-    if(sv == N){
-        return 0;
-    }
-    if(maxFlights[sv] != -1) return maxFlights[sv];
-
-    int ans = -1;
-    for(auto it: adj[sv]){
-        int nb = it.first;
-        int d = it.second;
-        int val = countMaxFlights(nb);
-        ans = max(ans, val);
-    }
-
-    if(ans == -1) return maxFlights[sv] = 0;
-    else return maxFlights[sv] = 1 + ans;
-}
-
-// We have to find following things in this problem:
-// 1. Find the min cost path - Djkstra
-// 2. Find the no of min cost path
-// 3. Find the shortest & longest length of the min cost from src to dest
 
 signed main() {
-    int n,m; cin>>n>>m;
-    adj.resize(n+1);
-    dp.resize(n+1,-1);
-    minFlights.resize(n+1,-1);
-    maxFlights.resize(n+1,-1);
+    initcode();
+    int n, m;
+    cin >> n >> m;
     N = n;
-    forn(i,m){
-        int u,v,wt; cin>>u>>v>>wt;
-        adj[u].push_back({v,wt});
+    adj.resize(n + 1);
+
+    // Read the graph edges
+    forn(i, m) {
+        int u, v, wt;
+        cin >> u >> v >> wt;
+        adj[u].push_back({v, wt}); // Add a unidirectional edge from u to v with weight wt
     }
 
-    int min_cost = djkstra();
-
-    int num_paths = countPaths(1, 0, min_cost);
-
-    int mn = countMinFlights(1);
-    int mx = countMaxFlights(1);
-
-    cout<<min_cost<<" "<<num_paths<<" "<<mn<<" "<<mx<<endl;
-  
+    // Run Dijkstra's algorithm to compute the required values
+    djkstra();
+    return 0;
 }
-
-

@@ -93,7 +93,11 @@ signed main() {
 
     // implementation (https://www.youtube.com/watch?v=009PBKHXtyA&ab_channel=Dardev)
     vector<vector<int>> dist(n+1, vector<int>(k,1e18)); // modified dist array of size n*k for this problem since we have to find k shortest paths
-    dist[1][0] = 0;
+     // for(int i=0;i<k;i++){
+    //     dist[1][i] = 0;
+    // }
+    dist[1][0] = 0;   // we know for sure that there is 1 path with 0 cost, but there might exists other paths that have a non zero cost. 
+                    // Hence not initialsing the entire dist[1] row with 0;
     
     // We will not use visited array in this problem
     priority_queue<pii, vector<pii>, greater<pii>> pq; // min heap(dist, node)

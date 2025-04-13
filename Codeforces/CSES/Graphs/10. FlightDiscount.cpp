@@ -22,7 +22,7 @@ using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,  tree_order_statist
 #define setbits(x)      __builtin_popcountll(x)
 #define zrobits(x)      __builtin_ctzll(x)
 #define mod             1000000007
-#define inf             1e18
+#define INF             1e18
 #define ps(x,y)         fixed<<setprecision(y)<<x
 #define mk(arr,n,type)  type *arr=new type[n];
 #define w(x)            int x; cin>>x; while(x--)
@@ -80,18 +80,110 @@ struct cmp {
 // d[a] = shortest path from 1(src) to a
 // d1[b] = shortest path from b to destination 
 
+// for each vertex, generally we have a vector of int which stores the nb nodes vvi(vector of vector of integers)
+// but here for each vertex, we're gonna have a vector of pii (nb and edge wt) (vvpii) (vector of vector of pii)
+vector<vector<pair<int,int>>> adj, adjR;
+vector<int> dist, distR;
+int N;
+vector<vector<int>> edges;
+
+// computes the shortest path from n(src) to all other nodes, obviously on the reversed graph
+void djkstraR(){
+    distR.resize(N+1,INF);
+	distR[N] = 0;
+	priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq; // min heap
+	pq.push({0, N}); // {dist,node}
+	while(!pq.empty()){
+		int u = pq.top().second;
+		int d = pq.top().first;
+		pq.pop();
+
+		// d is the curr cost at which we're reaching node u
+		// dist[u] is the minimal cost obtained till now for reaching u obviously from src 
+		// so if the curr cost of reaching a node is greater than minimal cost by which we reached the node,  we can discard that path
+
+		if(d > distR[u]) continue;
+
+		for(auto it: adjR[u]){
+			int v = it.first, edWt = it.second;
+			if(d + edWt < distR[v]){
+				distR[v] = d+edWt;
+				pq.push({distR[v], v});
+			}
+		}
+
+	}
+
+}
+
+// computes the shortest path from 1(src) to all other nodes
+void djkstra(){
+    dist.resize(N+1,INF);
+	dist[1] = 0;
+	priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq; // min heap
+	pq.push({0, 1}); // {dist,node}
+	while(!pq.empty()){
+		int u = pq.top().second;
+		int d = pq.top().first;
+		pq.pop();
+
+		// d is the curr cost at which we're reaching node u
+		// dist[u] is the minimal cost obtained till now for reaching u obviously from src 
+		// so if the curr cost of reaching a node is greater than minimal cost by which we reached the node,  we can discard that path
+
+		if(d > dist[u]) continue;
+
+		for(auto it: adj[u]){ // iterates over each pair in the adj[u]
+			int v = it.first, edWt = it.second;
+			if(d + edWt < dist[v]){
+				dist[v] = d+edWt;
+				pq.push({dist[v], v});
+			}
+		}
+
+	}
+
+}
+
 signed main() {
 	initcode();
 	int n,m;
 	cin>>n>>m;
-	vector<vector<pii>> adj(n+1); // [1..n] vertices
+	N = n;
+	adj.resize(n+1); // [1..n] vertices
+	adjR.resize(n+1);
+	
     forn(i,m){
         int u,v,wt;
         cin>>u>>v>>wt;
-        adj[u].pb({v,wt}); // it's a one way flight - i.e unidirectional edge
+        adj[u].push_back({v,wt}); // it's a one way flight - i.e unidirectional edge
+		adjR[v].push_back({u,wt});
+		edges.push_back({u,v,wt});
     }
 
-    // implement later
+	djkstra();
+	djkstraR();
+
+	// simply applying djkstra and then reducing the wt of the max weighted edge will not work
+	// We have to try reducing each edge and then determine the cost of reaching N
+	// assume we are reducing edge u that connects a and b and has a cost wt
+	// total cost would be dist[a] + wt/2 + distR[b]
+	// where dist[a] gives the shortest path from 1 to a
+	// and distR[b] gives the shortest path from b to N;
+	// a to b cost is known ie wt/2
+
+	int final_cost = INF;
+	
+	for(auto edge: edges){
+		int a = edge[0], b = edge[1], wt = edge[2];
+		int cost = dist[a] + (wt/2) + distR[b];
+		final_cost = min(final_cost, cost);
+	}
+
+	cout<<final_cost<<endl;
+
+
+
     
 
 

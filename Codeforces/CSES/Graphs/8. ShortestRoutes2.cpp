@@ -64,7 +64,7 @@ struct cmp {
 	}
 };
 
-// Bellmann Ford algorithm -  Multi source shortest path
+// Floyd warshall algorithm -  Multi source shortest path
     // Minor changes to pass the cses test cases: Generally we have atmost one edge b/w any 2 nodes in a graph.
     // But here this isn't mentioned in the question and therefore we also need to take care of the scenario where we have multiple roads b/w 2 same cities
     // like [1,2,1] & [1,2,2]
@@ -98,7 +98,7 @@ signed main() {
     }
 
     // Actual Processing
-    for(int k=1;k<=n;k++){
+    for(int k=1;k<=n;k++){ // WHy the loop order is k -> u -> v where k is the intermediate node, u is the src and v is the dest
         
         for(int i=1;i<=n;i++){
         
