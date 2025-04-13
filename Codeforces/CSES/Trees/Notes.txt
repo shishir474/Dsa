@@ -1,0 +1,179 @@
+Subordinates:
+    Simple recursion, used memoisation to optimise
+
+Tree Matching [Excellent Problem]
+    Recursion + Memoisation 
+    optimisation trick : calculated prefix and suffix sums to find sum from (0 to i-1) and (i+1 to n-1) in O(1)
+    
+Tree Diameter 
+    Recursion + memoisation
+    Took tree as an() input in adj list just like graph(UG). 
+    Recursion Logic: If the diamter passes through the root, ans would be 2+max 2 depths of its subtrees, if only 1 subtree exists then 1+subtree's depth and if no subtree then 0
+        If the diameter doesn't pass through the root, compute the diamter for each subtree and then select the max out of them
+        Pick the max amongst the 2 above options
+    Memoisation: solve() calls getDepth() for each node multiple times. Thus inorder to save on the repeated computations, we would save the depth for each node in Dp array, so that if the same function call is made in the future, instead of computing it again, we would directly pick the value
+
+
+Tree Distance 1 [Excellent Problem] 
+    N<=1e5, so we have to come up with O(N) or O(NlogN) approach
+    Brute force approach: O(n^2) For every node I would perform a bfs/dfs and track the distance I've travelled. N nodes and for each node O(n) time.
+    Task is to determine for each node the maximum distance to another node.
+    Precomputed the depth of tree at each node in O(n)
+    Used prefixMax and suffixMax array to get the max value from the left and right in O(1)
+    in addition to sv & parent, we also propagated partial_ans variable which helps us in computing ans for each node
+    partial_ans for a node is the 1 + max depth of any of its siblings
+
+
+Tree Distance 2 [Excellent Problem] [Pending]
+    Task is to determine for each node the sum of the distances from the node to all other nodes.
+    N <= 1e5, so we need to find an O(N) or O(NlogN) solution
+    Very first thought, if we find distance b/w every pair of nodes(using floyd O(n^3)), that can help. But this is inefficient
+    or Run a DFS N times for each node and calculate the sum of distance for each node --> This is O(N^2), O(N) for each DFS call and there are N nodes
+    DP on trees solution:
+        If I know subtreeAns for node 2 and 3, I can use that to evaluate answer for node 1
+        subtreeAns(i) => only considers he subtree rooted at node i and ignores the parent and rest of the other nodes
+
+        Here subtreeAns(2) is sum of distance of all nodes in the subtree of node 2 i.e 1+1=2. subtreeAns will not consider all the nodes, it will only take into account the subtree nodes
+        Evidenlty subtreeAns(1) is equivalent to ans(1)
+                
+                1
+            2
+        3       4
+
+
+        For instance, if we consider the below tree as an input
+        subtreeAns(2) = 0
+        subtreeAns(3) = 2
+        For subtree rooted at node 3, one thing to notice is the nodes which are at a distance of x from 3 in its subtree, are at a distance of 1+x from 1
+        Obviously, you will have to travel that edge from 1 to 3 and thus 1 will be added to all the nodes distance
+
+        Distance from 3: 0 1 1
+        Distance from 1: 1 2 2
+        1 is added in the distance for all the nodes 
+        So if we also know the count of nodes for subtrees rooted at each node (let's say n, then we can add n-1 ones)
+
+        subtreeAns(3) = 2
+        nodes(3) = 3
+        3 + 2 = 5 from node 1
+
+            1
+        2       3
+              4    5
+
+        So we need subtreeAns for each node, count of nodes for each subtree
+
+
+            1
+        c1      c2
+        subtreeAns(1) = [subtreeAns(c1) + nodes(c1)] + [subtreeAns(c2) + nodes(c2)]
+        and subtreeAns(1) is equivalent to ans(1)
+
+
+
+
+
+
+Company Queries 1
+    Binary Lifting: If I precompute 2^ith parent for each node then I can easily compute kth parent for each node 
+
+Company Queries 2 [Excellent Problem] [Pending]
+    Based on LCA 
+    LCA(lowest common ancestor) in logN time
+    LCA(u,v) ==> the node at the lowest level which is common in the path from u to root and v to root is the LCA
+    level(lca(u,v)) <= min(level(u),level(v))
+    assume v is at the lower level and is more closer to the lca 
+    I know the difference in levels of u and v, let's call it diff. I can jump diff from U(this can be done in logn using binary lifting) and now both the nodes will be at the same level
+    or the other case is U and V would become equivalent to each other( in the case when V was an ancestor of U)
+        1
+ 
+            V
+    U
+
+    First make a jump of diff so that both nodes u and v are at the same level, assuming v lies closer to the LCA. Obviously after making the jump if U and V become equiovalent to each other, then V is the LCA
+
+        1
+        LCA
+    newU   V
+
+    NOW U AND V are the same level and they are not equivalent. There is some difference in the levels of LCA and newU, let's call it X
+    Now we dont know this X, but one thing is sure that X lies in range of [1,level(newU)]. 
+    We can apply binary search to find the lca node, lets say for mid m, we take a jump from new_u and V. if we reach the same node, that node could be our lca and we update our range [1, mid-1] to find the best possible answer 
+    else [mid+1,level(newU)]
+
+
+
+Distance Queries
+    Based on LCA
+    q queries --> have to evaluate the distance b/w 2 nodes u and V
+    the path from u to v always passes through the lca(u,v)
+    dist(u,v) = depth[u] + depth[v] - 2*depth[lca]
+
+
+Counting paths
+    Based on LCA 
+    Some standard properties of a tree:
+    1. There always exists a unique path b/w 2 nodes u and V
+    2. Tree is always connected in nature
+    3. Path b/w 2 nodes always passes through their lca 
+    4. Also if you consider a path b/w 2 nodes u and v, lca node has got the lowest height amonst all the nodes in the path
+    i.e the lca will always be at the highest point, or if you consider from the root side(it will have the lowest height amonst all nodes in the path)
+    
+Subtree Queries [Excellent Problem] 
+    Task: Sum of the values in the subtree of node S 
+
+    Euler Tour + Segment Tree 
+    Sum of the values in the subtree of node s is equivalent to finding the sum of the values in the segment startTime[s], endTime[s]
+    Euler tour will give us the startTime and endTime for each node. So we have node, time relation 
+    We also have node, values relation 
+    Using the above 2, we can construct time, values relation 
+    NOTE: Assume we have N nodes 0 to N-1 and timer starts from 0, the startTime for each node will also be in range 0 to N-1 
+    N sized value array, N sized startTime array(storing the start time for each node), N sized timer-values array 
+    Build sum Segment Tree to compute the sum of a segment in O(logN)
+
+
+
+PathQueries [Excellent problem] Implementation Pending
+    Task: Sum of the values in the path from root node 1 to node S 
+
+    Euler Tour + Segment Tree 
+    Here we have to find sum of value in the path from root to Node s 
+    Sum of the values in the path from root to node s is equivalent to finding the sum of the values of the segment startTime[1] and endTime[s]-1
+    Here there is small change in the way startTime and endTime is computed. Here we also update the endTime while exiting a node. In the prev problem subtree queries, the endTime remained the same 
+    The main part is understanding why sum of the segment startTime[1] to endTime[s]-1 gives us the sum of the values from root to node s
+    All the nodes in the path from node 1(root) to node s have start time >= root's startTime and startTime <= endTime[s]. All the other nodes that are not part of the path and have startTime > starTime[1] & start time <= endTime[s] also end before i.e their endtime is < endTime[s].
+    Plus the nodes whose startTime whose > endTime[s]. We dont need to care about them
+
+    NOTE: Main benefit of using a segment Tree in this problem is it allows us to answer each query in O(logN) time as compared to O(N) approach for the brute force solution + it also allows us to accomodate updates 
+    Segment Tree allows update which takes just O(logN) time 
+    That is why segment Tree is the best ds when dealing with updates and answering multiple queries 
+
+
+PathQueries 2 [Pending]
+    Task: Find the maximum value on the path b/w node A and node B 
+    Heavy light decomposition
+
+Distinct colors [Good Problem]
+    New concept : SMALL TO LARGE MERGING
+    for each node we'll have a set that tracks the distinct colors in its subtree 
+    i.e set<int> color[MAXN] 
+    colors array of size N where each index is a set for the subtree rooted at ith node 
+    Each node will have its own set for their subtrees 
+    NOTE Merging a small set of size M into a large Set of size N takes O(MlogN)
+    AND MERGING 2SETS OF SIZE M AND N INTO A NEW SET TAKES O(MLOG(M+N)), ASSUMING M > N otherwise IT WILL BE O(NLOG(M+N))
+    SWAPPING IS AN O(1) OPERATION EVEN FOR SWAPPING SETS AS WELL  
+
+Finding a Centroid [Good Problem]
+    Uses Central decomposition technique [Read about it]
+    https://www.youtube.com/watch?v=e-mxm5bykrQ&ab_channel=Senior  
+
+    A centroid is a node such that when it is appointed as the root of the tree, each of its child subtree size is atmost [n/2] nodes
+    All the trees have a centroid
+    Brute force is to check the subtree size for each child, considering all the nodes as root one by one
+    For 1 call -> Tc is O(N)
+    for N nodes -> TC would be O(N^2)
+    optimised approach using central decomposition:
+        Start with any node as the root, check all its child subtree sizes. If the max(childSubtree size) <= [n/2], then the root node is your centroid 
+        Otherwise if there exists a childNode whose subtree size is > [n/2] (centroid will lie in that subtree), recurse on that childNode
+        TC: O(N) for computing the subtree size of each node 
+        and O(N) for 2nd dfs call to find the centroid
+        Overall: O(N) + O(N);
