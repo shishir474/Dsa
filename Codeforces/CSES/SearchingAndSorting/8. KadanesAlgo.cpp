@@ -54,18 +54,40 @@ struct cmp{
     }
 };
 
+
+// returns the max sum, starting index, and ending index of the max sum subarray
+pair<int, pair<int,int>> kadanes(vector<int> &arr){
+    int cs = 0, max_sum = -inf;
+    int start = 0, end = 0, temp_start = 0;
+
+    // start → stores the beginning index of the optimal subarray.
+	// •	end → stores the last index of the optimal subarray.
+	// •	tempStart → temporary starting index, resets whenever currentSum becomes 0.
+
+    forn(i,n){
+        cs += arr[i];
+        if(cs > max_sum){
+            max_sum = cs;
+            start = temp_start;
+            end = i;
+        }
+        if(cs < 0){
+            cs = 0; // reset cs 
+            temp_start = i+1;
+        }
+    }
+
+    return {maxSum, {start, end}};
+
+
+}
 signed main(){
     int n; cin>>n;
     vector<int> arr(n);
     forn(i,n) cin>>arr[i];
     
-    int cs = 0, max_sum = INT_MIN;
-    forn(i,n){
-        cs += arr[i];
-        max_sum = max(max_sum, cs);
-        if(cs < 0) cs = 0;
-    }
-    
-    cout<<max_sum<<endl;
+    pair<int, pair<int,int>> ans = kadanes(arr);
+    cout<<ans.first<<endl;
+    cout<<"l: "<<ans.second.first<<" "<<"r: "<<ans.second.second<<end;
     
 }

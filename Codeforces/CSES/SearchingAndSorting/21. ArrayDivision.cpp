@@ -99,6 +99,16 @@ signed main(){
     
 }
 
+// 5, 3
+// 2 4 7 3 5 = 21
+
+// 7-21, mid = 14 [13,8] part = 2 <= 3 True
+// 7-13, mid = 10 [6,10,5] part =3 <=3 true
+// 7-9, mid = 8 [6,7,8] part=3<=3 true
+// 7-7, mid = 7 [6,7,3,5] part=4 > 3 false 
+
+
+
 // the requirement here is to partition the array into k subarrays such that the max sum of all subarrays is as minimal as possible
 // The maximum minimal sum(what's the max possible value for minimum sum?) will always be equivalent to max element of the array. Consider the case where each partition contains 1 element
 // Maximum sum will be in the case where all the elements are part of one single partition

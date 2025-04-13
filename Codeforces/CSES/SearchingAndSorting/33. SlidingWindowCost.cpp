@@ -62,34 +62,114 @@ struct cmp{
     }
 };
 
+void printset(set<pii> s){
+    for(auto it: s){
+        cout<<it.first<<" "<<it.second<<endl;
+    }
+}
+
 // good question
 // 1st: for a particular window, we always convert all the elements to that window's median value. This will be the most optimal approach
 // 2nd: How we calculate ans for a particular window by keeping track of the sums of the left and right set
 signed main(){
     initcode();
     int n,k; cin>>n>>k;
-    vector<int> v(n);
-    forn(i,n) cin>>v[i];
+    vector<int> arr(n);
+    forn(i,n) cin>>arr[i];
 
-    set<pii> s,left, right;
-    int i=0,j=0;
-    for(;j<=n;j++){
-        if(j-i == k){
-            // populate the 2 left and right set using s and compute ans for this window
+    // Handling edge cases k=1 and k=2
+    if(k==1){
+        for(int i=0;i<n;i++){
+            cout<<"0"<<" ";
+        }
+        return 0;
+    }
+    if(k==2){
+        for(int i=0;i<n-1;i++){
+            cout<<abs(arr[i] - arr[i+1])<<" ";
+        }
+        return 0;
+    }
 
+    vector<pii> v;
 
-            if(j==n) break;
-            // remove the ith element and insert jth element
-            s.erase({v[i],i}); 
-            s.insert({v[j],j});
-            i++;
+    // process first k elements 
+    forn(i,k){
+        v.push_back({arr[i],i});
+    }
+    sort(all(v));
+
+    set<pii> lset, rset;
+    int lset_sum = 0, rset_sum = 0;
+
+    // lets add k+2 + (k%2) elements in the lset, and the remaing in rset 
+    for(int i=0;i < k/2 + (k%2); i++){
+        lset.insert(v[i]);
+        lset_sum += v[i].first;
+    }
+    for(int i = k/2 + (k%2); i<k; i++){
+        rset.insert(v[i]);
+        rset_sum += v[i].first;
+    }
+
+    // Initial configuration ready 
+    int median = (*lset.rbegin()).first;  // first window median
+    cout<< (lset.size() * median - lset_sum )       // first window cost 
+        + (rset_sum - rset.size() * median) <<" ";
+
+    // NOTE: while inserting and removing element, you have to update corresponding set's sum as well
+    for(int j = 1; j < n - k + 1; j++){
+        // remove arr[j-1] element 
+        if(lset.count({arr[j-1],j-1})) {
+            lset_sum -= arr[j-1];
+            lset.erase({arr[j-1],j-1});
         }
         else{
-            s.insert({v[j],j});
+            rset_sum -= arr[j-1];
+            rset.erase({arr[j-1],j-1});
         }
+        // insert arr[j+k-1] element 
+        if(arr[j+k-1] > lset.rbegin()->first){ // insert in rset
+            rset.insert({arr[j+k-1], j+k-1});
+            rset_sum += arr[j+k-1];
+        } else{
+            lset.insert({arr[j+k-1], j+k-1});
+            lset_sum += arr[j+k-1];
+        }
+        // transfer elements to ensure lset.size() is k/2 + (k%2) at the end 
+        while(lset.size() < k/2 + (k%2)){ // insert elements from rset.begin() into lset
+            pii p=  *(rset.begin());       // here we are trying to increase lset size
+            rset_sum -= p.first;
+            rset.erase(p);
+            lset.insert(p);
+            lset_sum += p.first;
+        }
+        // similary repeat the same activity if lset.size() > k/2 + (k%2)
+        while(lset.size() > k/2 + (k%2)){ // insert elements from lset.rbegin() into rset
+            pii p=  *(lset.rbegin());     // here we are trying to decrease lset size  
+            lset_sum -= p.first;
+            lset.erase(p);
+            rset.insert(p);
+            rset_sum += p.first;                             
+        }
+        // at this point lset size will guaranteed by k/2 + (k%2)
+        // Performing operations and maintaining lset size this way ensures that the median value is always given by lset.rbegin()->first
+        
+        // debug
+            // cout<<"printing lset "<<j<<endl;
+            // printset(lset);
+            // cout<<"lset sum "<<lset_sum<<endl;
+            // cout<<"printing rset "<<j<<endl;
+            // printset(rset);
+            // cout<<"rset sum "<<rset_sum<<endl;
+        
+        median = (*lset.rbegin()).first; 
+        cout<< (lset.size() * median - lset_sum )       
+        + (rset_sum - rset.size() * median) <<" ";
+
     }
 
 
-    
+    return 0;
     
 }

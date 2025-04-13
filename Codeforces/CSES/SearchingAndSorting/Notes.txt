@@ -1,0 +1,492 @@
+1. Apartments
+    Solution 1: Using Multisets O(nlogn) TLE on cses 
+
+        apply lower bound on arr[i]-x and see if the iterator points to a value <= arr[i]+x.m if yest, we can assign that apartment, but we'll also have to reomve that apartment since it has already been asigned
+        removing element from vector would have been expensive O(N), hence used multisets (not sets bcoz the apartment size might not be unique, hence storing all the elements in a multiset)
+        multiset insertion, deletion, lower_bound all takes O(logn) time 
+
+    Solution 2: Used sorting + 2 pointers  
+    
+        sort both the arrays: the applicants can be procesed in any order (processsing them in increasing order is better)
+        if the applicants are sorted in increasing order, it means if the ith applicant has demand d, then i+1th applicant's demand will be more than d for sure
+        so you are basically processing the applicants in the increasing order of their requirements
+        so if the ith applicant take bj room then (i+1)th appplicant's demand will for sure be greater than i's and will take something after bj
+
+        // Maintain 2pointers i=0 on a, and j=0 on b
+        // move j until b[j] < arr[i]-x
+        // at this point b[j] for sure will be >= a[i]-x
+        // check if b[j] <= a[i]+x. if yes, increment the count, increment i(move to next applicant), & increment j(move to next available apartment)
+        // if above if condition fails, then we found no room for this applicant, hence just increment i (note: j will not be incremented here)
+
+
+2. Ferris Wheel
+    sorting + 2 pointer 
+
+3. Concert Tickets : Why to use set<pair> rather than multisets 
+
+    used multisets for efficient deleting --> but this is giving TLE on cses 
+    another alternative for using multisets is using set<pair<int,int>> s; // {value,index}
+    Using set of pair of integers ensures that even if a value is duplicate, a new entry is inserted because the index is different 
+    set<int> s;
+    s.upper_bound(x)
+
+    multiset<int> ms;
+    upper_bound(all(ms), x)
+
+    Time Complexity Analysis
+        1.	First Solution (Using set<pii>):
+        •	Insertion (s.insert({price, i})) → O(log n)
+        •	Finding upper bound (s.upper_bound({b[i],inf})) → O(log n)
+        •	Erasing (s.erase(it)) → O(\log n)
+
+        2.	Second Solution (Using multiset<int>):
+        •	Insertion (ms.insert(price)) → O(log n)
+        •	Finding upper bound (upper_bound(all(ms),b[i])) → O(n)
+        •	This is the root cause of the TLE. upper_bound() on multiset is not logarithmic but linear O(n) when using all(ms).
+        •	Erasing (ms.erase(it)) → O(log n)
+
+    Why is upper_bound(all(ms), b[i]) Slow in Multisets?
+        •	upper_bound() works efficiently on ordered containers (set supports upper_bound() as a member function), but since multiset allows duplicates, upper_bound(all(ms), b[i]) has to iterate to find the right value, making it slower.
+
+
+    Conclusion: Using set<pii> s is better than using multisets 
+
+
+4. Restaurant cutomers:  [Excellent problem]
+    Given start and end time of each customer. you have to determine the max no of customers at any given point 
+
+    if you arrange the customer's arrival and exit time on a timeline in the sorted order and assign 1 to the start times and -1 to ending time and calculate the sum & track the max sum which is encountered at any point
+    This will give u the max no of customers at any point 
+
+5. Movie Festivals:
+    again you are given start and end times for n movies. You have to figure out max no of movies that you can watch entirely 
+
+    If you want to watch max no of movies, arrange the movies in increasing order of their end times and start watching
+
+6. Sum of two values:
+    2 sum problem, you have to print the positions of the values whose sum is X
+    2 pointer technique works only if the array is sorted
+    sort the array. 
+    Along with the elements, also store its original position as pii 
+    This will help us to print the original position in the ans 
+
+7. Maximum subarray sum (Kadanes algorithm)  [Important]
+    given an array of +ve/-ve integers, you have to find the maximum sum of the subarray 
+    2 variables initalised to curr_sum = 0, max_sum = -INF
+    also find the boundary of the max sum subarray 
+
+8. Sticks Length:  [Good Problem]
+    Optimal Target Length:
+    // To minimize the sum of absolute differences, the best target length is not always the mean (average). Instead, the median of the array is the optimal choice.
+    mean could be skewed, instead median gives us more better choice here in this scenario
+
+9. Missing Coin Sum {Excellent Problem}
+    // assume you are at ith index whose value is arr[i] and you are guarnteed that the prefix 0 to i-1 can generate sum from 1 to k
+    // next sum that you want to generate is k+1
+   0  1   2   3 ... i-1  i
+   [                  ]  a[i] 
+    this prefix 0 to i-1 generates all values between 1 to K, Now we want to generate K+1 at ith index 
+    // there can be 3 cases 
+    if arr[i]==k+1 ==> done k+1 generated 
+    if arr[i] < k+1
+        some_prefix_val + arr[i] == k+1 
+        some_prefix_val = (k+1) - arr[i]
+        arr[i] min value = 1, some_prefix_val = (k+1) - 1 = k 
+        arr[i] max value = k (since arr[i] < k+1), some_prefix_val = (k+1) - k = 1
+    in both the cases some_prefix_val lies between 1 and k 
+    if arr[i] > k+1
+        the prefix value is between 1 to k and if you add arr[i] which is greater than k+1 , overall value will become greater than k+1. Hence you cannot generate k+1 if arr[i]>k+1
+
+
+10: Collecting Numbers 2: {Excellent problem}
+    Originally you are given pos -> values array. use it to create values->position array 
+    i.e pos[arr[i]] = i;
+    Use this to calculate the inversion count. How do you calculate inversion count from this 
+    compare adjacent positions (1,2), (2,3) and so on . If pos[1] > pos[2] -> inv_count++;
+    calculate the inv_count in the original array
+    Now lets start performing those m operations 
+    In an operation, you will swap positions a and b values in the original array. Swapping this, will also cause an impact on the pos array 
+    Lets say you swap a and b positions in the original array, so this will impact arr[a] and arr[b] positions in the position array 
+    Find the affected pairs 
+    chaning arr[a] will impact arr[a]-1, and arr[a]+1 positions in the pos array 
+    impacted pairs: (arr[a]-1,arr[a]), (arr[a],arr[a]+1), (arr[b]-1,arr[b]), (arr[b],arr[b]+1)
+    Store these impacted positions in a set
+    For a particular swap, analsyse all the positions from the affectedPairs and decrease the inv_count 
+    perform the swap 
+    again anlyse all the positions from the affectedpairs and increase the inv count 
+    In the end 
+    # of rounds = inv_count+1
+    
+11. Playlist 
+    sliding window solution
+    mp stores the freq of the element part of the current window 
+
+    while(j<n){
+        mp[arr[j]]++;
+        while(mp[arr[j]] > 1){
+            mp[arr[i]]--;
+            i++;
+        }
+        ans = max(ans, (j-i+1));
+        j++;
+    }
+
+12. Towers
+    NOTE: How do you determine index from the iterator:
+        
+        auto it = upper_bound(all(arr),x)
+        int idx = it - arr.begin()
+
+13. Traffic Lights {Excellent Problem}
+    
+    FASTIO is required in this problem --> otherwise it is giving TLE 
+
+    Used sets to track the position where light is installed(positions will always be unique)
+    Used multiset to track the length b/w installed lights (length might not be unique, hence multisets)
+
+    set.insert(0);
+    set.insert(x);
+    ms.insert(x);
+
+    auto it = s.find(x) ==> tries to find x in the set and returns an iterator pointing to x if it exists, otherwie points to s.end()
+    auto prev_iterator = prev(it) ==> prev(it) returns an iterator to the prev element of it. (used * to dereference the iterator) 
+    auto next_iterator = next(it) ==> next(it) returns an iterator to the next eleemnt of it 
+
+    suppose you insert k, you can easily find the next and the prev element of k using prev() and next()
+        1. s.insert(k)
+        2. auto iter = s.find(k)  -- first find the element and then only you could use prev() and next(), bcoz you need to pass the iter to both these
+        3. int prev_val = *prev(iter) -- get the value prev to k
+        4. int next_val = *next(iter) -- get the value next to k
+    in this case it will be 0 and x 
+    Now you'll have to insert 2 lengths in the multiset (k-0) and (x-k) and delete the older length (x-0)
+        1. ms.erase(next_val - prev_val)  --> this is incorrect 
+            ms.erase(val) will erase all the occurences of value val from the ms 
+            instead use this 
+        ms.erase(ms.find(val))  -- this will find one occurence of val and will delete only that occurence
+        2.ms.insert(k-prev_val)
+        3. ms.insert(next_val-k)
+    Each query's anwer would be *ms.rbegin()
+    
+
+
+    ms.rbegin() points to the last element of the ms which will always be the largest element 
+    (since ms stores the elements in the sorted fashion)
+
+14  Josephus Problem 1 {Excellent Problem}
+    Classic Recursion Problem 
+    This problem teaches how to convert a problem into a recursive one 
+    During the first iteration, you print all the alternating eleements
+    and then you call recursion on the reduced input to print the elements in the remaing part 
+
+15. Josephus Problem 2  [Excellent problem]  
+    -- Generalised version of the prevvious problem 
+    Uses ordered set PBDS 
+    PBDS(policy based data structure) like ordered_set give indexing capabilities to your normal sets 
+    ordered_set<int> s;
+    It has 2 operations:
+    1. s.find_by_order(idx) --> takes index as an argument & returns the element at index idx in the ordered set 
+    2. s.order_by_key(key) --> takes a key as an argument and returns the index at which this key is present 
+        order_by_key can also be thought of as if you arrange this key by order, at what index does this key fall
+
+    Why we used ordered_set in this problem?
+       The Josephus Problem requires efficient access, deletion, and reindexing of elements in a circular sequence.
+    
+        An ordered_set (from Policy-Based Data Structures - PBDS) is an excellent choice because:
+        1.	Efficient Index-Based Access (find_by_order)
+            •	find_by_order(k) retrieves the k-th smallest element in O(log N) time.
+            •	This is crucial since, in each step, we need to remove the k-th element.
+
+        2.	Efficient Deletion (erase)
+            •	erase(it) removes the element in O(log N) time.
+            •	Unlike vectors, where deletion is O(N) due to shifting, ordered_set automatically re-indexes elements.
+
+        3.	Handles Circular Indexing Easily
+            •	The % operation ensures the index wraps around when reaching the end of the set.
+
+        
+        ordered_set<int> o_set;
+        fore(i,1,n)
+            o_set.insert(i);
+        
+        Stores elements {1, 2, ..., n} in a self-balancing tree.
+        Since ordered_set keeps elements sorted, we can access elements by index.
+    
+        int start = 0;
+        while(o_set.size() > 0){
+    
+        We start from index 0 (the first person).
+        The loop continues until all elements are removed.
+    
+        int pos = (start + k) % o_set.size();
+        
+        Circular movement: Ensures that the index wraps around.
+	    This is necessary because we are deleting elements, which shrinks the set.
+
+        auto it = o_set.find_by_order(pos);
+        cout << *it << " ";
+
+        find_by_order(pos) returns the element at index pos in O(log N) time.
+	    We print this element, as it is the next person to be eliminated.
+
+        o_set.erase(it);
+        start = pos;
+
+        Deletes the selected element in O(log N).
+	    Since all remaining elements are automatically reindexed, pos remains valid.
+
+
+    Approach 
+    1. Vector (std::vector)
+        Find K-th Element  O(1)
+        Deletion           O(N)
+        Re-indexing        O(N)
+        
+    2. Set (std::set)
+        Find K-th Element  not possible(does not support indexing )
+        Deletion           O(logN)
+        Re-indexing        No reindexing needed ( indexing is not supported in sets )
+
+    3. Ordered Set (pbds)
+        Find K-th Element  O(logN)
+        Deletion           O(logN)
+        Re-indexing        Automatically handled 
+
+
+16. Nested Range Check {Excellent Problem}
+    Sort the elements on the start time
+    If the start times are same, then sort in descending order of end times. Consider ex: (1,5), (1,4)
+    -- this gives us assuarance that if you are at ith position, then all the ranges on the rhs of i will have start time >= ith start time 
+    order of the ranges doesn't matter, so you can sort them 
+
+    ith interval will contain jth interval only if the below condition satisfies 
+    a[i].start <= a[j].start and a[j].end <= a[i].end
+
+    sorting on start time takes care of  a[i].start <= a[j].start 
+    so if you move inn the reverse direction from n-1 to 0, then for each i, a[i].start <= a[j].start is guaranteed 
+    Out of all the j intervals( we basically track the min end time amongst them). So if the min_end_time  <= a[i].end 
+    then contains[i] = true
+
+    ith interval will be contained by jth interval only if 
+    a[j].start <= a[i].start and a[i].end <= a[j].end
+
+    sorting on start time ensures that at particular ith index all the indexes before i(i.e j) have start <= a[i].start. Hence the firt part is taken care of
+    if the max end time amongst all the j ranges is >= a[i].end, then
+    contained[i] = true;    
+
+    so we need 3 things for each interval: start, end, index 
+    hence used vector<pii,int> v;
+
+
+17. Nested Range Count {Excellent Problem}  Pending
+        https://www.youtube.com/watch?v=ORdmSirqrMs&t=789s&ab_channel=NeatlyStructured
+    
+    Instead of identifying if ith range contains any range and any range contains ith range, we have to determine the actual count of ranges that ith range contains and the no of ranges that contains the ith range 
+
+    Solution 1: using ordered_set   
+        with ordered_set, you can find the no of elements smaller than x in the set in log(n) using order_by_key function 
+        insertion, retrieval and erase all are O(logn) operations
+
+    Solution2 : Using segment Tree (revisit)
+        Implementation pending :
+
+
+18. Room Allocation:    {Excellent problem}
+    Given arrival and departure time of n guests, you have to assign rooms to this guests 
+    Logic: when a guest arrives, check if we can allocate any of the existing available rooms (for this we used a priority_queue min heap (end_time, room_id))
+    so if arrival_time > pq.top() end time --> then we could use this existing room 
+        assign the existing room to the new guest, remove the prev entry and insert the new entry with the current guest's end time in the pq 
+    if arrival_time <= pq.top() end time  ---> then there is no option other than allocating a new room to this guest 
+        allocate a new room (for this keep track of next_avail_room)
+        assign the next_avail_room and increase it by 1 
+        insert the end time and the room id in the pq 
+    Pq will give you the minimal end time across all the rooms. Rest of the rooms will be freed at a later point in time
+
+    This will give you the minimum no of rooms required + the way allocation of rooms needs to be done to manage all the guests 
+
+    NOTE: We would need to process the guests in the increasing order of their arrival time. Why?
+    First guest arrived, the pq was empty (meaning no room was allocated) --> we will allocate it a room 
+    Second guest arrives(start time greater than the previous one) --> Check if we need to assign him a new room or an existing roomm will do  
+                Assign new room if the start time <= prev guest's exit else assign the existing room 
+    Third guest arrives : lets say we have assigned 2 rooms till now and we know the end times at which both the rooms will be freed. Now with the help of pq we'll determine the first room which is getting freed(best of all the allocated rooms)
+    if the guest is arriving before this, we have no choice other than allocating a new room else we can use the exising room 
+
+    Understaning the logic:
+    Understaning we need pq min heap 
+    Understanding we need to process the guests in increasing order of their arrival times 
+
+19. Factory Machines 
+    you are given n machines and the time each takes to build a product. We need to make k products 
+    You need to figure out the minimum time required to build k products 
+
+    Assuming you just have 1 machine (the one which takes the max amt of time)
+    then the time taken would be = t*k where t is the time the machine takes to build 1 product and k is the no of products 
+
+    consider range 0 to t*k - calculate mid 
+    if you are able to build k products in mid time , then definately for all > mid times also you will be able to build. So mid could be our ans and we update hi to mid-1 
+
+ 
+20.Tasks and Deadlines
+    Process the input in increasing order of duration 
+    pure logic/observation based question
+    The smaller the duration is, more earlier we would be able to complete it and thus higher the chance of increasing profits 
+
+21. Reading Books {Excellent Problem}
+    pure logic/observation based question
+
+22. Sum of Three Values
+    the pointer logic to update the sum only works if the array is sorted.
+    Since we need to print the original positions of the elements, due to sorting the positions will change (hence store the positions with the elements as pii)
+    TC: O(n^2) the outer loop for i and the inner loop for j and k 
+    SC: O(1)
+
+23. Sum of Four values {Excellent Problem}
+    Solution1 
+        TC: O(n^3) With the same approach in the above question  --> TLE
+
+    Solution 2: TC: O(n^2) using Maps 
+        1. the array size must be atleast 4
+        2. I can start i from index 2 and move j from i+1 to n 
+        as well as have a map which stores all possible sums before ith index 
+        here at this point mp contains sum of arr[0] and arr[1]
+        I will check for a given combination of i,j have we encoutered a sum x-(arr[i]+arr[j]) in the map. If yes, then we found the ans 
+        otherwise we will move i to the next index, but before doing that add all possible sums with the ith index in the map
+        For this run a loop from j=i-1;j>=0;j-- this will cover all possible sums with i 
+
+        Note that the sums might not be unique(so we cannot use sets) and for a given combination of (i,j) if we find its counterpart in the map, we also need the indices which constitutes that sum 
+        For this purpose, we can use map of int -> pair<int,int>
+        and since there might be more than 1 pairs with the same sum, we'll use vector<pair<int,int>>
+        map<int, vector<pii>> mp;
+
+        Overall TC: O(n^2)
+        one outer loop for i which runs n times 
+            and one inner loop j from i+1 to n which also runs n times to check if the counterpart sum exists in map
+            another inner loop j which also runs n times in the worst, to update the map with the sums for a particular i 
+
+
+        NOTE: we don't need to sort the input array. we'll check if a particular combination of (i,j) has it's counterpart sum availble in map -- we found the ans
+        otherwise we increase j and check other combinations. If j gets exhausted, increase i and again start j from i+1 to check new combinations
+
+        The 2pointer technique that we use generally works only iff the input array is sorted 
+
+24. Nearest Smaller Values {Good Problem}
+    We want to find the closest position with a strictly lower value for each index 
+    Used stack<pii> ---> value,index 
+    intially insert the (arr[0],0) in stack and start from i=1. 
+    Obviously ans for i=0 will be 0 
+    Keep popping from stack until the stack's top value is less than arr[i]
+    if stack becomes empty, no element exists 
+    else stack;'s top is your ans 
+    And at last insert the ith element in the stack 
+
+    TC: O(N) 
+    SC: O(N) worst case when the input array is sorted 
+
+    8
+    2 5 1 4 8 3 2 5
+    
+25. Subarray Sum1 {Good Problem}
+    Task is to count the no of subarrays with sum x 
+    Brute force: check all the subarrays O(n^2)
+    Optimised solution:
+        Use a map to track the prefix sums encoutered till now 
+        if at the ith index, 
+            sum+=arr[i]
+            check if sum - x exists in the map, if yes, no of times x sum is formed till now, we will add that many occurences to our ans 
+            hence storing the prefix sums and no of it's occurences 
+        TC: O(n)
+        SC: O(n)
+
+26. Subarray Sums 2:
+    Exaclty same as above problem, only difference is arr[i] lies in range [-1e9,1e9]
+    In above problem arr[i] was in range [0,1e9]
+
+27. Subarray Divisibility {Excellent Problem}
+    
+    We need to count the number of subarrays whose sum is divisible by n. The key observation is:
+	•	If two prefixes have the same remainder when divided by n, the subarray between them has a sum that is divisible by n.
+
+    Fix: Handling Negative Remainders
+    Instead of:
+        mp[sum % n]++;  
+    We should do:
+        int remainder = (sum % n + n) % n;  // Ensures remainder is always non-negative
+        mp[remainder]++;
+    
+    Why (sum % n + n) % n Works?
+	•	sum % n might be negative, so adding n makes it positive.
+	•	Taking another % n ensures it stays within [0, n-1].
+
+
+28. Subarray Distinct Values 
+    Map stores the elements of the current window
+    at any given point of time, mp.size() will indicate the no of unique elements in the window
+    hence when an element's freq becomes 0 in a window, we remove that element 
+    At a given point of time, we can atmost have k distinct element in the window 
+    if the no of distinct elements in the window i.e mp.size() becomes greater than k, start shringking the window from left 
+    i.e move i and while moving i remove the corresponding ith element from the mp by decreasing its freq (& if the freq becomes 0, remove the element from the map)
+    And the no of subarrays b/w indices i and j can be calculated using (j-i+1)
+
+29. Array Division {Excellent Problem}
+    You cannot sort the array, we want to divide the array into k subarrays such that the maximum sum in a subarray is as small as possible 
+    Sorting will change the position of the elements.
+    Intuition 
+    if k==1, all the elements in a single set , total would be sum of the array
+    if k==n, each element in its own set. ans in this case would be max element of the array 
+
+30. Sliding Window Median {Excellent problem}
+    Used ordered_set bcoz it gives us indexing capabilities in the set plus also maintain the elements in the sorted order by default, so median is just k/2 if k is odd and (k-1)/2 if k is even 
+    In fact we can use idx = (k-1)/2 for both odd and even k's
+    NOTE: that ordered_set like sets only stores unique elements, but we might duplicates as well. 
+    Hece used ordered_set<pii> s; // value,index 
+    This is a very good way to handle duplicate values in sets 
+    TC: O(nlogn) insert, retrival and erase is O(logn) in ordered set 
+
+
+31. Sliding Window Cost {baap problem + Implementation heavy }
+    https://www.youtube.com/watch?v=rMK_or9QNrg&ab_channel=NeatlyStructured
+    Fiding median is easy using ordered_set, but here we need to track sum of the left and right sets to efficiently compute the cost for a window 
+    Understand edge cases: 
+        we need atleast a window of size 3. Why?
+            processing for k==1 makes sense. every element has its own window 
+            for k=2, assume if both the elements lie in the rset and you try to access lset.rebgin() when the lset is empty --> this will give runtime error
+            Hence handled this case separately 
+
+    Very good Implementation
+        used 2 sets lset and rset that will store the first half upto median and the second half.
+        Also tracking sums using lset_sum and rset_sum variables 
+        Most tricky part was the transfer of elements and understanding the conditions in when we need to perform this transfer and in which direction 
+        While transferring/removing/inserting elements, dont forget to update corresponding set's sum 
+
+
+32. Maximum Subarray Sum2 : {Excellent Problem}
+Amazing Explaination: https://www.youtube.com/watch?v=jgEcICsn_6c&ab_channel=NeatlyStructured
+    harder version of Max subarray sum (Kadanes)
+
+    Best thing is how he optimised the solution from brute force step by step 
+
+33. Movie Festivals 2 {Excellent Problem}
+    Here we're following a Greedy approach to watch as many movies as possible 
+    s.lower_bound(x)
+    s.upper_bound(x)
+
+We have n movies and k persons, and we have to determine the max no of moveis that can be watched
+We will track the end time of each person's movie using a set
+ith movie can only be watched iff either of the below condition satisfies 
+    1. we've a new person remaining i.e set's size is less than k. That new person can watch that movie 
+    2. If all the persons are already busy, then iff there exists a person whose movie's end time is less current movie's start time, then that person could watch that movie 
+If no new person is remaining and neither of them are free, then that movie cannot be watched 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
