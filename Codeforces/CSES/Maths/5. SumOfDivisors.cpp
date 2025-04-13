@@ -56,10 +56,15 @@ signed main(){
     
     int ans = 0;
     
+     // iterating over the buckets(unique values of n/i) and in worst case we'll have 2*sqrt(n) unique values 
+    // so effectively this loop runs 2*sqrt(n) times in worst case 
     for(int i=1,j; i<=n; i = j){
         int q = n/i;
         j = (n/q) + 1;
+        //  (a/b) % mod  = (a * b_inv) % mod where b_inv = modularBinaryExponentitation(b,mod-2)
+        // (j * (j+1))/2;
         int sumUptoJMinusOne = ((((j-1)%mod) * (j%mod))%mod * modularBinaryExponentitation(2, mod-2))%mod;
+        // ((i-1) * i)/2;
         int sumUptoIMinusOne = ((((i-1)%mod) * (i%mod))%mod * modularBinaryExponentitation(2, mod-2))%mod;
         int rangeSum = (sumUptoJMinusOne - sumUptoIMinusOne + mod)%mod;
         ans = (ans + (rangeSum*q)%mod)%mod;

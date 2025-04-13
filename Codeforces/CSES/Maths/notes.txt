@@ -1,3 +1,415 @@
-Revisit Problems CSES:
+1. Exponentiation 1
+    Compute a^b where a,b<=1e9
+    // a^b = a^(b/2) X a^(b/2)
+    // a^b = a^(b/2) X a^(b/2) X a
 
-1. Exponentiation 2 
+2. Exponentiation 2:  Pending {https://www.youtube.com/watch?v=jkZ6c-uAl7Y&ab_channel=NeatlyStructured}
+    Compute a^b^C % mod
+    a=2, b=1e9+7, c=1
+    
+    Fermat's Little Theorem 
+        this theorem states that if p is a prime no, then for any integer a  
+        (a^p - a)%p = 0
+        a^p congruent to a (mod p)
+
+        if p is a prime no and p does not divide a or I can say a is not divsible by p 
+        then a^(p-1) congruent to 1 (mod p)
+        (a^(p-1) - 1)%p = 0
+
+        In our case p=1e9+7 and a,b,c <= 1e9+7
+        basically p does not divide a  
+
+
+
+3. Counting divisors   [Important]
+    In a nutshell: count the no of divisors for each element upto 1e6. create an array of size 1e6 and start i from 1 to 1e6. For each i, increment the count of its multiples by 1 
+    so j will start from i and will go upto 1e6 in the increments of i (This inner loop will take log(n)) time
+
+    Given an array of n integers, you have to find the cnt of divisors for each x 
+    n<=1e5, x<=1e6
+
+    Approach 1: factors symmetricity TC: O(sqrt(n))
+    Brute force: counting divisors usually takes O(sqrt(n)) where n is the no for which you want to determine the count 
+    Here we have to find factors for 1e5 nos and each no can be upto 1e6, which basically makes the overcall complexity as O(n * sqrt(x)) approx to 1e8 gives TLE 
+
+    Approach 2: Prime factorization TC: O(sqrt(n))
+    Every no greater than 1 is either a prime no itself, or can be represented as a product of prime nos and this representation is unique 
+    ex: 1200 = 2^4 X 4 X 5^2
+    This theorem says 2 things for this example: 1200 can be represented as a product of primes and second, no matter how this is done, there will always be exaclty 4 2's 1 3 and 2 5s
+    and no other primes in the product 
+
+    16 => 2^4 
+        can 3 be a power of 16, no bcoz it doesn't appear in the prime factorization of 16
+        can 2^7 be a power of 16, no the max power is 2^4
+        so possible factors 2^alpha where alphs belongs to [0,4]
+        i.e 2^0, 2^1, 2^2, 2^3, 2^4 basically 5 factors
+    
+    17 => 17
+         17^alpha where alpha belongs to [0,1]
+         i.e 2 factors 17^0, 17^1
+
+    18 => 2 X 3^2
+        2^alpha X 3^beta where alpha belongs to [0,1] 2 choices and beta belongs to range [0,2] 3 choices
+        in total 6 choices 
+
+    So any no num represented as 
+    num = p1^a X p2^b X p3^c X.......Xpn^z
+    total no of divisors = (a+1) X (b+1) X (c+1) X .... X (z+1) 
+
+    Approach 3: Precompute the cnt 
+    Precompute the no of divisors for each x beforehand in O(XlogX)
+    and then ans each query in O(1) time 
+    x = 1 ------ 1e6
+    i=1,2,3,4,....1e6
+    j= i, 2i, 3i, 4i, ....<=x
+    div_count[j]+=1;
+
+    for i=1 it will run x times
+    for i=2, x/2 times 
+    Total no of operations::: x + (x/2) + (x/3) + (x/4) + ..... + (x/x)1  i=x ==> x/x times 
+    x(1 + 1/2 + 1/3 + 1/4 + ... + 1/x)
+    summation of (1/i) where i lies in range of [1,x]
+    integral[1/i] for i belonging to [1,x]
+    integral(1/x) = lnx 
+    [ln(i)] for i belonging to range [1,x]
+    ln(x) - ln(1)=  ln(x) since ln(1) is 0
+    (1 + 1/2 + 1/3 + 1/4 + ... + 1/x) = ln(x)
+    Hence total time complexity become xlogx
+
+
+4. Common Divisors [Important]
+    In a nutshell -> Count the no of multiples for each possible gcd value and return the one which has got atleast 2 multiples 
+    In order to check the multiples, maintain a freq array
+
+    Given an array of n integers, you have to find the max possible gcd value 
+    brute force:
+        run 2 nested for loops and compute the gcd for every pair
+        TC: O(n*n*log(max(arr[i])))
+        TC of gcd(a,b) is O(log(min(a,b)))
+        given 1<=arr[i]<=1e6
+        hence gcd also lies in range 1<=gcd<=1e6
+    
+    Approach 2: TC: O(xlogx) + O(n) where x is the max eleement in the array x<=1e6 and n is the array size n<=2*1e5
+
+        we know that the gcd lies in range [1,1e6]
+        so we traverse from the end and check if this gcd value is our ans 
+        for(int i=1e6; i>=1; i++){      // this outer loop will run 1e6 times in the worst case
+            // i will be our ans if we have atleast 2 multiples of i in the array 
+           //  gcd(a,b) <= min(a,b)
+           int multiples = 0;
+           for(int j=i; j<=1e6; j+=i){ // checking all the multiples of i, and it's multiples will definitely be >= i. Inner loop will run logx times 
+                multiples += freq[j];      
+           }
+          if(multiples >= 2) 
+            return i;    // is the largest gcd possible in the array 
+        }
+        
+
+5. Sum of Divisors {Excellent Problem} https://www.youtube.com/watch?v=JqWiWJQOQyU&ab_channel=NeatlyStructured
+
+    Given n which can go upto 1e12, compute summation i=1 to n alpha(i)
+    where alpha(i) is the sum of divisors of i
+
+    Already came up with a O(N) appraoch 
+    assume n = 12 --> 
+    1 --> 12 times 
+    2 --> 6 times 
+    3 --> 4 times 
+    4 -> 3 times
+    5 -> 2 times 
+    6 -> 2 times
+    7   -> 1 time
+    8
+    9
+    10
+    11
+    12
+  
+   i no->        1   2   3   4   5   6   7   8  9   10   11  12
+(n/i) times ->   12  6   4   3   2   2   1   1   1   1   1   1   
+
+# count of distinct (n/i) values given i belongs to range [1,n]
+i belongs to [1,n]
+breaking this range into below 2 ranges
+i belongs [1,sqrt(n)] U [sqrt(n)+1,n]
+# distinct values of (n/i) if i belongs to [1,sqrt(n)] is sqrt(n) in the worst case (if all (n/i)s are unique)
+# distinct values of (n/i) if i belongs to range [sqrt(n)+1,n], since i > sqrt(n), it means (n/i) < sqrt(n). at max in the worst case this will also take sqrt(n) distinct values 
+In total we can get 2*sqrt(n) distinct values of (n/i)
+
+Now if we can figure out the boundary of each i(bucket), then we can easily compute entire sum 
+i=1, q = (12/i) = 12   q = (n/i) or i = (n/q)
+next index for which we get a different quotient i1 = (n/q) + 1
+                                                i1 = (12/12) + 1 = 2
+i = 2, q = (12/2) = 6   , i1 = (12/2)+1 = 3
+i = 3, q = (12/3) = 4, i1 = (12/4)+1 = 4
+i = 4, q = (12/4) = 3, i1 = (12/3) + 1 = 5
+i = 5, q = (12/5) = 2, i1 = (12/2)+1 = 7
+i = 7, q = (12/7) = 1, i1 = (12/1)+1 = 13  summation of [7,12] * 1
+
+Thus by breaking the entire [1,n] range in buckets, we are able to compute this entire summation in less than O(n)
+
+
+Important: 
+
+(a / b) % c = (a * modinv(b, c)) % c
+Where modinv(b, c) is the modular multiplicative inverse of b modulo c
+modinv exists only when b and c are coprime (GCD(b, c) = 1)
+
+🔁 What is modinv(b, c)?
+
+The modular inverse of b modulo c is an integer x such that: (b * x) % c = 1
+
+✅ How to compute it?
+
+There are 2 main ways to compute modinv(b, c):
+
+🔹 1. Extended Euclidean Algorithm (Works for any c)
+
+    This method works even when c is not prime.
+
+def modinv(b, c):
+    def extended_gcd(a, b):
+        if b == 0:
+            return (1, 0, a)
+        x1, y1, d = extended_gcd(b, a % b)
+        x, y = y1, x1 - (a // b) * y1
+        return (x, y, d)
+    
+    x, y, gcd = extended_gcd(b, c)
+    if gcd != 1:
+        raise ValueError("Modular inverse does not exist")
+    return x % c
+
+🔹 2. Fermat’s Little Theorem (only when c is prime)
+
+When c is prime, the modular inverse of b modulo c is:
+
+    modinv(b, c) = b^(c-2) % c
+
+
+---------------------
+
+(((j-1)*j)/2)%mod since mod is prime in our case, we can use fermat's little theorem to compute the mod inv 
+= ((j-1) * j * modinv(2,mod))%mod
+= ((j-1) * j * modularBinaryExponentitation(2,mod-2))%mod
+
+
+
+
+
+4. Divisor Analysis {Excellent Problem } Pending 
+Given a number in terms of its prime factoriation, compute 3 things:
+    1. # no of divisors DONE
+    2. Sum of divisors  DONE
+    3. product of divisors PENDING
+
+
+5. Prime Multiples {Excellent problem}
+    Tags: inclusion exclusion principle
+
+    Principle of inclusion-exclusion in finite sets --- refer its generalised version on google/gpt
+        It's a counting technique used to compute the size of the union of multiple finite sets while correcting for overcounting.
+    Used bitmasks to generate all possible combinations 
+    used the no of set_bits as index in arr to store the partial terms 
+    NOTE: Here we are given k primes, and an important property is all the primes are coprime which means there lcm(p1,p2) = p1.p2 since their gcd is 1 
+
+
+6. Counting Coprime pairs:  {Excellent Problem} PENDING
+    1<=n<=1e6 and arr[i] <= 1e6
+
+    GCD is a binary property, thus 
+    # of pairs whose gcd is 1 = Total no of pairs - # of pairs whose gcd is not 1 
+    We have rephrased the problem to now count the # of pairs whose gcd is not 1
+
+    We will use sieve to find the primes for each no upto 1e6   - MlogM where M is 1e6
+    Then we will go through each no in the array and generate all possible combinations/subsets of the prime factors
+    Then for each subset, we're gonna increment the value in A[] and we'll also track the no of prime factors of that subset in B[]
+    and at the end, we'll loop through our A[] and see if its corresponding value in B is odd or even. If it is odd then we'll add A[i]C2 else we'll subtract A[i]C2
+    This is based on inclusion exclusion Principle
+
+    For each element in our array, we'll generate all the subsets of its prime factors 
+        It cannot have too many distinct prime factors because they grow really fast. We can have atmost 7 prime divisors bcoz the smallest no that has 7 prime divisors is 
+            2*3*5*7*11*13*17 and this is about half million (1e6/2)
+        so atmost 7 disitnct prime nos and we'll generate all its subsets in 2^7 = 128
+        So for all the elements in the array it will take O(n * 128)
+        n is upto 1e5 so O(n*128) is approx 1e7 opereations 
+
+
+    for instance: if arr[i]=20
+    20 prime factors -> 2,5 
+    Generate all possible combinations(this will be done using masks) : {2}, {5}, {2,5}
+    so A[2] += 1, A[5] += 1, A[10] += 1  
+
+
+7. Binomial Coefficients 
+    - calculate nCr 
+
+8. Creating Strings 2 
+    Given an input string that contains lowercase alphabets, have to count the no of unique strings that can be made using this characters 
+    // s = "aaabc"
+    // string length is 5. If all chars were unique then we would have gotten fact[5] distint strings 
+    // since chars are repeating the total no of unique strings will be 
+    // a->3, b->1, c->1
+    // ans = fact(n) / [fact(3) * fact(1) * fact(1)]
+
+9. Distributing apples {Excellent Problem}
+    Tags: combinatorial problem (computing nCr)
+
+    how we have converted the problem to combinatorial problem is the heart of this problem
+
+    we have n students and m apples and we have to determine the no of ways in which we can distribute the apples 
+        ex: n=3 , m=2 
+        Below is the visual representation of how the Distribution would look like 
+        0 represents apples and 1 represents bars separting n students(we'll need n-1 bars)
+
+          0  1  0   1
+          0  1      1  0
+             1  0   1  0
+        0 0  1      1
+             1 0 0  1
+             1      1 0 0
+
+        We have reduced the problem to a combinatorial problem 
+        length of each mask will be m + (n-1)
+        m apples and (n-1) bars to separate n students 
+        ans = (n+m-1)Cm
+        OUt of n+m-1 positions we just need to choose m positions 
+
+    NOTE:  // n,m <= 1e6 We need fact[n+m-1], declaring a fact array of size 1000005 might cause problem if n+m-1 > 1000005. Hence to be sure we have declared the size of fact array as n+m
+        // the max fact that you need to access is fact[n+m-1], hence the size of fact array is n+m
+    
+
+10. Christmas Party {Excellent Problem}:
+    Tags: inclusion exclusion Principle
+
+    We have to count the no of mappings possible such that everybody will get a gift brought by somebody else 
+    Giver 1 2 3 4
+          
+    Total # of mappings possible = n! = good + bad 
+    good mappings are those where everybody will get a gift brought by somebody else 
+    Our task is to calculate # of good mappings 
+    good  = n! - bad 
+    # of bad mappings =  # of (1->1 or 2->2 or 3->3 or 4->4)
+    ie 1 gifts to 1 or 2 gifts to 2 or 3 gifts to 3 or 4 gifts to 4 
+    (1->1 or 2->2 or 3->3 or 4->4) ==> This can be calculated using inclusion exclusion principle
+
+    n = 4
+    (1->1 or 2->2 or 3->3 or 4->4) = 
+        (1->1) + (2->2) + (3->3) + (4->4)
+        - (1->1 and 2->2) - (1->1 and 3->3) - (1->1 and 4->4) - (2->2 and 3->3) - (2->2 and 4->4) - (3->3 and 4->4) 
+        + (1->1 and 2->2 and 3->3) + (1->1 and 2->2 and 4->4) + (2->2 and 3->3 and 4->4) + (1->1 and 3->3 and 4->4)
+        - (1->1 and 2->2 and 3->3 and 4->4)
+
+    = 4C1.(3!) - 4C2.(2!) + 4C3.(1!) - 4C4.(0!)
+    = nc1.(n-1)! - nc2.(n-2)! + nc3.(n-3)! - nc4.(n-4)! 
+    bad = n!/1! - n!/2! + n!/3! - n!/4!
+
+    # of good mappings = n! - (n!/1! - n!/2! + n!/3! - n!/4!)
+                    = n! - n!/1! + n!/2! - n!/3! + n!/4!
+                    = summation of (n!/i!)*(-1)^i where i = 0 to n 
+
+
+    Main part is understanding how you compute (1->1 or 2->2 or 3->3 or 4->4) 
+
+
+11. Bracket Sequence 1: {Important}  -- Pending 
+    How we reached the bijection conclusion is not clear atleast the intuition part 
+
+    Really intersting way of calculating no of valid sequeences 
+    Conditions:
+    1. n must be even
+    2. n/2 opening brackets and n/2 closing brackets. Total # of seq with n/2 opening brackets nC(n/2)
+    3. For every prefix, # of opening brackets must be >= # of closing brackets 
+
+    ans <= nC(n/2)
+    No of seq that satisfy the third condition is 
+    = nC(n/2) - # of prefix that does not satisfy the third condition 
+
+    NOTE: Author has proved that 
+    There is a bijection between the # of pairs that do not satisfy the third condition  and the no of seq that contains k-1 open and k+1 closing brackets 
+
+
+12 Fibonacci Numbers {Excellent Problem}
+    Tags: matrix exponentiation
+
+    Compute fib(n) in log(n) using matrix exponentiation 
+    [fib(n)     = [1 1  |^ (n-1) X  [fib(1)
+                        |           fib(0)]
+                   1 0] |
+    fib(n-1)]  
+
+
+    You basically calculate the matrix^(n-1) and this computation can be done in O(logN) time using binary exponentiation
+
+
+    Conclusions : 
+    Any fib(n) can be represented in terms of base conditions fib(0) and fib(1)
+
+
+13. Throwing Dice:  [Pending]
+    Tags: Matrix Exponentiation
+
+    constraints: n<=1e18  --> expecting O(logN) solution
+
+    Solution1: We can use DP to compute the no of ways we can reach i 
+    dp[i] = dp[i-1] + dp[i-2] + .... + dp[i-6] given that for all values from 1 to 6 given that i>=value
+    This is O(n) solution 
+
+    Basically converted this O(n) solution into matrix exponentiation solution 
+    Main challenge is to build that matrix 
+
+
+14. Graphs Paths 1  {Excellent Problem} Pending 
+    Tags: Matrix Exponentiation
+Consider a directed graph that has n nodes and m edges. Your task is to count the number of paths from node 1 to node n with exactly k edges.
+
+    Solution1:
+    solve(u,k)  // node  u and k edges to Traverse
+        solve(v,k-1)  call recursoin on v (child of u) and now we need to take k-1 edges
+
+        Base case: if(k==0){
+            and if(u  == n) return 1 
+        }
+
+        further we can memoise this to store dp[u][k]
+        TC: is linearly dependent on K 
+        and since K can go upto a billion i.e 1e9. THIS DP solution will give TLE 
+
+    
+    Solution 2:
+        Using matrix exponentiation
+        TC: (logN)
+
+        Representing the graph in form of adj matrix. 
+        Intuition: Cell (i,j) represents in how many ways you can reach from i to j. 
+        Row U stores in how many ways we can reach from Node U to some other node, Similarly a column V stores in how many ways you can reach Node V from some other node 
+
+        In how many ways you can reach node u to node v in 2 edges 
+        # u,v = summation of (# u,k ) . (# v,k) 
+        Using the concept of P&C, # of ways you can reach from node u to v in 2 edges 
+            = (# of ways you can reach from u to some intermediary node k) X (# of ways you can reach from k to some intermediary node v)
+
+        Here we want to find # of ways you can reach from node u to v in 2 edges 
+        Compute M^2 where M is the adj matrix. Exponenent is decided by the # of edges in which we want to reach a particular node 
+        ans = cell(u,v) in M^2
+
+        Similary compute M^k using binary exponentiation in O(logK) time and your ans will be cell(u,v)
+        This will give you the no of ways you can reach from node u to v in K steps 
+
+    Main part is formulating the problem in terms of matrix exponentiation
+
+
+15. Graphs Paths 2 [Pending]
+Tags: Intuition of matrix exponentiation: Although we are not multiplying matrices, but just like multiply, addition and min operators are also associative and commutative 
+
+
+
+Probability & Game Theory Questions Remaining 
+
+
+
+
+
+
+
+Also check strivers maths playlist

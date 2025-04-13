@@ -1,11 +1,19 @@
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
+template <typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag,  tree_order_statistics_node_update>;  // policy based data structure
+// ordered_set is a pbds which is similar to set and has 2 extra functionalities set.find_by_order(idx) -> returns the element at this index
+// and set.order_by_key(k) -> returns the index of the key k
+// ordered set data structure => adds indexing functionality to sets
 
 #define int             long long int
 #define ff              first
 #define ss              second
 #define pb              push_back
-#define mp              make_pair
+// #define mp              make_pair
 #define pii             pair<int,int>
 #define vi              vector<int>
 #define mii             map<int,int>
@@ -23,45 +31,78 @@ using namespace std;
 #define fore(i, l, r)   for(int i = l; i <= r; ++i)
 #define all(v)          v.begin(), v.end()
 
-// mt19937                 rng(chrono::steady_clock::now().time_since_epoch().count());
-void initcode(){
-    FIO;
-    #ifndef ONLINE_JUDGE
-    freopen("cpp/input.txt", "r", stdin);
-    freopen("cpp/output.txt", "w", stdout);
-    #endif // ONLINE_JUDGE
+mt19937                 rng(chrono::steady_clock::now().time_since_epoch().count());
+void initcode() {
+	FIO;
+	// #ifndef ONLINE_JUDGE
+	// freopen("cpp/input.txt", "r", stdin);
+	// freopen("cpp/output.txt", "w", stdout);
+	// #endif // ONLINE_JUDGE
 }
 int gcd(int a, int b)
 {
-    if (b == 0)
-        return a;
-    return gcd(b, a % b);
+	if (b == 0)
+		return a;
+	return gcd(b, a % b);
 }
-int lcm(int a, int b) { return (a / gcd(a, b) * b); }
-
-int modularBinaryExponentitation(int base, int exponent){
-    if(exponent==0) return 1;
-    int val = modularBinaryExponentitation(base, exponent/2);
-    if(exponent%2)
-        return ((val*val)%mod*base)%mod;
-    else    
-        return (val*val)%mod;
+int lcm(int a, int b) {
+	return (a / gcd(a, b) * b);
+}
+int log_a_with_base_b(int a, int b){
+        return log2(a) / log2(b);
+}
+void print_graph(vector<vector<int>> adj){
+	forn(i,adj.size()){
+		cout<<i<<": ";
+		forn(j,adj[i].size()){
+			cout<<adj[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+}
+int modularBinaryExponentitation(int base, int exponent) { // compute (a^b)%mod efficiently using binary exponentiation
+	if(exponent==0) return 1;
+	int val = modularBinaryExponentitation(base, exponent/2);
+	if(exponent%2)
+		return ((val*val)%mod*base)%mod;
+	else
+		return (val*val)%mod;
 }
 
-signed main(){
-    int fact[1000005];
-    fact[0] = 1;
-    fore(i,1,1000004){
-        fact[i] = (i*fact[i-1])%mod;
+struct cmp {
+	bool operator()(const pii& p1, const pii& p2) {
+		return p1.second < p2.second;
+	}
+};
+
+
+int modinv(int b, int c){
+    return modularBinaryExponentitation(b, c-2);
+}
+signed main() {
+    initcode();
+    // n <= 1e5
+    // 0 <= b <= a <= 1e6
+    int n; cin>>n; 
+
+    // aCb = fact(a)/(fact(b)*fact(a-b))
+    // we can precompute the fact upto 1e6
+    vector<int> fact(1000005);
+    fact[0]=1;
+    fact[1]=1;
+    for(int i=2;i<1000005;i++){
+        fact[i] = (i * fact[i-1])%mod;
     }
-    w(t){
-        int n,r; cin>>n>>r;
-        int nfact = fact[n];
-        int rfact = fact[r];
-        int nMinusrFact = fact[n-r];
-        int ans = (((nfact%mod) * modularBinaryExponentitation(rfact,mod-2))%mod * modularBinaryExponentitation(nMinusrFact, mod-2))%mod;
-        cout<<ans<<endl;
+    while(n--){
+        int a,b; cin>>a>>b;
+        int numerator = fact[a]%mod;
+        int den_inv = modinv(((fact[b]%mod) * (fact[a-b]%mod))%mod, mod);
+        cout<<(numerator * den_inv)%mod<<endl;
+
     }
-    
-    
+
+
+
+
+    return 0;
 }

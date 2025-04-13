@@ -74,89 +74,61 @@ struct cmp {
 		return p1.second < p2.second;
 	}
 };
+int modinv(int b, int c){
+    return modularBinaryExponentitation(b, c-2);
+}
+
+struct Matrix{
+    int m[2][2];
+};
 
 
-// Approach 1: using the fact that all the divisors of n are symmetrical around sqrt(n)
-// TC: O(sqrt(x)), total TC for n queries : O(n*sqrt(x))
-// int solve(int a){
-//     int cnt = 0;
-//     // using the fact that all the divisors of n are symmetrical around sqrt(n)
-//     for(int i=1;i<=sqrt(a);i++){
-//         if(a%i == 0){ // i and a/i
-//             if(i==(a/i)) cnt++;
-//             else cnt+=2;
-//         }
-//     }
-//     return cnt;
-// }
+Matrix matrixMultiplication(Matrix A, Matrix B){
+    Matrix res;
+    res.m[0][0] = ((A.m[0][0]*B.m[0][0])%mod + (A.m[0][1]*B.m[1][0])%mod)%mod;
+    res.m[0][1] = ((A.m[0][0]*B.m[0][1])%mod + (A.m[0][1]*B.m[1][1])%mod)%mod;
+    res.m[1][0] = ((A.m[1][0]*B.m[0][0])%mod + (A.m[1][1]*B.m[1][0])%mod)%mod;
+    res.m[1][1] = ((A.m[1][0]*B.m[0][1])%mod + (A.m[1][1]*B.m[1][1])%mod)%mod; 
+    return res;
+}
 
-// Approach 2: Better than the previous approach
-// TC: O(sqrt(x)), total TC for n queries : O(n*sqrt(x))
-// int solve(int number){
-//     // Generating prime factorisation of a, given that every no other than 1 can be written as product of primes
-//     vector<int> powersOfPrimeFactors;
-    
-//     for(int i=2; i*i<=number; i++){
-//         if(number%i == 0){
-//             int power = 0;
-//             while(number%i == 0){
-//                 number/=i;
-//                 power++;
-//             }
-//             powersOfPrimeFactors.push_back(power);
-//         }
-//     }
-//     if(number != 1)
-//         powersOfPrimeFactors.push_back(1);
-    
-//     // evaluating the total no of divisors of n
-//     // assume n = p1^a1 X p2^a2 X p3^a3 
-//     // then total count factors count = (a1+1) X (a2+1) X (a3+1)
-//     int ans = 1;        // ans stores the total factors count
-//     for(auto i: powersOfPrimeFactors){
-//         ans = ans * (i+1);
-//     }
-//     return ans;
-// }
-
-// approach 3: You can use the same logic to solve sum of divisors or similar problems
-vector<int> divisors_cnt;
-
-void solve(){
-    divisors_cnt.resize(1000003,0);
-    int x = 1000000;
-    for(int i=1;i<=x;i++){ // outer loop runs x times
-        for(int j=i;j<=x;j+=i){ // inner loop runs logx times
-            divisors_cnt[j]+=1;
-        }
+Matrix matrixExponentiation(Matrix base, int pow){
+    if(pow == 0) {  // return Identity Matrix
+        Matrix I;
+        I.m[0][0] = 1; I.m[0][1] = 0;
+        I.m[1][0] = 0; I.m[1][1] = 1;
+        return I;
     }
-    // Total time complexity: O(xlogx)
+    Matrix temp = matrixExponentiation(base,pow/2);
+    if(pow%2)
+        return matrixMultiplication(matrixMultiplication(temp,temp),base);
+    else    
+        return matrixMultiplication(temp,temp);
+}   
+
+
+int fib(int n){
+    if(n==0) return 0;
+    if(n==1) return 1;
+
+    Matrix base;
+    base.m[0][0] = 1;
+    base.m[0][1] = 1;
+    base.m[1][0] = 1;
+    base.m[1][1] = 0;
+
+    Matrix res = matrixExponentiation(base,n-1);
+    return res.m[0][0];
+
 }
 
 signed main() {
     initcode();
     int n; cin>>n;
-    // n <= 1e5
-    // x <= 1e6
-    // approach1,2: O(n * sqrt(x))
-    // appraoch3: O(xlogx) + O(n)
-    
-    // precompute the divisors_cnt 
-    solve();
-    
-    while(n--){
-        int x; cin>>x;
-        // cout<<solve(x)<<endl;
-        cout<<divisors_cnt[x]<<endl;
-    }
+    cout<<fib(n)<<endl;
 
+    return 0;
 }
 
-// // precompute the no of divisors for all x's upto 1e6, then this way you will be able to answer each query in O(1)
-// total time complexity in this case would be O(x) + O(n)
 
-// 1   2   3   4   5   6   7   8   9   10
-// 1   1   1   1   1   1   1   1   1   1
-//     1       1       1       1       1
-//         1           1           1
-//             1               1 
+
