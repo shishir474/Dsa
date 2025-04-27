@@ -104,6 +104,10 @@ int n, m;
 // Everything is same, just added vis[][] to track the visited cells. Marking vis[][] false while backtracking is important, becuae there might exist a path that leads to the boundary, but uses a part of the path that we just explored.
 // Thus in order to handle those scenarios, we need to mark the cell unvisited while backtracking, in order to allow future paths to use those cells in its path
 // call from main -- dfs(startR, startC, 0, s)  [starting cell, curr_dist, path string]
+
+// When we are exploring all the possibitlies in a matrix, it is important to keep track of the cells we've vis in our curr path. What if the curr path reaches a dead end and we need to backtrack to explore other paths. 
+// There might exist a path which is not explored yet but uses a part of the prev vis path and if we hadn't marked it unvisited while backtracking, we could've never got through that path 
+
 bool dfs(int x, int y, int d, string &s){
     if(x==0 or x==n-1 or y==0 or y==m-1){
         return true;

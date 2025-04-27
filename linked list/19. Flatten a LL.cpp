@@ -13,96 +13,123 @@ Flatten the Link List such that all the nodes appear in a single level while mai
 Note: The flattened list will be printed using the bottom pointer instead of next pointer.
 Output:  5-> 7-> 8- > 10 -> 19-> 20->22-> 28-> 30-> 35-> 40-> 45-> 50.
 
-struct compare{
-    bool operator()(Node* a, Node* b){
-        return a->data>b->data;
-    }
+
+// Solution 1: Using Priority Queue(min heap)
+
+struct cmp{
+	bool operator()(const Node* a, const Node* b){
+		return a->data > b -> data;				// min heap comparator
+	}
 };
-
-Node* mergeKsortedLL(vector<Node *> &v){
-    int k = v.size();
-    priority_queue<Node*, vector<Node*>, compare> pq;
-    for(int i=0;i<k;i++){
-        pq.push(v[i]);
-    }
-    struct Node* st=new Node(-1); // dummy node;
-    struct Node* tail = st;
-
-    while(!pq.empty()){
-        struct Node* top = pq.top();
-        pq.pop();
-        tail->bottom = top;
-        tail = tail->bottom;
-        if(top->bottom) pq.push(top->bottom);
-    }
-
-  return st->bottom;
-}
-
-Node *flatten(Node *root)
+Node* flattenLinkedList(Node* head) 
 {
-   // Your code here
-   vector<Node* > v;
-   Node* temp =  root;
-   while(temp!=NULL){
-       v.push_back(temp);
-       temp = temp->next;
-   }
-   // IMPORTANT STEP
-   for (int i=0;i<v.size();i++){
-       v[i]->next=NULL;
-   }
-   
-   return mergeKsortedLL(v);
+	Node* start = new Node(-1);
+	Node* tail = start;
+
+	// priority_queue<Node*, vector<Node*>, cmp> pq;
+	priority_queue<Node*, vector<Node*>, cmp> pq;
+
+	Node* curr = head;
+	while(curr){
+		pq.push(curr);
+		// cout<<curr->data<<endl;
+		curr = curr->next;
+	}
+
+	while(!pq.empty()){
+		Node* top = pq.top();
+		// cout<<top->data<<endl;
+		pq.pop();
+		tail -> child= top;
+		tail->next = NULL;
+		tail = tail->child;
+		if(top->child){
+			pq.push(top->child);
+		}
+	}
+
+	tail->next = NULL;
+
+	return start -> child;
+
 }
 
 
 
+/*
+ * Definition for linked list.
+ * class Node {
+ *  public:
+ *		int data;
+ *		Node *next;
+ * 		Node *child;
+ *		Node() : data(0), next(nullptr), child(nullptr){};
+ *		Node(int x) : data(x), next(nullptr), child(nullptr) {}
+ *		Node(int x, Node *next, Node *child) : data(x), next(next), child(child) {}
+ * };
+ */
 
-
-
-
-
-solution 2:
-
-Node* merge(Node* root1, Node* root2){
-    if(!root1) return root2;
-    else if(!root2) return root1;
-    Node* res;
-    if(root1->data < root2->data){
-        res = root1;
-        res->bottom= merge(root1->bottom, root2);
-    }
-    else{
-        res =  root2;
-        res->bottom = merge(root1,root2->bottom);
-    }
-    res->next=NULL;
-    return res;
+Node* findMid(Node* head){      // have to find the first mid to handle even length list 
+	Node* slow = head, *fast = head->next;
+	while(slow and fast and fast->next){
+		slow = slow->next;
+		fast = fast->next->next;
+	}
+	return slow;
 }
-Node *flatten(Node *root)
+
+
+// merge 2 sorted lists on their child pointers 
+Node* mergeTwoSortedList(Node* head1, Node* head2){
+	Node* start = new Node(-1);
+	Node* tail = start;
+	
+	Node* t1 = head1, *t2= head2;
+	while(t1 and t2){
+		if(t1->data <= t2->data){
+			tail->child = t1;
+			tail = tail->child;
+			t1 = t1->child;
+		}
+		else{
+			tail->child = t2;
+			tail = tail->child;
+			t2 = t2->child;
+		}
+	}
+	if(t1){
+		tail->child = t1;
+	}
+	if(t2){
+		tail->child = t2;
+	}
+
+	return start->child;		// NOTE: we are merging the list on child pointer
+	
+}
+
+// Solution 2: Sequential merge O(N*K)
+Node* flattenLinkedList(Node* head) 
 {
-    if(!root || root->next==NULL) return root;
-    root->next = flatten(root->next);
-    Node* res = merge(root,root->next);
-    return res;
+	if(head==NULL or head->next==NULL) return head;
+
+	Node* right = flattenLinkedList(head->next);
+	head->next = NULL;
+	return mergeTwoSortedList(head, right);
 }
 
-Time Complexity: O(N*N*M) - where N is the no of nodes in main linked list (reachable using right pointer) and M is the no of node in a single sub linked list (reachable using down pointer). 
 
+// Solution 3: Used Divide and conquer, find mid, flattern left half, flatten right half and then merge left_flattened and right_flattened lists
+Node* flattenLinkedList(Node* head) 
+{
+	if(head==NULL or head->next==NULL) return head;
 
-
-
-Explanation: As we are merging 2 lists at a time,
-
-
-After adding first 2 lists, time taken will be O(M+M) = O(2M).
-Then we will merge another list to above merged list -> time = O(2M + M) = O(3M).
-Then we will merge another list -> time = O(3M + M).
-We will keep merging lists to previously merged lists until all lists are merged.
-Total time taken will be O(2M + 3M + 4M + .... N*M) = (2 + 3 + 4 + ... + N)*M
-Using arithmetic sum formula: time = O((N*N + N - 2)*M/2)
-Above expression is roughly equal to O(N*N*M) for large value of N
-
-Space Complexity: O(N*M) - because of the recursion. The recursive functions will use recursive stack of size equivalent to total number of elements in the lists, which is N*M.
-
+	Node* mid = findMid(head);		// we'll have to find the first mid(in case of even length list)
+	Node* right = mid->next;		// otherwise we'll be stuck and eventually get runtime error
+	mid->next = NULL;
+	// cout<<mid->data<<endl;
+	Node* left_flattened = flattenLinkedList(head);
+	Node* right_flattened = flattenLinkedList(right);
+	return mergeTwoSortedList(left_flattened, right_flattened);
+	
+}

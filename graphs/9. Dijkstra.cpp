@@ -23,11 +23,13 @@ int main(){
     // and since you are using a min heap, you will always get a higher cost node at a later stage
     // The base factor is you've processed a node a lower cost, you don't need to process it again a higher cost
     // Hence checkinf if the node is not visited, then only we visit it and process it
-    bool visited[n];
+
+
+    // We dont need visited array in djkstra implementation using PQ, since PQ already maintains the nodes in sorted fashion 
     int key[n];
 
     for(int i=0;i<n;i++){
-        key[i]=INT_MAX; visited[i]=false;
+        key[i]=INT_MAX; 
     }
 
 
@@ -38,19 +40,21 @@ int main(){
 
     while(!pq.empty()){
         int u = pq.top().second;
+        int d = pq.top().first;  // d is the cost at which we are reaching th uth vertex
+        // whereas dist[u] is the shortest cost through which we reach the uth vertex
+
         pq.pop();
 
-        // process the node only if it is not visited yet
-        if(!visited[u]){
-            visited[u] = true;
+        // if the curr cost > existing cost for reaching the uth vertex
+        if(d > dist[u]) continue;
 
-            for(auto it: adj[u]){
-                int v=it.first;
-                int wt=it.second;
-                if(!visited[v] and key[u]+wt<key[v]){
-                    key[v]=key[u]+wt;
-                    pq.push({key[v],v});
-                }
+        // process the node only if it is not visited yet
+        for(auto it: adj[u]){
+            int v=it.first;
+            int wt=it.second;
+            if(key[u]+wt<key[v]){
+                key[v]=key[u]+wt;
+                pq.push({key[v],v});
             }
         }
         

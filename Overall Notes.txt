@@ -12,3 +12,357 @@ LLD
 Behavioural interviews  
     https://github.com/ashishps1/awesome-behavioral-interviews - 50 questions
     Amazon LeaderShip Principles: https://www.amazon.jobs/content/en/our-workplace/leadership-principles
+
+
+
+Understanding the initcode() Function in Competitive Programming
+
+The initcode() function is a common utility function used in competitive programming to optimize input and output operations. Let’s break it down step by step.
+
+⸻
+
+---XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+Role of initcode()
+	1.	Fast Input & Output (ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);)
+	•	ios_base::sync_with_stdio(0); → Disables synchronization between C++ streams (cin/cout) and C streams (scanf/printf). This makes input and output operations faster.
+	•	cin.tie(0); → Unlinks cin from cout, preventing automatic flushing of cout before every cin. This reduces unnecessary delays.
+	•	cout.tie(0); → Ensures that cout is not flushed before cin, making output more efficient.
+
+
+    2.	File Redirection for Debugging (freopen())
+	•	This part is useful only when debugging locally. It redirects standard input/output to files (input.txt and output.txt).
+    
+        #ifndef ONLINE_JUDGE
+        freopen("cpp/input.txt", "r", stdin);
+        freopen("cpp/output.txt", "w", stdout);
+        #endif
+
+    •	#ifndef ONLINE_JUDGE ensures that this code runs only on your local machine and not in an online judge (like Codeforces, Leetcode, AtCoder).
+
+
+	3.	Avoiding Time Limit Exceeded (TLE)
+	•	Standard cin and cout are slow, especially when dealing with large inputs.
+	•	The initcode() function optimizes them, reducing execution time significantly
+
+
+What Happens Without initcode()?
+
+    Without initcode(), your program might run slower due to:
+        •	Slower I/O operations (because cin and cout interact with stdio buffers).
+        •	Unnecessary cout flushing before cin, adding extra time overhead.
+        •	Delayed input processing, leading to TLE (Time Limit Exceeded) errors in competitive programming.
+
+Key Takeaways
+
+    ✔ Always use initcode() in competitive programming to avoid TLE.
+    ✔ It optimizes input/output operations, making the program significantly faster.
+    ✔ Use file redirection (freopen()) for debugging locally but avoid it in online contests.
+    ✔ Works best when handling large input sizes (10^5 or more).
+
+---XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+---XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+Summary of ordered_set & ordered_multiset (Policy-Based Data Structure in C++)
+
+An ordered_set is an augmented Red-Black Tree from Policy-Based Data Structures (PBDS) in C++. It extends the functionality of std::set by adding index-based access.
+
+Declaration:
+
+#include <ext/pb_ds/assoc_container.hpp>  // these 2 are the includes that we get from gnu compiler for pbds 
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;                 // namespace for pbds
+
+template <typename T>
+using ordered_set = tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+
+Key Features
+	1.	Stores Unique Sorted Elements (like std::set)
+	2.	Efficient K-th Smallest Element Access
+	    •	find_by_order(k) → O(log N): Returns the k-th smallest element (0-based index).
+	3.	Efficient Order (Index) of a Key
+	    •	order_of_key(x) → O(log N): Returns the number of elements strictly less than x.
+	4.	Insertion & Deletion
+	    •	insert(x), erase(x): O(log N).
+
+
+Example Usage:
+
+ordered_set<int> s;
+s.insert(5);
+s.insert(10);
+s.insert(2);
+
+cout << *s.find_by_order(1) << endl; // 5 (1st index element)
+cout << s.order_of_key(10) << endl;  // 2 (2 elements < 10)
+
+Use Case: Josephus Problem, K-th order statistics, Range queries efficiently in O(log N).
+
+
+ordered_set (based on tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>) only stores unique elements, just like std::set.
+
+However, if you want to store duplicate elements, you can use ordered_multiset by modifying the comparator to allow duplicates.
+How to Store Duplicates in Ordered Set?
+
+Method 1: Use pair<T, int> to Differentiate Duplicate Values
+
+Since ordered_set requires unique elements, you can store pairs instead:
+
+using ordered_multiset = tree<pair<int, int>, null_type, less<pair<int, int>>, rb_tree_tag, tree_order_statistics_node_update>;
+
+ordered_multiset ms;
+ms.insert({5, 0});  // Insert (value, index)
+ms.insert({5, 1});  // Same value, but unique index
+ms.insert({10, 2});
+ms.insert({5, 3});
+
+cout << ms.order_of_key({5, -1}) << endl; // Count elements < 5
+cout << (*ms.find_by_order(2)).first << endl; // Get 2nd smallest element
+
+Key Takeaways
+	•	ordered_set only stores unique values (like std::set).
+	•	For duplicates, use ordered_multiset with pair<T, int> to differentiate values.
+
+
+Refer Salary Queries CSES
+
+Key Difference between Ordered_set and set
+You’re seeing TLE (Time Limit Exceeded) when using a normal set because it does not support fast order-statistics operations like:
+	•	order_of_key() – returns the number of elements strictly less than a given key.
+	•	find_by_order() – returns an iterator to the element at a given index.
+std::set
+	•	Time complexity for insert, erase, find, lower_bound, etc. is O(log n).
+	•	But if you want to count the number of elements less than or within a range, you have to use distance() on iterators (which can be O(n) worst-case), which leads to TLE.
+ordered_set (from PBDS)
+	•	Supports indexing like a vector.
+	•	order_of_key({x, INF}) → O(log n) count of elements less than {x, INF}.
+	•	find_by_order(k) → O(log n) access to kth element.
+	•	All basic set operations still stay O(log n).
+
+
+// Can also use sets to acheive this, but apparantly you cannot calculate the dist between iterators s.lower_bound({x-1,INF}) - s.begin() like this. You will have to use a distnace(first,second) function
+where first and second are the iterators and second must be reachable from first to calculate the distance between these iterators.
+In the worst case, distance function is O(n)
+This distance calculation is O(1) in ordered_sets,  but in normal sets we'll have to distance() to calculate the no of entries b/w 2 iterators 
+
+TL;DR       (Too Long; Didn’t Read.)
+
+Features                ordered_set (PBDS)          std::set
+basic operations            O(logn)                 O(logn)
+Get k-th element            find_by_order(k)        Not supported
+Count elements < x          order_of_key(x)         Manual, slow
+Best for Range counting     Yes                     No
+
+---XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+Iterators   (Bidirectional iterators vs Random access iterators):
+
+s.lower_bound() returns an iterator and s.begin() also returns an iterator. So why can't we use - to find the distance between them
+
+Great question! You’re absolutely right that both s.lower_bound() and s.begin() return iterators. The key issue is not that they aren’t iterators, but what kind of iterators they are.
+
+Let’s break it down:
+⸻
+🔍 std::set uses a Red-Black Tree internally
+Because of that, its iterators are bidirectional iterators, not random access iterators.
+⸻
+✅ Bidirectional Iterators
+Bidirectional iterators (like in std::set, std::map, std::list) support:
+	•	++it and --it
+	•	==, !=, *, ->
+But they do not support:
+	•	Arithmetic operations like it2 - it1
+	•	it[i]
+⸻
+❌ Random Access Iterator Required for it2 - it1
+Random access iterators (like those from std::vector, std::array, std::deque) do support it2 - it1, because their elements are stored in contiguous memory, and subtracting pointers makes sense.
+But in std::set, the elements are stored in a tree, and the iterator is just a pointer to a node somewhere in the tree, so subtracting two such iterators doesn’t make sense — hence the compiler error.
+⸻
+✅ Correct Way to Get Distance
+Since std::set’s iterators are only bidirectional, you have to use std::distance():
+int a = distance(s.begin(), s.lower_bound({x, -INF}));
+This will internally iterate over the tree nodes from s.begin() to the result of lower_bound, counting how many steps it takes.Hence the complexity of O(n) in the worst case 
+
+
+
+---XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+Using unique() to remove duplicates from a sorted array 
+
+To remove duplicates from an array (or vector) in C++ using STL, you can use the combination of std::sort() and std::unique() along with vector::erase().
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+int main() {
+    std::vector<int> v = {5, 3, 1, 2, 3, 2, 4, 5, 1};
+
+    // Step 1: Sort the vector
+    std::sort(v.begin(), v.end());
+
+    // Step 2: Use unique to move duplicates to the end
+    auto it = std::unique(v.begin(), v.end());
+
+    // Step 3: Erase the duplicates
+    v.erase(it, v.end());
+
+    // Output the result
+    for (int x : v) std::cout << x << " ";
+    return 0;
+}
+
+   after sorting 1 1 2 2 3 3 4 5 5
+    unique()     1  2  3  4  5  1  2  3  5  --> 
+                                it
+    auto it = unique() moves all the duplicates to the end and returns an iterator to the element that follows the last element that was not removed 
+    v.erase(unique(all(v)),v.end()) --> this will remove all your duplicates 
+
+    But note that: unique() only works if the array is sorted, since it moves consecutive duplicate elements to the end. 
+
+    Also unique() does not resize the array, so we might have to resize it on its own 
+    v.resize(distance(v.begin(),it));
+    used the distance() to compute the new size of the array 
+
+
+
+Removing duplicates from an array while preserving its order 
+
+If you want to remove duplicates while preserving the original order of elements in a vector, you can use a std::unordered_set or std::set to keep track of what you’ve already seen
+
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+
+int main() {
+    std::vector<int> v = {5, 3, 1, 2, 3, 2, 4, 5, 1};
+    std::unordered_set<int> seen;
+    std::vector<int> result;
+
+    for (int x : v) {
+        if (seen.find(x) == seen.end()) {
+            result.push_back(x);
+            seen.insert(x);
+        }
+    }
+
+    // Output the result
+    for (int x : result) std::cout << x << " ";
+    return 0;
+}
+
+
+
+
+// map vs unordered_map vs freq_array
+
+    // for unordered_map
+    //     Operation       Average case    Worst Case 
+    //     Insert             O(1)          O(N)
+    //     Find               O(1)          O(N)
+    //     Delete             O(1)          O(N)
+
+    // ⚠️ Why is Worst Case O(n)?
+
+    //     Because unordered_map uses hashing, and in rare cases:
+    //         •	All keys collide to the same bucket (due to bad hash function or malicious input).
+    //         •	The map ends up behaving like a linked list or a long chain.
+
+    //     However, in practice:
+    //         •	The average case is O(1) for all operations because of good hash functions and rehashing (automatic resizing of the internal bucket array).
+    //         •	Especially in competitive programming or Mo’s algorithm, worst-case rarely hits unless:
+    //         •	Hash collisions are forced.
+    //         •	Very large inputs with poor distribution.
+
+    // Insert / Find / Delete in unordered_map:
+    // 	•	✅ Average-case: O(1)
+    // 	•	⚠️ Worst-case: O(n), but rare in practice.
+
+
+    // map vs unordered_maps core difference
+    //     Feature                       map (std::map)                          unordered_map (std::unordered_map
+    //     Underlying DS                   Balanced BST (Red-Black Tree)           Hash Table
+    //     Time Complexity                 O(logn) for insert/find/delete          O(1) on average, O(n) worst-case
+    //     Ordered?                        Yes (sorted keys)                       No (random order)
+    //     Memory usage                    Lower                                   Higher due to hash table
+
+
+    // Why unordered_map is usually better for Mo’s Algorithm
+    //     1. Speed (O(1) vs O(log n))
+
+    //     In Mo’s Algorithm, we often call add() and remove() functions many times — especially when shifting the window.
+    //         •	Using map, each operation takes O(log n) time.
+    //         •	With unordered_map, it’s amortized O(1) — significantly faster when n is large or the number of queries is high.
+
+    //     2. We don’t need order
+
+    //     Mo’s Algorithm only cares about frequency counts — not the order of elements. So the ordering feature of map is wasted here.
+
+
+    // What does Amortized O(1) mean?
+    //     It means that on average, each operation takes constant time (O(1)), across a sequence of operations, even if some individual operations take longer.
+    //     Technical Example: 
+    //         vector::push_back()
+
+    //     	Most push_back() operations are O(1).
+    // 	•	But sometimes the vector has to resize (allocate new memory & copy everything).
+    // 	•	That resize takes O(n) time.
+    // 	•	However, resizing happens rarely (log(n) times for n inserts), so the average cost per push_back is O(1).
+
+    //         Hence:
+    //         👉 push_back() is amortized O(1).
+
+    //         🧠 In the context of unordered_map
+    // 	•	Most insert/find/erase operations are O(1).
+    // 	•	But if there’s rehashing (resize of internal hash table), that takes O(n).
+    // 	•	Since rehashing is rare, over many operations, the average time per operation stays constant.
+
+    //     So:
+    //     👉 unordered_map operations are amortized O(1).
+
+    //     ⸻
+
+    //     🔑 Key Takeaway
+
+    //         Amortized O(1) means you might pay a big cost once in a while, but on average per operation, it’s still constant time.
+
+
+
+    // ✅ Advantages of vector (freq array) over unordered_map
+    // Feature             vector<int> (freq array)                unordered_map<int, int>
+    // Access Time             O(1)                                    Amortized O(1), Worst-case O(n)
+    // Cache Friendliness      Excellent (contiguous)                  Poor (scattered in memory)
+
+    //     🤔 Why prefer a freq array over an unordered_map?
+
+    //     Once you’ve coordinate compressed your array, your values lie in a small range:
+    //     from 0 to n-1 (or distinct_values - 1).
+
+    //     ⚠️ When is unordered_map better?
+    //         If the values in your array:
+    //             •	Are very large (like up to 1e9)
+    //             •	Or not compressed to a tight range
+    //         Then using freq[value] would be memory inefficient or even crash.
+
+
+
+Always Prefer using DP vector instead of map 
+    Accessing and updating map<pii, int> is slow compared to using a vector, especially when you’re dealing with up to 2^n * n states (for n=20, it becomes 20 million+ states in worst case).
+    Refer to Hamiltonian Flights on CSES
+    here memoisation using map is giving TLE, but when memoised using dp vector, solution passes with flying colors
+
+
+🔑 What’s the difference between pop_back() vs erase(find(...))?
+    Mail Delivery CSES  
+Operation               Time Complexity                     Notes
+pop_back()                 O(1)                             Removes the last element in a vector O(1) constant time, very fast.
+erase(find(...))           O(N)                             Searches for the element and then shifts all elements -- slow for large vectors.
+
+
+Map Important Property :
+One imp thing about maps in cpp is they store the keys in the lexicographical order, not in the order in which they are inserted 

@@ -57,3 +57,18 @@ class Solution{
 
 extension problem:
 count distinct palindromic subsequences : LC HARD HAVENT SOLVED THIS ONE
+
+✅ Summary of Recurrence:
+
+    if (s[i] != s[j]) {
+        dp[i][j] = dp[i+1][j] + dp[i][j-1] - dp[i+1][j-1];
+    }
+    else {
+        // s[i] == s[j]
+        if (no s[i] inside i+1..j-1)
+            dp[i][j] = 2 * dp[i+1][j-1] + 2;
+        else if (only one s[i])
+            dp[i][j] = 2 * dp[i+1][j-1] + 1;
+        else
+            dp[i][j] = 2 * dp[i+1][j-1] - dp[low+1][high-1];
+    }

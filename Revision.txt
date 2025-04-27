@@ -1,0 +1,27 @@
+1. Interleaving strings
+    a. checking freq of char is not sufficient
+    b. length summatoin of s1 and s2 should match
+    c use recusive + memoisation technique to see if you are able to exhaust both s1 and s2 to form s3
+
+2. Median of 2 sorted arrays
+
+    sol1: merge both the sorted arrays and then find the median TC: O(n+m)
+    sol2: using binary search O(log(min(n,m))) to find the appropriate partition/cuts
+    apply binary search on the smaller arrray to find the right partition 
+    mid1 = (lo+hi)/2;
+    mid2 = half - mid1;
+    int aleft,aright,bleft,bright;
+    aleft = (mid1 == 0) ? INT_MIN : a[mid1-1];
+    aright = (mid1==a.size()) ? INT_MAX : a[mid1];
+    bleft = (mid2 == 0) ? INT_MIN : b[mid2 - 1];
+    bright = (mid2 = b.size()) ? INT_MAX : b[mid2];
+
+    right partition:    
+    aleft <= bright and bleft <= aright;
+
+3. Recursive problems:
+    tc evaluation
+    for sc: always consider the recursive stack space as welll
+
+3. count of distinct palindromic subsequences 
+    

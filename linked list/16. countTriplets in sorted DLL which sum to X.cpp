@@ -1,7 +1,20 @@
-// function to count triplets in a sorted doubly linked list
-// whose sum is equal to a given value 'x'
-int getLength(struct Node* head){
-    struct Node* t=head;
+#include <bits/stdc++.h> 
+/***********************************************
+
+    Following is the class structure of the Node class:
+
+    class DLLNode
+    {
+        public:
+        int data;
+        DLLNode *next;
+        DLLNode *prev;
+    };
+
+***********************************************/
+
+int getLength(DLLNode* head){
+    DLLNode* t=head;
     int len=0;
     while(t){
         len++;
@@ -10,35 +23,38 @@ int getLength(struct Node* head){
     return len;
 }
 
-struct Node* getTail(struct Node* head){
-    struct Node* t=head;
-    while(t->next != NULL) t=t->next;
-    return t;
-}
-
-int countTriplets(struct Node* head, int x)
+int countTriplets(DLLNode* head, int x)
 {
-        int ans=0,len=getLength(head);
-        struct Node* tail = getTail(head);
-        struct Node* t=head;
-        for(int c=1;c<=len-2;c++,t=t->next){
-            struct Node* l=t->next, *r=tail;
-            while(l!=r){
-                if(l->data + r->data == x-t->data){
-                    ans++;
-                    l=l->next;
-                    r=r->prev;
-                }
-                else if(l->data + r->data < x-t->data){
-                    l=l->next;
-                }
-                else{
-                    r=r->prev;
-                }
+    if(head == NULL) return 0;
+    
+    int cnt = 0;
+    
+    DLLNode* temp = head;
+    while(temp->next) temp = temp->next;
+    // temp points to your tail node
+
+    int len = getLength(head);
+    DLLNode* t1 = head;
+    int i = 0;
+    while(t1 and i < len-2){
+        DLLNode* t2= t1->next, *t3 = temp;
+        while(t2 and t3 and t2 != t3 and t2->prev != t3){      // in arrays, ensuring t2 < t3 is easy, but in linked lists the same can be represented via the conditions t2->prev != t3
+            int sum = t1->data + t2->data + t3->data;
+            if(sum == x){
+                cnt++;          // found 1 pair
+                t2 = t2->next;  // since list contains unique elements, update t2 and t3
+                t3 = t3->prev;
+            }
+            else if(sum < x){       // we need to increase the sum
+                t2 = t2->next;
+            }
+            else{       // we need to decrease the sum 
+                t3 = t3->prev;
             }
         }
+        i++;
+        t1 = t1->next;
+    }
 
-
-        return ans;
-    
-}
+    return cnt;
+}  

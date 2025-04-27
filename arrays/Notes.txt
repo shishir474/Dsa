@@ -1,0 +1,18 @@
+1. quick sort, paritition function  - complexity analysis
+2. Merge sort, merge two sorted arrays without any extra space (Gap method)     TODO
+
+3. MinJumpsToReachEnd       {vague logic}       Revisit
+4. Minimise the heights of towers    {extreme logic}     Revisit
+
+5   287. Find the Duplicate Number      
+    duplicate no represents the starting point of the cycle. use 2 pointers slow, fast to find the duplicate(floyd cycle detection algo)
+
+6. Interval based problems  {Revisit}
+
+7. next permutation logic 
+
+8. Moore Voting Algo            {Pending}
+    find majority element 
+
+
+

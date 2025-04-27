@@ -177,3 +177,19 @@ Finding a Centroid [Good Problem]
         TC: O(N) for computing the subtree size of each node 
         and O(N) for 2nd dfs call to find the centroid
         Overall: O(N) + O(N);
+
+
+
+Revision
+    Tree Matching -- 4 test cases failing  {Debug}
+    Tree Diameter: 
+        2 choices: diameter either can pass through the root, or will belong to any of it's subtree
+        Why dp array for storing depths? In order to avoid repeated calculations of max depth for each node in the calcDiamater()
+        getDepth() is repeateadly called in the calcDiamter()
+        We can also memoise the diamter results for each node. diameter[i] will represents the diamter of tree rooted at ith node 
+    Tree Distance 1     {Pending / doubt}
+    Tree Distance 2     {Pending}
+    Company Queries1 --> binary Lifing
+    Company Queries2 --> LCA (sol1: binaryLifting + binary search TC O(log2n), sol2: using binaryLifting TC: O(logn))
+    Distance Queries: --> distance between 2 nodes u and v is depth[u] + depth[v] - 2*depth[v]
+    

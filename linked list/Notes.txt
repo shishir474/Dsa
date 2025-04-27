@@ -1,0 +1,251 @@
+1. Remove duplicates from sorted ll [https://www.interviewbit.com/problems/remove-duplicates-from-sorted-list-ii/]
+    // at the end we need to set tail->next to NULL. If we have duplicates after tail node, not setting it's next will cause those duplicates to be considered as part of the final ans 
+
+2. remove duplicates from unsorted linked list.
+    // again at the end we need to set tail->next = NULL. Because if we have duplicates after tail in the original list, not setting tail's next will cause those duplicates to appear as part of your ans
+
+3. Add 2 numbers represented as a LL        {Excellent Problem}
+
+    reverse both the lists 
+    create a dummy node start, initialise tail with start 
+    initialise t1 and t2 to the heads of the reversed lists l1 and l2 
+    int carry = 0;
+    while (t1 and t2){
+        int sum = t1->val + t2->val + carry;
+        tail -> next = new ListNode(sum%10);
+        carry = sum/10;
+        tail = tail->next;
+        t1 = t1->next;
+        t2 = t2->next;
+    }
+    // either t1 will be not null or t2 will be not null 
+    // running a while loop cause, we are calculating sum and we need to propagate the carry forward to the next element in the seq 
+    while(t1){
+        int sum = t1->val + carry;          
+        tail -> next = new ListNode(sum%10);
+        carry = sum/10;
+        tail = tail->next;
+        t1 = t1->next;
+    }
+    while(t2){
+        int sum = t2->val + carry;          
+        tail -> next = new ListNode(sum%10);
+        carry = sum/10;
+        tail = tail->next;
+        t2 = t2->next;
+    }
+    // if at last carry is remaining, add that carry as well
+    if(carry){
+        tail -> next = new ListNode(carry);
+        tail = tail->next;
+    }
+    // now return the reversed linked list 
+    return reverseLL(start->next)
+
+4. Merge 2 sorted Linked Lists  {Excellent Problem}
+    
+    Here in the end after the while loop completes, you'll notice that we are not iterating over the remaining list of t1/t2
+    because, here we just need to append the elements. In the sum problem, we needed to calculate the sum and we might get some carry as well, which we'll need to propagate forward 
+    here it's just merging, and since both the lists are already given in the sorted format, appending the remaining sorted list will do the job 
+    
+    Node<int>* start = new Node<int>(-1);
+    Node<int>* tail = start;
+    
+    Node<int>* t1 = first, *t2 =second;
+    while(t1 and t2){
+        if(t1->data <= t2->data){
+            tail->next = t1;
+            tail = t1;
+            t1 = t1->next;
+        }
+        else{
+            tail->next = t2;
+            tail = t2;
+            t2 = t2->next;
+        }
+    }
+    // it might be possible that both t1 and t2 are NULL, hence using 2 separate if conditions
+    // if t1 remains
+    if(t1){
+        tail->next = t1;
+    }
+    // if t2 remains
+    if(t2){
+        tail->next = t2;
+    }
+
+    return start->next;
+
+    TC: of merging 2 sorted lists O(M + N) 
+
+5. Merge Sort Linked List   {Good Problem}
+    Application of merging 2 sorted lists 
+    TC: You’re dividing the linked list into two halves recursively (like standard Merge Sort), and then merging them.
+        findMid = O(n)
+        mergeTwoSortedLists = O(N)
+        recusive calls O(logn)
+        Overall O(NlogN)
+
+6. Check If Linked List Is Palindrome       {Excellent Problem}
+
+    Palindromes have a special property that they are summetric around the center. So if we reverse the second half, then it will be identical with the first half 
+    We'll use this property to determine whether a ll is a palindrome or not 
+
+    findMid(2nd half to handle even length lists)
+    reverse the 2nd half 
+    and compare the original first half and the reversed second half.
+    If they are identical, ll is a palindrome 
+
+7. QuickSort on Linked List         {Excellent Problem}
+
+    quick sort logic: 
+        Pick the pivot(usually considered as the last element of the array, you can consider any randome elemnent as your pivot)
+    	Rearrange the array so that:
+        •	Elements less than the pivot go to the left.
+        •	Elements greater than the pivot go to the right.
+        •	The pivot ends up in its correct sorted position.
+        Recursively apply the above steps to the left and right sub-arrays.
+        4. Base Case:
+	    •	When the sub-array has 0 or 1 element, it is already sorted.
+
+    Partition Function
+        We'll have an i pointer initally at -1
+        Iterate over the array from lo to hi-1, arr[hi] is your pivot 
+        compare arr[j] with arr[hi]
+        if(arr[j] <= arr[hi])   
+            it means arr[j] needs to be placed at the left end, so increase i and swap arr[i],arr[j]
+
+        In the end, perform one more swap arr[i+1],arr[hi] to place arr[hi] at its correct position
+        and finally return your pivot index i+1 
+
+        int partition(int arr[], int low, int high) {
+            int pivot = arr[high];       // pivot is the last element
+            int i = low - 1;             // index of smaller element
+
+            for (int j = low; j < high; j++) {
+                if (arr[j] <= pivot) {
+                    i++;                 // increment smaller element index
+                    swap(arr[i], arr[j]);
+                }
+            }
+            swap(arr[i + 1], arr[high]); // place pivot at correct position
+            return i + 1;                // return pivot index
+        }
+
+8. Count triplets in sorted DLL in which all elements are unique
+
+    Since the list is sorted, we can apply 2 pointer techinue just like array 3sum 
+    To ensure condition j < k in array, we can do the same in linked lists using t2->prev != t3. This ensures that out t2 pointer never crosses t3 in the inner while loop
+
+9. Sort K sorted DLL                {Excellent Problem}
+    The biggest question that comes to my mind is -- do we need to sort this in place ?
+    Yes, We need to do this inplace 
+
+    We'll use a min heap to solve this problem
+    Keep on adding elements to your min heap. The moment size of your heap > K (NOTE: pq.size() > k, not >= K, why because the element can be at most k distance away from its actual position)
+    Extract the top element of your heap and append it next to tail. Update tail->next = pq.top() and pq.top()->prev = tail
+    Since it is a DLL, remember to update both next and prev pointers.
+    Update tail to pq.top() 
+
+    at last set tail->next = NULL, to terminate the list 
+    before returning start->next also set start->next->prev = NULL.
+    In the end we must set the next of tail and prev of start to NULL to ensure proper clarity  
+
+    Why used pq? 
+        Whenever we're given some k factor in problem statement, think about priority queues 
+        Once the pq size becomes > K, the top eleement of your pq will be the next element in the sorted list 
+
+    TC: time required to insert and remove the elements from a pq of size k is O(logK),
+    since there are n elements in the pq, Overall tc: O(NlogK)
+
+    which is better than sorting the array O(NlogN)
+
+10. reverse a DLL in groups of size K       {Good Problem}
+
+11 Flatten a LL         {Excellent Problem}
+
+    This problem is excellent in terms of how we have optimised the solution. Started with a min heap based solution, then optimised the extra space by using a recusion based solution
+    Further optimised the recursion based solution using divide and conquer approach 
+    Instead of performing sequential merge, find mid, flatten the left half and right half and then merge both the half 
+    
+    You are given a ll where each node contains next and child pointers
+    Each sublist is sorted. You have to flatten this list and return the final list 
+    In the res list, ensure that all nodes are connected via the child pointer and their next pointers are set to NULL
+    
+    Solution 1:  Using Priority queue (it will track the min amongst all)
+
+        #include <bits/stdc++.h>
+
+        struct cmp{
+            bool operator()(const Node* a, const Node* b){
+                return a->data > b -> data;				// min heap comparator
+            }
+        };
+        Node* flattenLinkedList(Node* head) 
+        {
+            Node* start = new Node(-1);
+            Node* tail = start;
+
+            // priority_queue<Node*, vector<Node*>, cmp> pq;
+            priority_queue<Node*, vector<Node*>, cmp> pq;
+
+            Node* curr = head;
+            while(curr){
+                pq.push(curr);
+                // cout<<curr->data<<endl;
+                curr = curr->next;
+            }
+
+            while(!pq.empty()){
+                Node* top = pq.top();
+                pq.pop();
+                tail -> child= top;	// question states that all nodes should be connected by child pointers and next pointer should point to null
+                tail->next = NULL;
+                tail = tail->child;
+                if(top->child){
+                    pq.push(top->child);
+                }
+            }
+
+            tail->next = NULL;
+
+            return start -> child;
+
+        }       
+    
+
+    Solution Without Extra space           -- Important solution 
+
+    This solution:
+	•	Uses no extra space (no heap, no recursion stack beyond normal).
+	•	Only manipulates the given linked list.
+	•	Result is a flattened list using child pointers only and all next pointers are NULL.
+
+    Below solutions are similar to merging K sorted lists 
+    
+    solution 2: Using sequential merging: 
+        TC: O(n*K)          -- accepted 
+
+    Solution3: Using Divide and Conquer Approach and without extra space 
+
+    TC: O(NlogK)             -- accepted 
+
+    Approach                    Time Complexity             
+    Your recursive approach         O(n*k)
+    Divide & Conquer approach       O(nlogk)
+    Min Heap                        O(nlogk)
+
+12. Sort linked list of 0s 1s 2s            {Good Problem}
+    Inplace pointer manipulation
+
+NOTE: Try to delete the Dummy nodes wherever possible. This is a good practise 
+Use  -->  delete dummy_node; to free up the space 
+
+
+
+
+
+
+
+    
+

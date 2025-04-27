@@ -182,7 +182,7 @@ signed main() {
     
     // n vertices and n-1 edges
     // assuming that 1 is the root of the tree;
-    forn(i,n-1){
+    forn(i,n-1){                                // bidirectional edges
         int u,v; cin>>u>>v;
         adj[u].push_back(v);
         adj[v].push_back(u);

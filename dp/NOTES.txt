@@ -1,3 +1,11 @@
+Types of DP Problems
+    If a question is asking you to find this kind of problem    
+    Total no of ways, Maximum value/Maximum sum, Minimum value/Minimum sum
+
+    then it is a dp problem and you will have to use memoisation to avoid recomputation
+    Very good øptimisation technique:
+        
+
 1. palindrome partitioning variations -> 
     palindrome partitioning 1, 
     palindrome partitioning 2, 
@@ -8,14 +16,14 @@
 2. Count all Palindromic subsequences: Tricky Recurrence relation - Try to understand the logic via some youtube video behind this recurrence 
     Recurrance Relation:
 
-If s[i] == s[j], the number of palindromic subsequences is: count(i, j) = 1 + count(i + 1, j) + count(i, j – 1).
-The “+1” counts the new palindrome formed by s[i] and s[j].
-If s[i] != s[j], the relation becomes: count(i, j) = count(i + 1, j) + count(i, j – 1) – count(i + 1,j – 1)
-We subtract count(i + 1, j – 1) because it is counted twice.
+    If s[i] == s[j], the number of palindromic subsequences is: count(i, j) = 1 + count(i + 1, j) + count(i, j – 1).
+    The “+1” counts the new palindrome formed by s[i] and s[j].
+    If s[i] != s[j], the relation becomes: count(i, j) = count(i + 1, j) + count(i, j – 1) – count(i + 1,j – 1)
+    We subtract count(i + 1, j – 1) because it is counted twice.
 
-3.Jump game: Start from the i=n-2 and check if you can reach your target from this i. If you can, then your next step should be to check if you can reach this i(update the target to i) 
+3. Jump game: Start from the i=n-2 and check if you can reach your target from this i. If you can, then your next step should be to check if you can reach this i(update the target to i) 
     bcz if you can reach target from your current pos, then now the updated target for you is to reach your current pos becaue you already know that you can reach n-1 from here
-variations:
+    variations:
     Jump Game 2: determine the min no of jumps to reach end of array
     Take a window initially l=0,r=0 and try to expand each window. Traverse from l to r in the window and determine the farthest you can go in that window. That will be your r and update l = r+1 for the next iteration
     Jump Game 3,4 -> Done
@@ -43,7 +51,7 @@ variations:
     We could check this using hashset
     Overall time complexity reduced to O(n)
 
-Variation:
+    Variation:
     Count the number of arithmatic subarrays (Optmised using linear DP)
     Can use the above mentioned approach to check if the given subarray is an arithmatic sequence, but that will cost O(n^3) overall, since there are O(n^2) subarrays
     Can use O(n^2) approach to count the no of subarrays that forms an arithmatic seq ending at index i.
@@ -61,7 +69,6 @@ Variation:
     t1[i] stores the max sum of a subarray of length x ending at index i
     Similary, t2 gives us the max sum of subarray of length y starting at index i and built from right to left
     Our ans would be max(t1[i] + t2[i+1]) for i in range(x-1,n-y-1)
-
 
 8. LIS (longest increasing subsequence)
     O(nlogn) approach : used lower_bound because we need strictly increasing subsequence
@@ -83,7 +90,6 @@ Variation:
     
     3. 2407. Longest Increasing Subsequence II [Pending]
 
-
 9. 1027. Longest Arithmetic Subsequence
     Getting WA for my solution -> Debug this
     
@@ -98,7 +104,6 @@ Variation:
         In order to find out the if the current element is an even or odd index element, we will use a flag. flag 0 means it's an even index element and 1 means odd index element in our subsequence
 
     Maximum alternating subarray sum [Pending]
-
 
 10. Matrix DP
     Variation:
@@ -117,3 +122,194 @@ Variation:
             Similary yCount[i][j] represents the no of Y in matrix from cell (0,0) to cell(i,j)
             At a particular cell, we need to determine the no of X and Y that lies in the matrix from (0,0) to (i,j) .
             We need Equal no X and Y 
+
+11. String interleaving:
+    Obviously s1.length() + s2.length() should match s3.length();
+    the freq of the char's in s1 + s2 should match s3. This is also not sufficient, bcoz order of chars also matters.
+    checking lcs(s1,s3)==s1 and lcs(s2,s3)==s2. If this holds, it still doesn't guarantee that s3 is formed using s1 and s2 interleaving 
+    
+    simple Recursive intuition: 
+    lets have 3 pointers p1,p2,p3 for s1,s2,and s3
+    base case: if(p3 == s3.length()) return p1==s1.length() and p2==s2.length();            // p1 and p2 both needs to be at the end of s1 and s2 at this point
+    if(p1==s1.length()){    // p1 has reached s1's end. At this point, s2[p2] should match s3[p3]. If not return false;
+        if(s2[p2] == s3[p3]){
+            if(solve(p1, p2+1, p3+1)) return true;
+        }
+        else return false;
+    }
+
+    else if(p2 == s2.length()){
+        // at this point, s1[p1] must be equal to s3[p3]. If not return false;
+        ...
+    }   
+    else {      // neither p1 is at s1's end nor p2 is at s2's end 
+        compare s1[p1] and s2[p2] with s3[p3] and call recusion for the both, if their current char matches. 
+        If either of the recusive calls returns true, ans is true 
+
+        bool one=false, two=false;
+        if(s1[p1] == s3[p1]){
+            one = solve(p1+1,p2,p3+1) ;
+        }
+        if(s2[p2] == s3[p2]){
+            two = solve(p1,p2+1,p3+1)
+        }
+
+        return one || two;
+    }
+
+
+    // we can memoise this solution by using map<string,bool> mp 
+    where key = to_string(p1) + "$" + to_string(p2) + "$" + to_string(p3);
+    if(mp.count(key)) return mp[key]
+
+12. Count of distinct palindromic subsequences in a string 
+
+    LC 730 Hard 
+    
+    Summary of recurrence used
+    if (s[i] != s[j]) {
+        dp[i][j] = dp[i+1][j] + dp[i][j-1] - dp[i+1][j-1];
+    }
+    else {
+        // s[i] == s[j]
+        if (no s[i] inside i+1..j-1)
+            dp[i][j] = 2 * dp[i+1][j-1] + 2;
+        else if (only one s[i])
+            dp[i][j] = 2 * dp[i+1][j-1] + 1;
+        else
+            dp[i][j] = 2 * dp[i+1][j-1] - dp[low+1][high-1];
+    }
+
+    variations: 2484. Count Palindromic Subsequences {Revisit}
+
+13. 698. Partition to K Equal Sum Subsets
+
+    preliminary checks:
+        First condition: if we want to partition the array in to k equal sum subsets, then the sum(arr) % k == 0;
+        Second: Since there will be k subsets, each having max sum of total/k, max element of the arr couldn't exceed total/K
+            i.e max_element(arr) <= total/k;
+
+    we will create a subset_sums[k] initialised to 0, which will be used to track the sum of each subset 
+    Using recursion+ backtracking I'll try to place each eleemnet into one of the k subsets
+
+    We can place the ith element in jth subset only if subset_sum[j] + arr[i] <= total/k; 
+
+    void solve(int i){
+        for(int j=0;j<k;j++){
+            if(subset_sum[j] + arr[i] <= total/k){
+                subset_sum[j] += arr[i];        // place element in jth subset
+                if(solve(i+1)) return true;                     // calll recursion
+                subset_sum[j] -= arr[i]         // backtrack
+            }
+
+            if(subset_sum[j] == 0) break;       // if you are not able to place ith element in this empty subset, then you wont be able to place it any future subsets as welll
+                                                // imp optimisation
+        }
+
+        return false;
+    }
+    
+
+    Optimisation: also I have sorted the array arr in descending order, to ensure that we are first trying to place larger elements, to reduce the size of the recusion tree and to make the algo more fast 
+
+    Variation: 
+        416. Partition Equal Subset Sum
+        494. Target Sum (subset sum Difference)             {Revisit}
+            Sol1 : Getting WA when using logic of subset sum difference.Not able to figure out why?
+            
+            Sol2:  Implementation pending
+            
+            since we have to assign either + or - sign to each index element, we make recursive calls doing both 
+            in the base case (i >= arr.size()) : we'll check if the curr_sum == target. If yes, increase the global counter total_ways += 1
+
+            solve(idx, curr_sum){
+                if(idx == arr.size()){
+                    if(curr_sum == target) count++;
+                    return;
+                }
+                // either I can assign + or -ve sign to currnet index element
+                solve(idx+1, curr_sum + arr[idx]);
+                solve(idx+1, curr_sum - arr[idx]);
+            }
+
+            memoise this solution on (idx, curr_sum)
+            idx varies from (0 to n-1) 
+            curr_sum ranges from [-total_sum, + total_sum]
+            hence tc; O(n * 2* total_sum)
+
+        2035. Partition Array Into Two Arrays to Minimize Sum Difference        {Todo}
+
+
+14. 377. Combination Sum IV
+
+    nums = [1,2,3], target = 4
+    count the number of combinations. Note(1,2,1) and (1,1,2) are considered different 
+    The trick here is the function signature. If we use idx in the function parameter, it signifies we are moving in the forward direction from left to right, which removes the flexibility to reuse the prev elements
+    Instead run entire loop from i=0;i<arr.size();i++ and make recursive calls with reduced target values.
+    Base case: if target becomes 0, you have found 1 possible combination
+    other base case: if target > 0, but i>=arr.size() which means you have exhaused the entire array, return 0(no combinations possible)
+
+    🚫 What’s wrong with your current code?
+    int solve(int idx, int target, vector<int> &arr)
+
+    This assumes you’re moving index forward, which removes flexibility to reuse elements in any order.
+	You’re not exploring all possible permutations — just combinations from left to right.
+
+    ✅ If you want a top-down recursive + memoization version:
+    int solve(int target, vector<int> &nums) {
+        if (target == 0) return 1;
+        if (t[target] != -1) return t[target];
+
+        int res = 0;
+        for (int num : nums) {
+            if (target >= num)
+                res += solve(target - num, nums);
+        }
+
+        return t[target] = res;
+    }
+
+    int combinationSum4(vector<int>& nums, int target) {
+        memset(t, -1, sizeof(t));
+        return solve(target, nums);
+    }
+
+
+801. Minimum Swaps To Make Sequences Increasing  {Todo}
+
+1240. Tiling a Rectangle with the Fewest Squares    {Pending / Highly complex, need to try again}
+    Determine min squares required to tile this rect.
+
+    My understanding: minCuts + 1 = min sqaures to tile rectangle, but this is not true 
+    Counter test case: n=11, m=13 
+    minCuts = 7 so with my logic, min squares should be 7 + 1 = 8
+    but Min Squares to tile rectangle = 6
+
+    Hence this 2 are completely different problems 
+
+    Variation : Rectangle Cutting CSES (determine min cuts required to break rect into squares)
+        
+        hint: If you are given a rect of size a X b (a length and b is width)
+        If you choose to cut along b, you can cut at any pos from i=1 to i<=b-1 (vertical cut)
+            and your problem is reduced to solve(a,i) and solve(a,b-i);
+        Similary, If you choose to cut along a,             (horizontal cut)
+            your problem is reduced to solve(i,b) and solve(a-i,b);
+
+        you have 2 choices -- either you can make a vertical cut or horizontal cut at each point 
+        for both choices, you have multiple possiblities(where you want to apply that cut)
+
+174. Dungeon Game   {Good problem}
+    find the min health that you should start with from the top left corner and reach the bottoom right corner of the matrix. Ensure your health remains > 0 at every point 
+
+871. Minimum Number of Refueling Stops {Pending}
+
+474. Ones and Zeroes            {Revisit}
+    not clear on the Base condition 
+
+673. Number of Longest Increasing Subsequence {Good Problem}
+    apart from tracking lis[i], also track cnt[i] i.e no of subsequences ending at index i with lis = lis[i]
+    lis(arr) = max(lis[i]) for all i between 0 to n-1
+    total no of lis will be sum of cnt[i] for all i between 0 to n-1 where lis[i] = maxLis
+
+    finding actual lis vector or lis length --> TC: O(logN)
+    another solutoin: O(n^2) approach

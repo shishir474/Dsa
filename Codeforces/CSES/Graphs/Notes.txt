@@ -839,3 +839,8 @@ Core Algorithms: https://blog.algomaster.io/p/master-graph-algorithms-for-coding
 10. Max Flow Algorithm 
 
     
+
+Revision:
+    Teleporter paths, Mail Delivery - TLE on 1 test case
+    Knight Tour's   -- warnsdorff heurestic, (sort the next possible moves based on their onward moves cnt ? )      revistit
+    Hamiltonian Paths -- use DP array instead of mp for memoisation. maps gives TLE and are highly unoptimised

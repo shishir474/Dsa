@@ -34,11 +34,10 @@ void initcode() {
 
 // Structure to represent a cell in the priority queue
 struct cell {
-    int distance, node, len;
-    cell(int d, int sv, int length) {
+    int distance, node;
+    cell(int d, int sv) {
         distance = d;
         node = sv;
-        len = length;
     }
 };
 
@@ -68,14 +67,13 @@ void djkstra() {
 
     // Priority queue to process nodes in order of increasing distance
     priority_queue<cell, vector<cell>, cmp> pq;
-    pq.push(cell(0, 1, 0)); // Push the starting node with distance 0 and length 0
+    pq.push(cell(0, 1)); // Push the starting node with distance 0 and length 0
 
     while (!pq.empty()) {
         // Extract the node with the smallest distance
         cell c = pq.top();
         int d = c.distance;
         int u = c.node;
-        int len = c.len;
         pq.pop();
 
         // If the extracted distance is greater than the current known distance, skip
@@ -91,12 +89,11 @@ void djkstra() {
                 count[v] = count[u]; // Reset the count of shortest paths
                 minLenArr[v] = minLenArr[u] + 1; // Update the minimum length
                 maxLenArr[v] = maxLenArr[u] + 1; // Update the maximum length
-                pq.push(cell(dist[v], v, len + 1)); // Push the updated node into the queue
+                pq.push(cell(dist[v], v)); // Push the updated node into the queue
             }
             // If another path with the same distance is found
             else if (d + wt == dist[v]) {
-                count[v] += count[u]; // Increment the count of shortest paths
-                if (count[v] >= mod) count[v] -= mod; // Handle large counts to prevent overflow
+                count[v] = (count[v] + count[u])%mod; // Increment the count of shortest paths
                 minLenArr[v] = min(minLenArr[v], minLenArr[u] + 1); // Update the minimum length
                 maxLenArr[v] = max(maxLenArr[v], maxLenArr[u] + 1); // Update the maximum length
             }
