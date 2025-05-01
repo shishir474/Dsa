@@ -109,6 +109,36 @@ void dfs(int sv, int parent){
 // }
 
 
+// ⏱️ Time Complexity
+// 🧠 Key Optimization:
+// if (colors[nb].size() > colors[sv].size())
+    // swap(colors[nb], colors[sv]);
+
+//     This ensures that you’re merging the smaller set into the larger set, which is crucial for avoiding TLE.
+
+// This technique is similar to DSU’s union by size.
+
+
+// 🧩 Without optimization:
+// 	•	Merging two sets of size a and b takes O(b log a) time in worst case.
+// 	•	Without optimization, total time could go up to O(n² log n) in the worst case — when merging large sets repeatedly (which leads to TLE).
+
+// 🧠 With Optimization (Union by Size):
+// 	•	This is a well-known amortized trick.
+// 	•	If you always merge smaller set into larger one:
+// 	•	    Each color is moved across sets at most O(log n) times.
+//     ✅ So each insertion colors[u].insert(x) is done at most O(log n) times.
+
+// → Total insertions over all nodes = O(n log n)
+
+// → Each insertion in a set takes O(log n), so:
+
+// ✅ Final Time Complexity:
+// O(n log² n)
+// ✅ Acceptable for n ≤ 2 * 10^5
+
+// SC: O(n + nlogn) 
+// n for adj list and nlogn for colors[]
 
 signed main() {
     initcode();
@@ -123,6 +153,10 @@ signed main() {
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
+    
+    // You’re using:
+	// •	A post-order DFS traversal.
+	// •	A clever optimization: merge smaller set into the larger one to avoid TLE.
     
     dfs(0,-1); // 0 is the root
     forn(i,n) cout<<ans[i]<<" ";

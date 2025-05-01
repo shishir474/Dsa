@@ -123,6 +123,8 @@ void dfs(int node, int parent){
 }
 
 
+// Important: The way start time and end time is assigned in euler tour especially to the leaf nodes, depends on the problem statement.
+// Here in this problem, we assigned same time as the start and end time for leaf nodes. In some problems, start and end time differs by 1 
 signed main() {
     initcode();
     int n,q; cin>>n>>q;

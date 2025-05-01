@@ -120,6 +120,8 @@ int queryTree(int index, int lo, int hi, int l, int r){
 	return left + right;
 }	
 
+
+// The only difference between this problem and Subtree Queries(prev problem) is whether we increment the timer after assigning end time or not.
 signed main() {
     initcode();
 	int n,q; cin>>n>>q;

@@ -76,46 +76,68 @@ struct cmp {
 };
 
 vector<vector<int>> adj;
-vector<int> nodescnt, subtreeAns,ans;
+vector<int> subtreeSize, dp, ans;
+int N;
 
-int evalNodeCount(int sv, int parent){
-    int total = 0;
+
+// first DFS (Postorder Traversal):
+// calculate:
+    // subtreeSize[u] stores the no of nodes in the subtree rooted at node u, including u
+    // dp[u] stores the sum of distances from u to all the nodes, it its subtree 
+void dfs(int sv, int parent){
+    subtreeSize[sv] = 1;
     for(auto nb: adj[sv]){
         if(nb!=parent){
-            total += evalNodeCount(nb,sv);
+            dfs(nb,sv);
+            subtreeSize[sv] += subtreeSize[nb];
+            dp[sv] += (dp[nb] + subtreeSize[nb]);
         }
     }
-    return nodescnt[sv] = total+1;
 }
 
-// returns subtreeAns(i) for subtree rooted at node i
-int evalSumOfDistance(int sv, int parent){
-    int ans = 0;
+// Rerooting technique
+// moving root from a node to its child, and updating the distance sums smartly
+// When you move root from parent to child, the distances to nodes in the child's subtree decreases by 1, and distances to all the other nodes outside child's subtree increases by 1 
+// net change: (-1 * num_of_nodes_child_subtree) + (n - num_of_nodes_child_subtree)*1
+// Since subtreeSize[child] = num_of_nodes_child_subtree 
+// hence , net change n - subtreeSize[child] - subtreeSize[child]
+// n - 2*subtreeSize[child]
+void dfs2(int sv, int parent){
     for(auto nb: adj[sv]){
-        if(nb!=parent){
-            ans += evalSumOfDistance(nb,sv)+nodescnt[nb];
+        if(nb != parent){
+            ans[nb] = ans[sv] + (N - 2*subtreeSize[nb]);
+            dfs2(nb, sv);
         }
     }
-    return subtreeAns[sv] = ans;
 }
 
 signed main() {
     initcode();
     int n; cin>>n;
+    N = n;
     adj.resize(n+1);
     forn(i,n-1){
         int u,v; cin>>u>>v;
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
+    
+    subtreeSize.resize(n+1,1);      // subtreeSize(node) represents the size of the subtree rooted at node, including node 
+    
+    dp.resize(n+1,0);           // dp[node] stores the sum of distances from node to all other nodes, in its subtree.
+    //  Initialising it with 0 --> Imp
 
-    nodescnt.resize(n+1,-1);
-    subtreeAns.resize(n+1,-1);
+    dfs(1,-1);      // node,parent              1st dfs call to compute subtreeSize[node] & dp[node]
 
-    // assuming the tree is rooted at 1 -- actually it doesn't matter which node is considered a root
-    evalNodeCount(1);
-    int ans = evalSumOfDistance(1,-1);
-    cout<<ans<<endl;
+    ans.resize(n+1, -1);                        // ans[node] stores the sum of distances from node to all nodes in tree
+
+    ans[1]= dp[1];                              
+    dfs2(1,-1);
+    
+    for(int i=1;i<=n;i++){
+        cout<<ans[i]<<" ";
+    }
+    cout<<endl;
 
     return 0;
     

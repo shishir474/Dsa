@@ -92,6 +92,17 @@ int findCentroid(int sv, int parent){
     else return findCentroid(node, sv);
 }
 
+// We'll need to 2 DFS calls
+// 1t dfs() to find the subtree size rooted at each node --> this will take O(n) 
+// 2nd dfs() to find centroid --> this will take O(logn) time 
+        // Why logn?
+            // I will first check the size of root's child subtrees. and if the max size of its child;s subtrees <= N/2. Root is your centroid
+            // if not, we will recurse to the child whose subtree size > N/2 & we can only have at most 1 subtree whose size is > N/2
+            // bcoz if we have 2 subtrees with size > N/2, then the total no of nodes will become > N which is not possible.
+            // So essentially, during each recursive call, tree size is getting reduced by half. FIrst N, then N/2, then N/4 and so on
+            // Hence Logn
+// Overall Time Complexity : O(n + logn) = O(n)
+
 signed main() {
     initcode();
     int n; cin>>n;
@@ -103,6 +114,42 @@ signed main() {
         adj[v].push_back(u);
     }
     subtree.resize(n+1,0);
+
+// 🔍 Can you use the Rerooting technique to find the centroid?
+
+// No — rerooting is not the best or natural choice for centroid finding.
+// Here’s why:
+
+// ⸻
+
+// 🧠 Rerooting Technique:
+
+// Used when you want to:
+// 	•	Calculate a value for each node as if it’s the root (e.g., distance sum, subtree size, DP, etc.).
+// 	•	It’s useful when you want to compute values for all nodes after computing it for one node efficiently.
+
+// 📌 But centroid is:
+// 	•	A single node with a specific structural property.
+// 	•	You don’t need per-node DP or rerooting — you just want the one node whose largest child subtree is ≤ N/2.
+
+
+// Your Current Centroid Logic:
+//     Start from the root, check the size of the child's subtree and find the max size
+// If maxSize <= N/2
+// 	Root is your centroid
+// If not, then you can recurse to the child which has the largest subtree size 
+
+// If the largest subtree size was <= N/2, then sv would have been your centroid, but since this is not true
+// I.e the largest subtree size was > N/2, our centroid will lie in this subtree
+
+// Total nodes: N
+// Size of largest child subtree > N/2
+// Hence, Size of the remaining subtree excluding the largest child subtree will be < N/2. 
+// This part is fine, we don’t need to worry about it.
+// We just have to focus on the subtree whose size > N/2
+
+
+
 
     // We;ll perform 2 DFS
     // 1st to calculate subtree sizes O(N)

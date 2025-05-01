@@ -1,3 +1,15 @@
+Finding Diameter : O(n)
+Finding LCA(u,v) : O(logn)
+Binary Lifting 
+    Precomputation: O(n*20) which is O(n)
+    liftNode(u,k) O(logk) --> in worst case O(logn)
+evalDepth() --> O(n) using dp[] 
+evalSubtreeSize() --> O(n) using dp[]
+
+
+
+
+
 Subordinates:
     Simple recursion, used memoisation to optimise
 
@@ -5,7 +17,9 @@ Tree Matching [Excellent Problem]
     Recursion + Memoisation 
     optimisation trick : calculated prefix and suffix sums to find sum from (0 to i-1) and (i+1 to n-1) in O(1)
     
-Tree Diameter 
+Tree Diameter       -- evaluting diameter       
+                            sorting method takes O(nlogn)
+                            manually traversing the heights[] to find best 2 heights : O(n)
     Recursion + memoisation
     Took tree as an() input in adj list just like graph(UG). 
     Recursion Logic: If the diamter passes through the root, ans would be 2+max 2 depths of its subtrees, if only 1 subtree exists then 1+subtree's depth and if no subtree then 0
@@ -15,69 +29,146 @@ Tree Diameter
 
 
 Tree Distance 1 [Excellent Problem] 
+    Uses tree's diameter concept. The farthest distance of a node will be its distance from either of the endpoints of the diameter 
+    We first find the 2 endpoints of the diameter. 
+    Start a dfs(1) from 1 assuming 1 is the root, to find the farthest possible node. Keep track of the distance of each node from sv 
+    after the dfs call, iterate over the dist[] to find the max dist and the corresponding node
+    Start another dfs(u) and find the farthest possible node. lets call it v. Again use a dist_u[] to keep track of the distance of each node from u 
+    Final dfs(v) to get the distance of each node from v 
+
+
+
     N<=1e5, so we have to come up with O(N) or O(NlogN) approach
-    Brute force approach: O(n^2) For every node I would perform a bfs/dfs and track the distance I've travelled. N nodes and for each node O(n) time.
-    Task is to determine for each node the maximum distance to another node.
-    Precomputed the depth of tree at each node in O(n)
-    Used prefixMax and suffixMax array to get the max value from the left and right in O(1)
-    in addition to sv & parent, we also propagated partial_ans variable which helps us in computing ans for each node
-    partial_ans for a node is the 1 + max depth of any of its siblings
+    Brute force approach: 
+        O(n^2) For every node I would perform a bfs/dfs and track the distance I've travelled. N nodes and for each node O(n) time.
+        ans for each node is essentially the depth of the tree rooted at that node. So if we evalute the depth of the tree considering each node as root, then we'll be compute the ans.
+        But evaluating depth of a tree is O(n) operation, and performing this n times considerign each node as root, will lead to O(n^2) solution
+
+    Sol1: (more intuitive)
+        •	In a tree, the longest path between two nodes is called the diameter of the tree.
+        •	For a node u, its maximum distance to any other node is either:
+        •	Distance to one endpoint of the diameter
+        •	Or distance to the other endpoint
+
+        ✅ So basically:
+            •	Find two farthest points in the tree (the two endpoints of the diameter).
+            •	Then for each node, maximum distance = max(distance to endpoint1, distance to endpoint2)
+
+    Sol2 : (less intuitive)
+        Task is to determine for each node the maximum distance to another node.
+        Precomputed the depth of tree at each node in O(n)
+        Used prefixMax and suffixMax array to get the max value from the left and right in O(1)
+        in addition to sv & parent, we also propagated partial_ans variable which helps us in computing ans for each node
+        partial_ans for a node is the 1 + max depth of any of its siblings
 
 
-Tree Distance 2 [Excellent Problem] [Pending]
+Tree Distance 2 [Excellent Problem] 
+    precomputations + rerooting technique
+
     Task is to determine for each node the sum of the distances from the node to all other nodes.
     N <= 1e5, so we need to find an O(N) or O(NlogN) solution
-    Very first thought, if we find distance b/w every pair of nodes(using floyd O(n^3)), that can help. But this is inefficient
-    or Run a DFS N times for each node and calculate the sum of distance for each node --> This is O(N^2), O(N) for each DFS call and there are N nodes
-    DP on trees solution:
-        If I know subtreeAns for node 2 and 3, I can use that to evaluate answer for node 1
-        subtreeAns(i) => only considers he subtree rooted at node i and ignores the parent and rest of the other nodes
+    Sol1: Very first thought, if we find distance b/w every pair of nodes(using floyd O(n^3)), that can help. But this is inefficient
+    Sol2: or Run a DFS N times for each node and calculate the sum of distance for each node --> This is O(N^2), O(N) for each DFS call and there are N nodes
+    
+    Sol3: 
+    🔥 Key Idea:
 
-        Here subtreeAns(2) is sum of distance of all nodes in the subtree of node 2 i.e 1+1=2. subtreeAns will not consider all the nodes, it will only take into account the subtree nodes
-        Evidenlty subtreeAns(1) is equivalent to ans(1)
-                
-                1
-            2
-        3       4
+    Instead of recomputing distances from scratch for every node (which would be too slow), we use two DFS traversals:
 
+    1. First DFS (Postorder Traversal):
+        •	Calculate:
+        •	subtree_size[node]: How many nodes are there in the subtree rooted at node.
+        •	dp[node]: Sum of distances from node to all nodes in its subtree.
 
-        For instance, if we consider the below tree as an input
-        subtreeAns(2) = 0
-        subtreeAns(3) = 2
-        For subtree rooted at node 3, one thing to notice is the nodes which are at a distance of x from 3 in its subtree, are at a distance of 1+x from 1
-        Obviously, you will have to travel that edge from 1 to 3 and thus 1 will be added to all the nodes distance
+    ⸻
 
-        Distance from 3: 0 1 1
-        Distance from 1: 1 2 2
-        1 is added in the distance for all the nodes 
-        So if we also know the count of nodes for subtrees rooted at each node (let's say n, then we can add n-1 ones)
+    2. Second DFS (Rerooting Technique):
+        •	Move the root from a node to its child and update the distance sums smartly.
+        •	If you know the answer for a node, you can compute the answer for its children in O(1) time.
 
-        subtreeAns(3) = 2
-        nodes(3) = 3
-        3 + 2 = 5 from node 1
+    The core idea:
+    ans[child] = ans[parent] + (n - 2 * subtree_size[child])
+    (When you move the root from parent to child, distances to nodes in child’s subtree decrease by 1, and distances to nodes outside child’s subtree increase by 1.)
 
-            1
-        2       3
-              4    5
+    🚀 Plan:
+	•	First DFS:
+	        Compute dp[node] and subtree_size[node]
+	•	Second DFS:
+	        Reroot and compute final answers for all nodes
+    
+    Time Complexity:
+	•	First DFS: O(n)
+	•	Second DFS: O(n)
+	•	Total: O(n) ✅
 
-        So we need subtreeAns for each node, count of nodes for each subtree
+    ⚡ Final Key:
+    Step         What it does
+    dfs1         Find subtree sizes and initial distances
+    dfs2         Use rerooting to find answer for every node
 
+    dp[u] += dp[v] + subtree_size[v];
+    can you explain how this condition holds true?
 
-            1
-        c1      c2
-        subtreeAns(1) = [subtreeAns(c1) + nodes(c1)] + [subtreeAns(c2) + nodes(c2)]
-        and subtreeAns(1) is equivalent to ans(1)
+        🧠 First, Recall What dp[u] and subtree_size[u] Mean:
+            •	dp[u]: The sum of distances from node u to all nodes in its subtree.
+            •	subtree_size[u]: The total number of nodes in the subtree rooted at u, including u itself.
 
+        🔥 Now, let’s break it down:
 
+            When you’re doing DFS from u to v, v is a child of u.
+            You already know:
+            •	dp[v] → The sum of distances from v to all nodes in its subtree.
+            •	subtree_size[v] → The number of nodes in the subtree rooted at v.
 
+            Now, when you’re at u and you want to merge the information from v into u:
+            •	To reach any node in the subtree rooted at v starting from u, you must:
+            •	Move one extra step from u to v, and
+            •	Then from v to the destination node.
 
+        So:
+
+        ✅ For each node in v’s subtree:
+        	•	The distance from u = (1 step to v) + (distance from v to that node
+        Thus:
+        	•	The total extra distance = subtree_size[v] (because you add 1 for each node
+        dp[u] += dp[v] + subtree_size[v];
+        means:
+        	•	Add all the distances already calculated from v (dp[v]),
+        	•	Plus 1 step for each node in v’s subtree (subtree_size[v]).
+
+    
+    Proof : ans[child] = ans[parent] + (n - 2 * subtree_size[child])
+
+        Suppose:
+        •	n = total number of nodes
+        •	subtree_size[child] = number of nodes inside the subtree rooted at child
+        •	Thus, n - subtree_size[child] = number of nodes outside the subtree
+        
+        When moving the root from parent to child:
+        •	For each node in the child’s subtree:
+        •	Distance decreases by 1 → total effect = -subtree_size[child]
+        •	For each node outside the child’s subtree:
+        •	Distance increases by 1 → total effect = +(n - subtree_size[child])
+
+        ✍️ Total change in distance sum:
+        Total Change = (nodes outside child) + (nodes inside child)
+                = (n - subtree_size[child]) - subtree_size[child]
+                = n - 2 * subtree_size[child]
+
+        Thus,
+        ans[child] = ans[parent] + (n - 2 * subtree_size[child]);
 
 
 Company Queries 1
+    binary lifting 
+        precomputation : O(n+1 * 20)  approx O(n) operation
+        liftNode(u,k): O(logK) operation
+
     Binary Lifting: If I precompute 2^ith parent for each node then I can easily compute kth parent for each node 
 
-Company Queries 2 [Excellent Problem] [Pending]
-    Based on LCA 
+Company Queries 2 [Excellent Problem] 
+    Finding LCA -- O(logn) operation
+
     LCA(lowest common ancestor) in logN time
     LCA(u,v) ==> the node at the lowest level which is common in the path from u to root and v to root is the LCA
     level(lca(u,v)) <= min(level(u),level(v))
@@ -100,8 +191,6 @@ Company Queries 2 [Excellent Problem] [Pending]
     We can apply binary search to find the lca node, lets say for mid m, we take a jump from new_u and V. if we reach the same node, that node could be our lca and we update our range [1, mid-1] to find the best possible answer 
     else [mid+1,level(newU)]
 
-
-
 Distance Queries
     Based on LCA
     q queries --> have to evaluate the distance b/w 2 nodes u and V
@@ -109,7 +198,7 @@ Distance Queries
     dist(u,v) = depth[u] + depth[v] - 2*depth[lca]
 
 
-Counting paths
+Counting paths              {Excellent Problem}
     Based on LCA 
     Some standard properties of a tree:
     1. There always exists a unique path b/w 2 nodes u and V
@@ -180,16 +269,75 @@ Finding a Centroid [Good Problem]
 
 
 
+Centroid decomposition [Pending]
+https://www.youtube.com/watch?v=w_kmxeeEv5c&ab_channel=LearntoCodewithCodeChef
+
+What is a centroid?
+
+
+Properties:
+For any given tree, the centroid always exists
+    start with any arbitrary vertex and check whether it satisfies the property. If yes, we're done, otherwise there exists only one adjacent subtree with more than N/2 nodes.
+    Consider the adjacent vertex u in that subtree and apply the same argument. Repeat till you find the centroid
+
+Centroid Decomposition:
+    Decomposing the original tree to get the Centroid tree
+
+    def decompose(root, centroid_parent = -1):
+        centroid = find_centroid(root)
+        if centroid_parent != -1:
+            add_edge_in_centroid_tree(centroid_parent, centroid)
+        for(adjacent_edge, adjacent_vertex) in G[centroid]:
+            delete_edge(adjacent_edge)
+            decompose(adjacent_vertex, centroid)
+
+
+    decompose() returns a rooted tree with centroid of the original tree as the root
+
+    original_tree, centroid_tree
+    find the centroid of the original tree, that centroid becomes the root of your centroid tree
+    recurse to centroid's child and call decompose on those child nodes to decompose the child's subtrees 
+    The centroid of those child's subtrrees becomes children of centroid in your centroid tree 
+
+    properties of centroid tree:            {https://www.youtube.com/watch?v=w_kmxeeEv5c&ab_channel=LearntoCodewithCodeChef}
+    1. The structure of the centroid tree is very different from the original tree and an edge in the centroid tree might not represent an edge in the original tree 
+    2. The centroid tree contains all the N nodes of the original tree   
+    3. The height of the centroid tree is at most O(logN)
+        Since at each step, the new trees formed by removing the centroid have size at most N/2, the maximum no of levels would be O(logN)
+    4. Consider any two arbitrary vertices A and B and the path betweeen them in the originaln tree can be broken down into A --> C and C --> B where C is the LCA of nodes A and B in the centroid tree
+         In the original tree, the first time A and B got disconnected was when we removed vertex C. Hence A--B = A--C + C--B
+    5. In a tree, we can have N^2 paths(NC2)
+        We decompose the given tree into O(NlogN) different paths (from each centroid to all the vertices in the corresponding part) such that any path 
+        is a concatenation of two different paths from this set 
+
+        The claim here is all the N^2 paths in your original tree can be broken down into A,C and B,C 
+        where C is the LCA of A and B in the centroid tree and both these paths A,C and B,C are part of this O(NlogN) paths 
+
+        There are atmost O(N) special paths(whose one endpoint is Centroid and other endpoint is any other vertex) at each level in your centroid tree. 
+        Since there logN levels, total no of paths are O(NlogN)
+
+
+        We'll prepocess the info for these NlogN paths. This will help us to answer each query very efficiently 
+        Since the path A,B can be broken down into A,C and B,C where C is the lca(A,B0 in the centroid tree, we would already have info for these A,C and B,C paths since these are part of those O(NlogN) paths 
+
+        usecases:
+            dist(A,B) = Dist(A,C) + Dist(B,C)
+            minWtEdge(A,B) = min(minWtEdge(A,C), minWtEdge(B,C))
+            
+
+
+
+
 Revision
-    Tree Matching -- 4 test cases failing  {Debug}
+    Tree Matching
     Tree Diameter: 
         2 choices: diameter either can pass through the root, or will belong to any of it's subtree
         Why dp array for storing depths? In order to avoid repeated calculations of max depth for each node in the calcDiamater()
         getDepth() is repeateadly called in the calcDiamter()
         We can also memoise the diamter results for each node. diameter[i] will represents the diamter of tree rooted at ith node 
-    Tree Distance 1     {Pending / doubt}
-    Tree Distance 2     {Pending}
+    Tree Distance 1
+    Tree Distance 2     
     Company Queries1 --> binary Lifing
     Company Queries2 --> LCA (sol1: binaryLifting + binary search TC O(log2n), sol2: using binaryLifting TC: O(logn))
     Distance Queries: --> distance between 2 nodes u and v is depth[u] + depth[v] - 2*depth[v]
-    
+    Counting Paths

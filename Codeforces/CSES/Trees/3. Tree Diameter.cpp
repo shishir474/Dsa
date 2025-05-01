@@ -97,6 +97,46 @@ int getHeight(int sv, int parent){
 
 }
 
+
+// TC analysis:
+getHeight() is O(n) for all n nodes, since we are using dp[] to store the height of subtree rooted at each node. This will help us to avoid recomputations. 
+So effectively O(n)
+solve(sv,parent)
+    iterates through all child nodes of sv, and calls recursion on them 
+    assuming d is the degree of the sv, at max d recursive calls at each level 
+    builds the height vector with the heights of children  O(d)
+    sorts the height vector to get  O(dlogd)
+
+    Since a tree with n nodes has exactly n-1 edges,
+    in a tree: {Sum of degrees} = 2 * (n-1)
+    So total size of heights across all nodes = sum(degree) = 2*(n-1) which is O(n)
+
+    sorting heights for single node with d neighbours: O(dlogd)
+    for all nodes , overall sorting cost would be O(nlogn)
+
+
+
+    
+Can further optimise this solve()
+
+    Instead of sorting the heights array to find the top 2 heights. Run a simple for loop to find max1 and max2 
+    
+    int max1-=-1, max2 = -1;
+    for(int i=0;i<heights.size();i++){
+        if(heights[i] > max1){
+            max2 = max1;
+            max1 = heights[i];
+        }
+        else if(heights[i] > max2){
+            max2 = heights[i];
+        }
+    }
+
+    // this will give you the best 2 heights
+    So this way we can reduce the complexity from O(nlogn) to O(n)
+
+
+
 // solve function returns the diameter(in terms of no of edges)
 int solve(int sv, int parent){
 
@@ -137,6 +177,8 @@ int solve(int sv, int parent){
     return max(ans, best);
 
 }
+
+
 signed main() {
     initcode();
     int n; cin>>n;
@@ -153,7 +195,9 @@ signed main() {
     // n nodes (1 to n). OUt of this you can pick any value which is in range [1,n] and consider it your root
     // assuming 1 is the root of the tree. (You can pick any node among (1 to N) both inclusive as your root)
     // but since our will run on multiple hidden test cases, we dont know the actual value of N against which our code will be executed. N is gauranteed to be >= 1. Hence choosing 1 as your root makes sense
-    int diameter = solve(1,-1);
+    
+    int diameter = solve(1,-1);         // reduced to complexity from O(nlogn) to O(n)
+    
     cout<<diameter<<endl;
 
     return 0;

@@ -403,15 +403,15 @@ signed main() {
     N = n;
     height.resize(n+1,-1);
 
-    binaryLifting();
+    binaryLifting();            // O(n)
     
-    evallevel();
+    evallevel();                // O(n)
         
     // print_graph(adj);
     // fore(i,1,N) cout<<height[i]<<" ";
     // cout<<endl;
     
-    while(q--){
+    while(q--){             // O(Qlogn) - O(logn) / query for finding lca(u,v)
         int u,v; cin>>u>>v;
         // we've to compute the lca of u and v;
         // make sure v is closer to the root/lca - we'll judge based on their levels

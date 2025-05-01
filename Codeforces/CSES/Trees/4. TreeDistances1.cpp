@@ -76,67 +76,26 @@ struct cmp {
 };
 
 vector<vector<int>> adj;
-vector<int> height,ans;
 
-// depth calculation is based on no of edges
-int evalDepth(int sv, int parent){
-    int best = 0;
-    bool childFound = false;
+// this dfs captures the dist of each node from sv 
+void dfs(int sv, int parent, int dist, vector<int> &d){
+    d[sv] = dist;
     for(auto nb: adj[sv]){
         if(nb != parent){
-            best = max(best, evalDepth(nb, sv)); // compute the max depth amongst all child subtrees
-            childFound = true;
+            dfs(nb, sv, dist+1, d);
         }
     }
-
-    // if leaf node
-    if(!childFound) return height[sv] = 0; 
-    return height[sv] = 1+best;
 }
 
+// In a tree longest distance between 2 nodes is called the diameter of the tree.
+// For a node u, its maximum distance to any other node is either:
+// 	•	Distance to one endpoint of the diameter
+// 	•	Or distance to the other endpoint
 
-void evalDistance(int sv, int parent, int partial_ans){
+// ✅ So basically:
+// 	•	Find two farthest points in the tree (the two endpoints of the diameter).
+// 	•	Then for each node, maximum distance = max(distance to endpoint1, distance to endpoint2)
 
-    vector<int> prefixMax, suffixMax;
-    for(auto nb: adj[sv]){
-        if(nb != parent){
-            prefixMax.push_back(height[nb]);
-            suffixMax.push_back(height[nb]);
-        }
-    }
-
-    for(int i=1;i<prefixMax.size();i++){
-        prefixMax[i] = max(prefixMax[i-1], prefixMax[i]);
-    }
-    for(int i=suffixMax.size()-2;i>=0;i--){
-        suffixMax[i] = max(suffixMax[i+1], suffixMax[i]);
-    }
-
-    int childno = 0, numChild = prefixMax.size();
-    for(auto nb: adj[sv]){
-        if(nb!=parent){
-            // if first child, prefixMax[i-1] won't exist
-            int leftmax = (childno == 0) ? INT_MIN : prefixMax[childno-1];
-            // if last child, suffixMax[i+1] wont exist
-            int rightmax = (childno == numChild-1) ? INT_MIN : suffixMax[childno+1];
-            
-            // cout<<nb<<" "<<leftmax<<" "<<rightmax<<" "<<partial_ans<<endl;
-            // partial_ans wrt this child
-            int next_partial_ans = 1 + max({leftmax, rightmax, partial_ans}); // having all 3 parameters is important 
-            
-            // recursion call
-            evalDistance(nb, sv, next_partial_ans);
-
-            childno++;
-        }
-    }
-
-    // for root node, there will be no siblings, hence partial_ans is not applicable to it and thus we''ll consider the height as the ans for that node
-    // 1+partial_ans ==> 1 for distance of the node from its parent. partial_ans is computed from the parent
-    // cout<<sv<<" "<<partial_ans<<endl;
-    ans[sv] = max(height[sv], 1+partial_ans);
-
-}
 
 signed main() {
     initcode();
@@ -148,32 +107,44 @@ signed main() {
         adj[v].push_back(u);
     }
     
-    height.resize(n+1, -1); // -1 indicates height[i] isn't computed yet
+    // start dfs from 1 to find the farthest end point(lets call it u)
+    // start 2nd dfs from u to find the farthest end point(lets call it v). u and v represents two different endpoints of the diameter
+    // start 3rd dfs from v to find the distance of each node from v
+    // final ans for each node would be max(dist_u[i], dist_v[i]), where dist_u[node] represents the distance of node i from u and dist_v[i] represents the dist of node i from v
     
-    // height[i] stores height of the subtree rooted at node i
-    ans.resize(n+1,-1);
-    // ans[i] stores the max distance to another node for node i
-    // ans[i] = max(1+partial_ans(i), depth(i))
-    // where partial_ans(i) denotes the max depth of its parent considering the fact that ith node subtree is not considered 
-    // partial_ans(i) ==> partial_ans for ith node is max(prefixMax[i-1], suffixMax[i+1])
-    // considering n siblings and we are currently analysing ith sibling, prefixMax[i] gives the max depth amongst the first i siblings(0 to i-1)
-    // and suffixMax[i] gives the max depth amonst the siblings on the right (i+1 to n-1)
-    // This will help us get the max depth amongst the left and right siblings in O(1) time
-    // so partial_ans(i) = 1 + max(prefixMax[i-1],suffixMax[i+1])
-    // added 1 in order to consider the distance from parent
 
-    // Assuming the tree is rooted at 1
-    evalDepth(1,-1);
-    // fore(i,1,n) cout<<height[i]<<" ";
-    // cout<<endl;
-    
-    evalDistance(1,-1,-1); // sv, parent, partial_ans
-    // we're propagating partial_ans for each node downwards --> THis is the heart of the problem --understanding why propagating partial_ans is important and why cant wejust compute it at each node 
 
-    fore(i,1,n) cout<<ans[i]<<" ";
+    // find u(1st endpoint of the diameter)
+    vector<int> d(n+1,-1);      
+    dfs(1,-1,0,d);                            // 1st dfs()
+    int maxDist = -1, u=-1, v=-1;           // u and v represents 2 endpoints of the diameter
+    for(int i=1;i<=n;i++){
+        if(d[i] > maxDist){
+            maxDist = max(maxDist, d[i]);
+            u = i;
+        }
+    }
+
+    // find v(2nd endpoint of the diameter)
+    vector<int> dist_u(n+1,-1);
+    dfs(u,-1,0,dist_u);                        // 2nd dfs()
+    maxDist = -1;      
+    for(int i=1;i<=n;i++){
+        if(dist_u[i] > maxDist){
+            maxDist = max(maxDist, dist_u[i]);
+            v = i;
+        }
+    }
+
+    vector<int> dist_v(n+1, -1);
+    dfs(v,-1,0,dist_v);                         // 3rd dfs()
+
+    for(int i=1;i<=n;i++){
+        cout<<max(dist_u[i], dist_v[i])<<" ";
+    }
     cout<<endl;
-
-
+    
+    return 0;
 }
 
 
