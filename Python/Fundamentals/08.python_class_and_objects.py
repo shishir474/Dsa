@@ -163,3 +163,50 @@ car = Car("Honda", "Civic", 2022)
 
 
 # Dynamic Attributes in python
+
+# These are the attributes which are defined at the runtime
+class GFG:
+    None
+    
+def value():
+    return 10
+
+# Driver Code
+g = GFG()
+
+# Dynamic attribute of a
+# class object
+g.d1 = value
+
+# Dynamic attribute of a 
+# function
+value.d1 = "Geeks"
+
+print(value.d1)
+print(g.d1() == value())
+
+# Explanation: Firstly lets see the objects(g and value(functions are also considered as objects in python) are the 2 objects)
+# d1 is the dynamic attribute for both the objects g and value. This is defined at runtime and not at compile time like static attributes.
+# NOTE: the class GFG and all other objcts of this class do not know the attribute "d1". It is only defined for g
+
+
+# Example 2
+class GFG:
+    
+    employee = True
+
+# Driver Code
+e1 = GFG()
+e2 = GFG()
+
+e1.employee = False
+e2.name = "Nikhil"          # defined a dynamic attribute name for e2. Only e2 is aware of this attribute. Neither the GFG class, nor the other instances of GFG are aware of this attribute
+
+print(e1.employee)      # False
+print(e2.employee)      # True
+print(e2.name)          # Nikhil
+
+# this will raise an error 
+# as name is a dynamic attribute
+# created only for the e2 object
+print(e1.name)
