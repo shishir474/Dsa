@@ -6,7 +6,24 @@ The test cases are generated so that the answer will fit in a 32-bit integer.
 
 A subarray is a contiguous subsequence of the array.
 
- 
+// We have to find the maximum product of a contiguous subarray in the given array.
+
+// Brute force: can be done in O(n^2) time complexity by checking all possible subarrays.
+
+// But we need to do it in O(n) time complexity.
+
+input[]: 2      3                -2                         4
+mx[]:    2    max(6,6,3)= 6.  max(-12,-6,-2)= -2        max(-8,-48,4)=4
+mn[]:    2    min(6,6,3)= 3.  min(-12,-6,-2)= -12.      min(-8,-48,4)=-48
+
+ans = max(ans, mx[i], mn[i]);
+// This will give us the maximum product of a contiguous subarray.
+
+// recurrence relation:
+mx[i] = max(mx[i-1]*nums[i], mn[i-1]*nums[i], nums[i])
+mn[i] = min(mx[i-1]*nums[i], mn[i-1]*nums[i], nums[i])
+
+
 
 Example 1:
 

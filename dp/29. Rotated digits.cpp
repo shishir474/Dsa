@@ -18,6 +18,26 @@ Explanation: There are four good numbers in the range [1, 10] : 2, 5, 6, 9.
 Note that 1 and 10 are not good numbers, since they remain unchanged after rotating.
 
 
+
+LOGIC: 
+If the no is invalid --> assign dp[i]  = 0
+else if no is valid and produces the same no --> assign dp[i] = 1
+else if no is valid and produces different no --> assign dp[i] = 2
+
+0,1,8 are valid no but produces the same no --> hence dp[0] = dp[1] = dp[8] = 1
+2,5,6,9 are valid but produces different no --> hence dp[2] = dp[5] = dp[6] = dp[9] = 2
+rest all are invalid dp[i] = 0  for i in range(0,10)
+
+Now for i>= 10 
+i can be broken down into i/10 and i%10
+if dp[i/10] == 0 or dp[i%10] == 0  : dp[i] = 0            // any one is invalid
+else if dp[i/10] == 1 and dp[i%10] == 1 : dp[i] = 1                  // both produces same no
+else dp[i] = 2                                              // any one part produces different no and hence the final no will also be different
+
+finally count all i''s where dp[i] = 2
+    
+
+
 Solution1:
 Brute force check each numver from 1 to n and increase count if i is good. 
 TC: O(nlogn);  n for traversing from 1 to n and logn for checking each number

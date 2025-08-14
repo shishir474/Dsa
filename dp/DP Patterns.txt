@@ -1,0 +1,110 @@
+DP Patterns Found so far:
+
+1. Pick vs Non Pick (decide whether you choose ith element or not)
+2. Longest Palindromic Subsequence / Subarray
+    Longest palindrome subarray/substring:
+        Approach 1: USE DP[][] to store whether s[i..j] is a palindrome or not.
+                    S[i..j] is a palindrome only if s[i] == s[j] and dp[i+1][j-1] == True 
+        Approach 2: Expand around the center
+                    Treat each index as the center of the potential palindromic substring and try expanding on left and right side.
+                    Around each center we can build an odd and an even length palindrome 
+                    pseudo code:
+                    for(int i=0;i<s.length();i++){
+                        // FIRST CASE
+                        int l = i, r = i;       // odd length string
+                        while(l>=0 and r<n and s[l] == s[r]){
+                            l--; r++;
+                        }
+                        ans = max(ans, r-l+1)
+                        // SECOND CASE
+                        l = i, r = i+1          // even length string 
+                        while(l>=0 and r<n and s[l] == s[r]){
+                            l--; r++;
+                        }
+                    }
+
+    Longest Palindromic Subsequence:  
+        This could be any subsequence 
+
+        Accepted Sol1:
+        finding the longest palindromic subsequence is effectively finding the lcs(s, reverse(s))
+        i.e the longest commmon subsequence in s and reverse(s)
+
+        Solution 2 -- Correct but throwing MLE 
+        string s[l..r]      l and r represents the endpoints of the string
+        if(s[l] == s[r])    // this 2 will form the endpoint of my potential palindromic subs
+            2 + solve(l+1,r-1);     // and the length of longest palindromic subs in the middle 
+        else
+            max(solve(l,r-1), solve(l+1,r))  
+
+        BASE CASE:
+        if (l > r) return 0;        // empty string
+        if (l == r) return 1;       // single length palindrome
+
+        add memoisation to avoid recomputing the same (l,r) again 
+
+
+
+    Shortest Palindrome
+        Find the longest palindromic prefix substring and then add the remaining part to the front by reversing it 
+        KMP, LPS(longest prefix suffix), Rabin Karp
+
+    
+
+            
+
+3. Longest Arithmatic subsequence / subarray
+4. LIS (longest increasing subsequence / subarray)
+4. LCS (Longest common subsequence / subarray)     
+    you'll be given 2 string or arrays and you are asked to find the longest commong subsequence or subarray between those 
+
+
+Longest Palindromic Subsequence Follow up's
+
+Longest Palindromic Substring       -- DONE
+Medium
+Palindromic Substrings              -- DONE         (count the # of palindromic substrings)
+Medium
+Count Different Palindromic Subsequences -- PENDING  (count the # of unique palindromic subsequences)
+Hard
+Count Palindromic Subsequences       -- PENDING (count the # of palindromic subsequences of length 5, not necessarily be unique)
+Hard                 
+Unique Length-3 Palindromic Subsequences    -- DONE
+Medium   
+Longest Common Subsequence           -- DONE
+Medium
+Longest Palindromic Subsequence II
+Medium          [LC Premium]         -- Pending
+Maximize Palindrome Length From Subsequences
+Hard             -- DONE    
+Maximum Product of the Length of Two Palindromic Subsequences
+Medium          -- DONE
+Maximum Product of the Length of Two Palindromic Substrings
+Hard  (Manachar's Algorithm)          -- Pending
+2448. Minimum Cost to Make Array Equal
+Hard                                    -- Pending
+    Follow Ups
+    Minimum Operations to Make All Array Elements Equal
+    Medium              -- Done             (not a dp problem)
+    Minimum Moves to Equal Array Elements 
+    Medium             -- Done 
+    Minimum Moves to Equal Array Elements II
+    Medium              -- Done 
+    Maximum Product of the Length of Two Palindromic Substrings
+    Hard
+    Minimum Amount of Time to Fill Cups
+    Easy
+    Minimum Cost to Make Array Equalindromic
+    Medium
+
+
+Longest Palindromic substring follow up'S
+
+Shortest Palindrome             -- DONE (not a DP problem though)
+Hard                            
+Palindrome Permutation
+Easy
+Palindrome Pairs
+Hard
+Maximum Number of Non-overlapping Palindrome Substrings
+Hard

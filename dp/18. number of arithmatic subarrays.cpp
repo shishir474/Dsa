@@ -7,6 +7,35 @@ Given an integer array nums, return the number of arithmetic subarrays of nums.
 
 A subarray is a contiguous subsequence of the array.
 
+
+// We have to find the count of total no of arithmatic subarrays
+// Count the # arithmatic subarrays ending at each index and then add that to final ans
+// one constraint that problem sets is arithmatic subarray size should be atleast 3
+// so if n < 3 return 0
+
+// dp[i] stores the # arithmatic subarrays till ith index 
+// How to check if ith element is a part of an arithmatic subarray. 
+if arr[i] - arr[i-1] == arr[i-1] - arr[i-2]: true then yes and #of arithmatic subarrays till ith will be #of arithmatic subarrays till i-1 + 1
+else dp[i] = 0
+                              0,1,2,3,4  
+ex:                           1,2,3,4,5
+#of arithmatic subarrays      0,0,1,2,  
+
+index 2: 1,2,3
+index 3: [2,3,4], [1,2,3,4] 
+index 4: [3,4,5], [2,3,4,5], [1,2,3,4,5] 
+// i.e t[i] = 1 + t[i-1]
+1 for [a[i-2],a[i-1],a[i]]
+and then a[i] can be appended at the end of t[i-1] subarrays
+
+
+1   3   5   7   9
+0   0   1   2.  3
+
+final ans: 1 + 2 + 3 = 6
+
+
+
 TC: O(n)
 SC: O(n)
 class Solution {
@@ -30,7 +59,13 @@ public:
 };
 
 
-
+// Solution2:
+I will start from i = 0, and run till i < n-2 (basically till third last element)
+If difference between arr[i],arr[i+1] and arr[i+2] is constant, then we can start an arithmatic subarray from i.
+Now the total count of subarrays from i will be 
+I know the differenc, which should be d = arr[i+1] - arr[i]
+Run another loop j from i+2 till j < n
+arr[j] - arr[j-1] should be equal to d, if not break else increment the count 
 
 TC: O(n^2)
 SC: O(1)
@@ -65,7 +100,9 @@ m == r.length
 2 <= n <= 500
 1 <= m <= 500
 
-// Brute force
+// Brute force solution 
+// Here you sort each range and then check if that subarray is a arithmatic subarray
+//  There are m queries, for each query you will sort the array from l[i] to r[i] which takes O(nlogn) in worst case and then we have m queries
 // TC: O(m * nlogn)
 // SC: O(n)
 class Solution {
@@ -142,3 +179,9 @@ public:
         return ans;
     }
 };
+
+// Trick here is 
+// Given an array, you do not need to sort it to determine if this array would make an arithmatic array.
+// We can simply check this by calculating the diff and then check if all the elements starting from the min all the way to max are present in the set --> which can be done in O(n) time -- if we use unordered_set (since we just need to check the presence of an element)
+// If the array was an arithmatic, then its difference d must be (max_element(arr) - min_element(arr)) / n-1
+// which means (max_element(arr) - min_element(arr)) % (n-1) == 0

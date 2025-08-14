@@ -20,6 +20,44 @@ since its a subarray, it should be continuous. If subsequence we used to go from
 length will be atleast 1, as there will be atleast 1 length subarrya ending at index i
 
 
+// We have 2 approaches to solve this problem:
+
+// Sol1: using dp[]
+// since we are looking for subarrays(which are contiguous) we are only concerned with prev position's value and we have to determine if we can extend that or not
+vector<int> dp(n,1);        // ans will be atleast 1
+// dp[i] stores the length of longest strictly increasing subarray ending at the ith index 
+for(int i=1;i < n;i++){
+    if(arr[i-1] < arr[i]){
+        dp[i] = dp[i-1] + 1;
+    }
+    else{                               // no need of else part, just written for better understanding
+        dp[i] = 1;  // reset 
+    }
+    
+    ans = max(ans, dp[i]);
+}
+
+// TC: O(n)
+// SC: O(n) for DP[]
+
+
+// Sol2: using 2 pointers -- space optimised
+take 2 pointers i and j. i will always point to the starting point of the window. 
+initialise j = i+1
+keep on incrementing j until a[j] > a[j-1] and j < n
+length of the current window = j - i, compare that with ans and update it accordingly
+update i to j and again j will be initalised to i+1
+
+int j, ans = 1;         // ans will be atleast 1
+for(int i=0; i<n; ){
+    j = i+1;
+    while(j < n and nums[j-1] < nums[j]) j++;
+    ans = max(ans, j-i);
+    i = j;
+}
+// TC: O(n) and SC: O(1)
+
+
 class Solution {
 public:
     int findLengthOfLCIS(vector<int>& a) {
@@ -36,3 +74,6 @@ public:
         return ans;
     }
 };
+
+// Follow ups
+Longest Increasing Subsequence II

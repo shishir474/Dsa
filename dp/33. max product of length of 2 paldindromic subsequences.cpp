@@ -14,6 +14,9 @@ The product of their lengths is: 3 * 3 = 9.
 
 constraints: s.length()<=12
 
+// Since the constraints are low, we will find all the subsequences using mask and store all the palindromic subs in a vector along with their mask
+// 2 subs are disjoint if & operation between their masks is 0
+// i.e assume string s1 and s2 has mask m1 and m2 respecitvely. If m1&m2 == 0, then s1 and s2 are disjoint
 
 
 
@@ -49,6 +52,7 @@ public:
         int n=s.length();
         vector<pair<string,int> > v;
         
+        // Generate all subseuquences
         for(int mask=1;mask<(1<<n);mask++){
             string temp=getString(mask,s);
             if(isPalindrome(temp)){
@@ -58,11 +62,13 @@ public:
         
         int ans=0;
         
+        // 
         for(int i=0;i<v.size();i++){
             for(int j=i+1;j<v.size();j++){
                 string s1=v[i].first, s2=v[j].first;
                 int mask1=v[i].second, mask2=v[j].second;
                 int n1=s1.length(), n2=s2.length();
+                // if these subs are disjoint
                 if((mask1&mask2) == 0){
                     ans = max(ans,n1*n2);
                 }
@@ -73,3 +79,11 @@ public:
         
     }
 };
+
+// TC: O(n * 2^n) for generating all subs and checking if they are palindrome
+// SC: O(2^N) for storing all the subs
+
+
+Follow UP:
+1960. Maximum Product of the Length of Two Palindromic Substrings
+Hard                -- USES Manacher Algorithm (need to see how this works PENDING)

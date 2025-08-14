@@ -5,6 +5,20 @@
 // If s[i] != s[j], the relation becomes: count(i, j) = count(i + 1, j) + count(i, j – 1) – count(i + 1,j – 1)
 // We subtract count(i + 1, j – 1) because it is counted twice.
 
+// Why we don't need to subtract count(i + 1, j - 1) when s[i] == s[j]?
+// The recurence already accounts for all palindromic subsequences in s[i+1,j] and s[i,j−1].
+// If you add these two counts, you might expect a double count for subsequences in the interior (s[i+1,j−1]), 
+// but in this context, the "+1" precisely covers the new palindromic subsequence formed by including both endpoints: every subsequence in 
+// s[i+1,j−1] can be wrapped with s[i] at both ends to form a new palindrome.
+
+// actually count(i+1,j-1) needs to be counted twice first independently and then once more when we add the new palindrome formed by s[i] and s[j].
+
+// Base cases: if s.length() == 1, return 1
+// if s.length() == 2, 
+//   if s[0] == s[1], return 3 (the subsequences are "", s[0], s[1], and s[0]+s[1])
+//   else return 2 (the subsequences are "", s[0], and s[1])
+
+
 class Solution{
     public:
     /*You are required to complete below method */
@@ -38,8 +52,8 @@ class Solution{
            }
        }
        
-       for(ll i = n-3;i>=0;i--){
-           for(ll j=i+2;j<n;j++){
+       for(ll i = n-3;i>=0;i--){    // bottom to top
+           for(ll j=i+2;j<n;j++){   // left to right
                if (s[i]==s[j]){
                    dp[i][j] = (dp[i][j-1] + dp[i+1][j] + 1)%mod;
                }else{

@@ -10,6 +10,18 @@ Input: nums = [3,8,1,3,2,1,8,9,0], firstLen = 3, secondLen = 2
 Output: 29
 Explanation: One choice of subarrays is [3,8,1] with length 3, and [8,9] with length 2.
 
+
+// LOGIC:
+// I''ll basically store the max sum of subarray of len x till each ith index from left side 
+// and I''ll store the max sum of subarray of len y starting at each ith index from right side 
+// // This can be easily accomplished using prefix & suffix sums 
+// final ans will be t1[i] + t2[i+1]
+// t1[i] stores the max sum of subarray of len x ending at ith index and is populated from left to right
+// t2[i] stores the max sum of subarray of len y starting at ith index and is populated from right to left
+
+// NOTE: One important point here is y length subarray could come before x len subarray, we'll have to call the solve(input, y, x) and then return the max of both the possible options
+
+
 class Solution {
 public:
     // x sized subarray, y sized subarray

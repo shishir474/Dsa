@@ -18,7 +18,11 @@ Input: coins = [2], amount = 3
 Output: -1
 
 
-
+// Recursion States:
+// For each coin, we have two choices: either include it or exclude it.
+// If I include the coin, I reduce the amount by the coin's value and count that coin.
+// If I exclude the coin, I move to the next coin without changing the amount.
+// f(i, j) = min(f(i, j - coins[i]) + 1, f(i - 1, j))
 class Solution {
 public:
     int coinChange(vector<int>& coins, int x) {
@@ -43,5 +47,45 @@ public:
         
         if(t[n][x]==INT_MAX-1) return -1;
         return t[n][x];
+    }
+
+    // TC: O(n*x)
+    // SC: O(n*x)
+};
+
+// Solution 2: 
+// SC: O(2*x) - Space Optimized DP
+// TC: O(n*x)
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int x) {
+        int n=coins.size();
+        int t[2][x+1]; 
+        // fill first col with 0
+        for(int i=0;i<=1;i++){
+            t[i][0] = 0;
+        }
+        // initialise first row with INT_MAX - 1
+        for(int j=1;j<=x;j++){
+            t[0][j]=INT_MAX-1;
+        }
+        
+        int flag  = 1;
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=x;j++){
+                if(coins[i-1]<=j){
+                    t[flag][j]=min(1+t[flag][j-coins[i-1]], t[flag^1][j]);
+                }
+                else{
+                    t[flag][j] = t[flag^1][j];
+                }
+            }
+            flag = flag^1;
+        }
+
+        flag = flag^1;
+        
+        if(t[flag][x]==INT_MAX-1) return -1;
+        return t[flag][x];
     }
 };

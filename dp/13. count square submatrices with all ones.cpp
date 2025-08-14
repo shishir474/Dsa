@@ -68,3 +68,7 @@ public:
         return count;
     }
 };
+
+Follow ups:
+Count Submatrices With All Ones
+Medium

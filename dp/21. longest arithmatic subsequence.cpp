@@ -9,6 +9,33 @@ SC: O(n^2)
 
 0<=A[i]<=1e9; // since diff will be very huge we cannot use vector wala solution. Have to use maps only
 
+// dp[i][diff] stores the length of the arithmatic subsequence ending at ith index with difference diff
+// all the arithmatic subsequence problems follows the below pattern
+
+int ans = 0;
+for(int i=0;i<n;i++){
+    for(int j=0;j<i;j++){
+        int diff = a[i] - a[j];
+        int l = dp[j][diff];            // l = length of arithmatic subs ending at index j with difference diff
+        if(l==0){                       // if there is no sequence ending at j with difference diff, then len of seq ending at i with difference diff will be 2 (j,i) pair
+            dp[i][diff] = 2;
+        }
+        else{                           // else the length will be l + 1
+            dp[i][diff] = l + 1;
+        }
+        
+        ans = max(ans, dp[i][diff]);
+    
+    }
+
+}
+
+
+
+
+
+
+
 int Solution::solve(const vector<int> &A) {
     int n = A.size();
     vector<map<int,int> > v(n);

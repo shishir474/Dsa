@@ -19,7 +19,12 @@ Explanation: there are four ways to make up the amount:
 5=1+1+1+1+1
 
 
-
+// Again I have two choices: either include the coin or exclude it.
+// If I include the coin, I reduce the amount by the coin's value
+// If I exclude the coin, I move to the next coin without changing the amount.
+// f(i, j) = f(i, j - coins[i]) + f(i - 1, j) & I can only take the coin if coins[i] <= j
+// TC: O(n*x)
+// SC: O(n*x)
 class Solution {
 public:
     int change(int x, vector<int>& a) {
@@ -41,3 +46,9 @@ public:
 	
     }
 };
+
+// Solution 2: Space Optimized DP - use flag
+// SC: O(2*x) - Space Optimized DP
+// TC: O(n*x)
+
+// Implement later

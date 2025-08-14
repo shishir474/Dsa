@@ -15,6 +15,7 @@ for(int i=1;i<n;i++){
 OPTIMISED:
 SINCE we are interested in pos that has a[i]-d, why dont we maintain map<int,vector<int>> pos
 which stores element and its position. So that we can directly jump on to that index.
+// dp[i] stores the length of the longest arithmatic subs ending at ith index with given difference diff
 
 unordered_map<int,vector<int> > mp; // value -> vector of positions
         for (int i=0;i<arr.size();i++){
@@ -46,18 +47,12 @@ unordered_map<int,vector<int> > mp; // value -> vector of positions
 
 
 
+arr[j]-d,  ....   arr[i]
+SO ideally we are looking for all positions j where arr[i] - d is present, before i 
 
+Other way could be, we start at ith index and we look for all positions j where arr[i] + d is present on right hand side.
 
-
-
-
-
-
-
-
-
-
-
+I don''t think there is a much difference in both this approaches 
 
 
 
@@ -66,42 +61,42 @@ unordered_map<int,vector<int> > mp; // value -> vector of positions
 
 class Solution {
 public:
-    int longestSubsequence(vector<int>& arr, int d) {
-        unordered_map<int,vector<int>> mp;
-        for(int i=0;i<arr.size();i++){
+    int longestSubsequence(vector<int>& arr, int difference) {
+        int res = 1, n = arr.size();
+        vector<int> dp(n,1);    // length of arithmatic subs ending at ith index is atleast 1
+        
+        // TC is O(n^2)
+        // for(int i=0;i<n;i++){
+        //     for(int j=0;j < i;j++){
+        //         // I'm essentially looking for all Js where a[i] - a[j] == difference 
+        //         if(arr[i]-arr[j] == difference){
+        //             dp[i] = max(dp[i], dp[j] + 1);
+        //         }
+        //     }
+        //     res = max(res, dp[i]);
+        // }
+
+        // one thing we could probably do is, maintain a positions map that will allow us to directly jump to those positions or Js where arr[i] - arr[j] == difference and j < i
+        unordered_map<int, vector<int>> mp;     // value --> positions vector
+        for(int i=0;i<n;i++){
             mp[arr[i]].push_back(i);
         }
-        int n=arr.size();
-        int dp[n];
+
         for(int i=0;i<n;i++){
-            dp[i]=1;
-        }
-        
-        // constructing the arithmatic subsequence from i will give TLE. consider case 1,2,3,4,....1000
-        // instead at i, check if a[i]+d,exists in map & if it does, then at all pos(lets call it j) at the right side of i mark the length as dp[j] = max(dp[j], dp[i]+1)
-        // if we are following this strategy then its better to move backwards.That way we dont even have to initalise our dp[] with 1.
-        
-        for(int i=0;i<n;i++){
-            
-            int b=arr[i]+d;
-            
-            if(mp.count(b)){
-                
-                for(int j=0;j<mp[b].size();j++){
-                    if(mp[b][j]>i){
-                        dp[mp[b][j]] = max(dp[mp[b][j]], dp[i]+1);
-                    }
+            vector<int> pos = mp[arr[i] - difference];
+            // I'm essentially looking for all Js where a[i] - diff is present on left side
+            for(auto j: pos){
+                if (j < i){
+                    dp[i] = max(dp[i], dp[j] + 1);
                 }
-                
             }
+            res = max(res, dp[i]);
         }
-        
-    //  for(int i=0;i<n;i++) cout<<dp[i]<<" ";
-        
-        int mx=INT_MIN;
-        for(int i=0;i<n;i++){
-            mx=max(mx,dp[i]);
-        }
-        return mx;
+
+        return res;
+
     }
 };
+// TC: is still O(N^2) but with positions map, we have reduced the complexity from O(N) linear to only the positions where arr[i]-diff is present
+// Space Complexity:
+// The space complexity is O(N) for the dp array, plus O(N) for the positions map

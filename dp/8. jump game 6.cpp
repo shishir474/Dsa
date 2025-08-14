@@ -32,6 +32,40 @@ Constraints:
 -104 <= nums[i] <= 104
 
 
+For each index i, I have to find the best value in the next j indices and then use that value to calculate dp[i]
+but j will be in range [i+1, min(n-1,i+k)]
+
+       0  1  2 3  4 5
+input: 1 -1 -2 4 -7 3
+score: 7  6  5 7 -4 3
+
+dequeu is storing indices 
+i = 4   deque:  5   index 
+i = 3   deque:  5 4 index       dp[i] = dp[5]+nums[i] = 7
+        deque:  3
+i = 2.  deque:  3,2
+i = 1.  deque:  3,1
+i = 0.  deque:  1
+        deque: 0
+
+dq.front() should be <= i+k
+store elements in descending order of values in deque
+dp[dq.back()] < dp[i] - we'll keep popping until we find a value that is greater than dp[i] or the deque is empty
+dp[i] should be less than or equal to dp[dq.back()]
+
+for(int i=n-2;i>=0;i--){
+    while(!dq.empty() and dq.front() > i + k)
+        dq.pop_front();
+    int mx = dp[dq.front()];
+    dp[i] = nums[i] + mx;
+    while(!dq.empty() and dp[i] > dp[dq.back()])
+        dq.pop_back();
+    dq.push_back(i);
+}
+
+
+
+
 
 USES CONCEPT OF SLIDING WINDOW MAXIMUM  -> FOR THIS USE DEQUE
 class Solution {
@@ -49,7 +83,7 @@ public:
             }
             // q.front() index has the max value
             dp[i]=dp[q.front()]+nums[i];
-            // store the elements in strictly decreasing order
+            // store the elements in non increasing order(either it will decrease or remain same)
             while(!q.empty() and dp[i]>=dp[q.back()]){
                 q.pop_back();
             }
@@ -59,6 +93,11 @@ public:
         return dp[n-1];
     }
 };
+// The time complexity of deque solution is O(n).
+    // Each index is pushed and popped from the deque at most once.
+    // All operations inside the loop (push, pop) are amortized O(1).
+    // The overall complexity is O(n), which is optimal for this problem.
+// Space complexity: O(n) (for the dp array and deque).
 
 
 
@@ -74,7 +113,7 @@ public:
         dp[n-1] = nums[n-1];
         
         priority_queue<pair<int,int>> pq; // max heap
-        pq.push({dp[n-1], n-1});
+        pq.push({dp[n-1], n-1});          // value, index  
 
         for (int i=n-2;i>=0;i--){
             while(!pq.empty() and pq.top().second > i + k)
@@ -91,4 +130,13 @@ public:
 };
 
 // TC: O(nlogn)
+    // Each index is pushed/popped atmost once from the heap.
+    // The heap operations (push, pop) take O(log n) time.
+    // The loop runs for n indices
 // SC: O(n)
+    // O(n) for the dp array and heap
+
+
+// Learning: This deque kind of problems can be solved using priority queue as well, but deque is more efficient in terms of time complexity.
+// In both cases, we need a while loop to remove elements that are out of bounds, but deque is more efficient as it allows O(1) time complexity for both push and pop operations, while priority queue has O(log n) time complexity for these operations.
+// One advantage of using priority queue is we don't need that second while loop to store the elements in non-increasing order, as the priority queue will always give us the maximum element at the top.

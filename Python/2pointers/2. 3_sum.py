@@ -3,14 +3,14 @@
 class Solution:
     def threeSum(self, nums: List[int]) -> List[List[int]]:
         ans = []
+        
+        #sort the array
         nums.sort()
-        print(nums)
 
         i,n = 0, len(nums)
         while(i < n):
             j,k = i+1,n-1
             while(j < k):
-                print(i,j,k)
                 if(nums[i] + nums[j] + nums[k] == 0):
                     ans.append([nums[i],nums[j],nums[k]])
                     a,b = nums[j], nums[k]

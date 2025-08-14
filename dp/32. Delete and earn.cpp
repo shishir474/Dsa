@@ -4,7 +4,6 @@ You are given an integer array nums. You want to maximize the number of points y
 Pick any nums[i] and delete it to earn nums[i] points. Afterwards, you must delete every element equal to nums[i] - 1 and every element equal to nums[i] + 1.
 Return the maximum number of points you can earn by applying the above operation some number of times.
 
- 
 
 Example 1:
 
@@ -25,6 +24,20 @@ Explanation: You can perform the following operations:
 You earn a total of 9 points.
 
 
+
+
+// Intuition:
+// Classic knapsack problem
+// at each index you have the option to pick or skip the element
+// If you pick ith element, then you'll earn arr[i] * freq (all arr[i]-1 and arr[i]+1 are erased) and now you're essentially looking for arr[i+2]
+// basically lower_bound(arr[i]+2)
+
+// Assume you're at ith index. 
+// If you pick this element, you'll get arr[i] * freq[arr[i]] and now you jump to index i1 which is basically lower_bound(arr[i] + 2)
+// If you decide to not pick arr[i], you jump to lower_bound(arr[i]+1)
+// But in order to make this work, you will have to sort the input[]
+
+
 solutions:
 This is similar to house robber problem.
 [x-1,x,x,x,x,x,x+1,x+1]
@@ -33,8 +46,8 @@ If I choose to delete val x thn all values equal to x-1 and x+1 are also deleted
 SO if I delete x, then I get x*freq(x) + solve(i1), where i1 index is the upper_bound of a[i]+1, i.e value just greater than a[i]+1, bcoz a[i]+1 is now deleted and cannot be considered
 If I dont delete x, then then I can go to j, where j index is the upper_bound of a[i], i.e I can delete a[i]+1
 
-TC: O(nlogn)
-SC: O(n);
+TC: O(nlogn) for sorting + O(nlogn) work for all indices = > Overall O(nlogn)
+SC: O(n);       // each index will be computed just once
 class Solution {
 public:
     int t[20002];

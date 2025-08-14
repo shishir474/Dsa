@@ -21,34 +21,34 @@ On day 20, you bought a 1-day pass for costs[0] = $2, which covered day 20.
 In total, you spent $11 and covered all the days of your travel.
 
 
-Solution:
-
-TC: O(nlogn), n unique calls & logn time for finding upperbound
-SC: O(n) max depth of recursion tree is n hence O(n)
 class Solution {
 public:
     int t[370];
-    int solve(int i,vector<int>& days, vector<int>& costs,int n){
-        if(i>=n) return 0;
-        if(t[i]!=-1) return t[i];
+    int solve(int i, vector<int>& days, vector<int>& costs){
+        if(i >= days.size()) return 0;
+        if(t[i] != -1) return t[i];
+
+        int option1 = costs[0] + solve(i+1, days, costs);
+
+        int idx1 = lower_bound(days.begin(),days.end(),days[i]+7) - days.begin();
+        int option2 = costs[1] + solve(idx1, days, costs);
         
-        int op1=costs[0]+solve(i+1,days,costs,n);
-        
-        int i1=upper_bound(days.begin(),days.end(),days[i]+6) - days.begin();
-        int op2=costs[1]+solve(i1,days,costs,n);
-        
-        int i2=upper_bound(days.begin(),days.end(),days[i]+29) - days.begin();
-        int op3=costs[2]+solve(i2,days,costs,n);
-        
-        return t[i] = min({op1,op2,op3});
-        
+        int idx2 = lower_bound(days.begin(),days.end(),days[i]+30) - days.begin();
+        int option3 = costs[2] + solve(idx2, days, costs);
+
+        return t[i] = min({option1, option2, option3});
     }
+
     int mincostTickets(vector<int>& days, vector<int>& costs) {
-        sort(days.begin(),days.end());
-        int n=days.size();
-        
+        // sort days so that we can apply lower/upper bounds
+        sort(days.begin(), days.end());
         memset(t,-1,sizeof(t));
-        
-        return solve(0,days,costs,n);
+        return solve(0, days, costs);
     }
 };
+// TC: O(nlogn) for sorting and O(n) unique recursive calls. For each call, we are doing O(logn) work to find the upper bound for 7-day and 30-day passes.
+// SC: O(n) for the recursion stack space and the memoization array.
+
+
+pattern:
+standard dp problem to minimise the total cost.
