@@ -80,6 +80,7 @@ void constructPath(){
     path.push_back(curr);
 }
 
+// DFS to find the longest path from 1 to N
 int dfs(int sv){
     if(sv == N){ // destination
         return 1;
@@ -113,6 +114,18 @@ void isConnected(int sv){
         }
     }
 }
+
+// Given a DAG, you have to find the longest path from 1 to N. Edge weights are not given.
+    // 1. Since the graph is a DAG, can we do topological sort? -- NOT helpful
+    // 2. Since edge weights are not given, djkstra also won't help
+    // 3. Assuming each edge has a weight of 1, and since we have to find the longest path, I can assign -1 edge weight to each edge and apply bellman ford to find the longest path.
+    // but bellman will just give you the distance. We will have to construct the path.
+    // 4. Thinking about DP, so from each neighbour we will try to find the longest path and then return the max of all the neighbours.
+    // also N should be reachable from 1, else return impossible
+
+    // Assuming N is reachable from 1. I can start a DFS from 1 and get the length 
+
+
 
 // observation points
 // 1. node 1 and n must be connected. If not connected return impossible

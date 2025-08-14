@@ -68,13 +68,13 @@ signed main(){
         // }
         // cout<<endl;
         
-        auto it = s.upper_bound({b[i],INT_MAX});  // How comparison works in case of pair of elements
+        auto it = s.upper_bound({b[i],INT_MAX});  // O(logn) How comparison works in case of pair of elements
         if(it==s.begin()){
             cout<<"-1"<<endl; continue;
         }
         it--;
         cout<<it->first<<endl;
-        s.erase(it);
+        s.erase(it);      // O(logn)
     }
     
     

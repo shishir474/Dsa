@@ -102,7 +102,8 @@ bool isConnected(){
     return true;
 }
  
- 
+//  euler circuit: cover all edges exactly once, starting and ending point must be same 
+// Prerequisite: all edges should be part of one single component and all the vertices must have even degree
 void dfs_to_generate_euler_circuit(int sv){
     // METHOD 1: RUNTIME ERROR
     // for(int i=1;i<=N;i++){
@@ -337,6 +338,10 @@ Option 2: Proper for loop
 // Once I assign the directed edges, the graph that is formed is 1 single Strongly Component
 // So if someone gives u an undirected graph and tells you to assign edges in such a way that the graph becomes 1 single strongly connected component -> eulerian Circuit
 // The way you assign directions to the edges - eulerian oriented graph. It is a directed graph and it represents a single strongly connected component 
+
+// every euler circuit is a euler path but vice versa might not be true. Only those euler paths that starts and ends at the same node are considered as euler circuits.
+// A Strongly connected component(every pair of vertices are reachable from each other). A euler circuit represents a strongly connected component, since in euler circuits too every pair of vertices are reachable from each other.
+
 
 
 // // Directed graph implementation

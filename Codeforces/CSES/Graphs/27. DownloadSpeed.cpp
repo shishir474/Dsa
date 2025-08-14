@@ -141,6 +141,16 @@ int max_flow(int s, int t){
 // 	•	It pushes as much flow as possible through these paths while respecting capacity limits.
 // 	•	It keeps adjusting the residual capacities and iterates until no more flow can be pushed.
 
+// we will be primarily focussing on the shortest paths from src to dest, and in that path we are mainly concerned with the min weight which will be the bottleneck for that path
+// so we'll start a bfs from starting vertex i.e src and will keep track of the min weightflow that we encoutered till that point. Initially it's gonna be inf
+// (node, currMinFlow)
+// while exploring neigbhours of node, compute the new minFlow which will be min(currMinFlow, edgeWeight), update the parent of the node and push the new pair in queue
+// only those neighbours which are not visited yet and have some residual capacity ie. capacity[node][nb] > 0
+// edgeWeight = capacity[node][nb]
+// if you reach dest, return the minFlow that you found till that point. YOU have found one augmenting path. We'll keep on repeating the above steps until we no new augmenting paths are found
+// add the flow of the augmenting path to the final maxFlowRes. Update the capacity of each edge that was covered in this path.
+// Here we need parent[] to backtrack from dest to src and get the path
+
 signed main() {
     initcode();
     int n,m; cin>>n>>m;

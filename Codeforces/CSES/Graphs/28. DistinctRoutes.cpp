@@ -83,11 +83,12 @@ vector<int> ans;
 vector<bool> vis;
 int N;
 
+// called from maxFlow Algorithm
 int bfs(int s=1, int t=N){
     fill(all(parent),-1);
     parent[s]=-2;
 
-    queue<pair<int,int>> q;
+    queue<pair<int,int>> q;     
     q.push({s,INF});
     while(!q.empty()){
         int curr = q.front().first;
@@ -95,12 +96,12 @@ int bfs(int s=1, int t=N){
         q.pop();
 
         for(auto nb: adj[curr]){
-            if(parent[nb]==-1 and cap[curr][nb] > 0){
-                parent[nb] = curr;
-                int new_flow = min(flow, cap[curr][nb]);
+            if(parent[nb]==-1 and cap[curr][nb] > 0){       // if the neighbour is not visited and capacity[curr][nb] > 0
+                parent[nb] = curr;                          // update the parent
+                int new_flow = min(flow, cap[curr][nb]);    // compute the new flow which is min(curr_flow, capacity[curr][nb])
                 if(nb == t)
                     return new_flow;
-                q.push({nb,new_flow});
+                q.push({nb,new_flow});                      // push (nb,newFlow) into the queue
             }
         }
     }
@@ -136,6 +137,7 @@ int maxflow(int s=1, int t=N){
     return flow;
 }
 
+// separate dfs() to retrive the path
 void dfs(int sv=1){
     ans.push_back(sv);
     if(sv == N) return;

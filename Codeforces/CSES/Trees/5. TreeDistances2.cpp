@@ -143,6 +143,13 @@ signed main() {
     
 }
 
+// intutioin:
+// lets start by finding the sum of distances of all nodes from root, in its subtree
+// Then we can use this and rerooting technique to get the answers for all nodes by calculating the net change 
+
+// calculating the sum of distances from all nodes for root 
+    // this will need subtree size + dp val of the child node 
+
 
 
 

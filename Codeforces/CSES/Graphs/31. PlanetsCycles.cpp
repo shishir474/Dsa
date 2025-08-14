@@ -85,6 +85,8 @@ int up(int node, int k){
     return res;
 }
 
+// Find distance of each node from the cycle. if a node is part of the cycle, then dist = 0. if a node is not part of the cycle, then dist = distance from the nearest node in the cycle
+
 signed main() {
     initcode();
     int n; cin>>n;

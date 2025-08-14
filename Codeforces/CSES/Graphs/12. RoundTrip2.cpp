@@ -113,7 +113,10 @@ signed main(){
     initcode();
     int n,m; cin>>n>>m;
     adj.resize(n+1); // 1 to n vertices
-
+    
+    // We have to start a node and check if we can reach the same node again or not. No compulsion to cover all the nodes or all edges. and all the edges are unidirectional.
+    // So we just need to check if there is a cycle in the directed graph or not. 
+    // Use parent[] to construct the cycle
     forn(i,m){
         int u,v; cin>>u>>v;
         adj[u].push_back(v); // it's a one way edge

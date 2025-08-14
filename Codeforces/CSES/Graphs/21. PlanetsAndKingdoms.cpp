@@ -127,7 +127,7 @@ void kosaraju(){
     cout<<sccs.size()<<endl;
 
     // mp stores which node is part of which scc
-    unordered_map<int,int> mp;
+    unordered_map<int,int> mp;  // node, scc_idx
     forn(i,sccs.size()){
         forn(j,sccs[i].size()){
             mp[sccs[i][j]] = i+1;
@@ -147,14 +147,19 @@ signed main() {
     int N,M; cin>>N>>M;
     n = N;
     adj.resize(n+1);
+    // For Kosaraju we need reversed adj list because this will help us to retrive SCC, once we have got all the vertices sorted in descending order of the finish time
+    // (Vertex which finishes the first lies at stack bottom, whereas the last finished vertex lies at stack top)
     rev_adj.resize(n+1);
     forn(i,M){
         int u,v; cin>>u>>v;
         adj[u].push_back(v);
-        rev_adj[v].push_back(u); // storing reverse graph
+        rev_adj[v].push_back(u); // storing reversed graph
     }
 
     kosaraju();
+    // 1. sort the vertices in descending order of their finish time. Use dfs + stack for this. Note: The graph can be disconnected, so make sure to cover all the components
+    // 2. Start 2nd dfs using stack.top() on the reversed graph. This will give you all the strongly connected components. 
+    // 3. Make sure that you exhaust all the vertices in the stack. Thus second condition will run until stack is not empty
 
     return 0;
 }

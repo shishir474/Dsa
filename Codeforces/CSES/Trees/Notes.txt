@@ -1,4 +1,10 @@
+Various Operations:
 Finding Diameter : O(n)
+    Other scenario: 
+    start dfs from 1(root) to find the farthest end point(lets call it u)
+    start 2nd dfs from u to find the farthest end point(lets call it v). u and v represents two different endpoints of the diameter
+    For any node x, the maximum distance to any other node is: max(dist(x, u), dist(x, v)).
+Finding the sum of distances from node to all nodes in its subtree
 Finding LCA(u,v) : O(logn)
 Binary Lifting 
     Precomputation: O(n*20) which is O(n)
@@ -7,6 +13,19 @@ evalDepth() --> O(n) using dp[]
 evalSubtreeSize() --> O(n) using dp[]
 
 
+Binary Lifting:
+    If no of rows is much larger than no of columns, then how should we construct the matrix? 
+    I mean why is it preferred to have a dimension with lower value along the row side and dimension with higher value along the column side
+
+    This is related to matrix layout and memory access patterns
+    Row-Major vs Column-Major Order
+	•	C++ stores 2D arrays in row-major order, meaning:
+	•	Elements in the same row are stored contiguously in memory
+
+    🧠 Analogy: Bookshelf
+    Imagine you’re scanning a shelf of books:
+	•	Row-major: books in the same row are side by side (fast to scan left to right).
+	•	Accessing vertically (like a stack on different shelves) is slow — you have to jump across memory.
 
 
 

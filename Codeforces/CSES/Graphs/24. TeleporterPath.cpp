@@ -134,6 +134,15 @@ void dfs_to_generate_euler_path(int sv){
 
     s.push(sv);
 }
+// both the functions are essentially doing the same thing. In the above one, we are modifying the adj list to avoid procesing the same edge again, whereas in the below one we are using vis[] to track 
+void dfs_to_generate_euler_path(int sv){
+    for(auto nb: adj[sv]){
+        if(!vis[nb]){
+            dfs_to_generate_euler_path(nb)
+        }
+    }
+    s.push(sv);
+}
 
 // given a directed graph, we have to determine if there exists euler path which starts from 1 and ends at n
 // Some necessary prerequisites for euler path:

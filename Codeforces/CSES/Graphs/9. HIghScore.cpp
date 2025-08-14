@@ -176,7 +176,8 @@ signed main() {
 // Detecting a -ve edge wt cycle here means, the weights will keep on reducing as we try to relax them more, which means in the original graph, the dist will keep on increaseing and bound to infinity 
 // and if this v leads to N and V is reachable from 1, then the dist to N will be infinite
 
-// checking vis[v]==true and visR[v]==true is important, because there exist a situation where the graph contains a negative cycle and it doesn't involved N, then in that case dist for N will not be infinite 
+// EDGE CASE: checking vis[v]==true and visR[v]==true is important, because there exist a situation where the graph contains a negative cycle and it doesn't involved N, then in that case dist for N will not be infinite 
+// Hence checking if negative cycle is reachable from 1 and N is reachable from v is important
 
 // -ve weight cycle only causes problem if their exists a path b/w 1 to N and that cycle is part of this path  
 

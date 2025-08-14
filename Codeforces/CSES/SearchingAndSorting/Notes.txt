@@ -255,6 +255,8 @@
 16. Nested Range Check {Excellent Problem}
     Sort the elements on the start time
     If the start times are same, then sort in descending order of end times. Consider ex: (1,5), (1,4)
+    if we dont sort on end time in descending order then (1,4), (1,5) for (1,4) we'll get it is not contained, but in actual it will be contained by (1,5)
+    (1,4) can only be contained by someone on its left and if the max end time on left >= a[i].end, then i is contained, but since -1 is not greater than 4, hence contained[i] = 0 which is incorrect
     -- this gives us assuarance that if you are at ith position, then all the ranges on the rhs of i will have start time >= ith start time 
     order of the ranges doesn't matter, so you can sort them 
 
@@ -291,6 +293,9 @@
 
 
 18. Room Allocation:    {Excellent problem}
+    we would need to track the end_time for each room which will indicate the time until when the room is blocked. Basically we need to find the min end_time room each time and compare it with the arrival time of the new guest.
+    To track the min end time, hence using priority queue.
+    NOTE: Ensure that you process the input in increasing order of the arrival time. 
     Given arrival and departure time of n guests, you have to assign rooms to this guests 
     Logic: when a guest arrives, check if we can allocate any of the existing available rooms (for this we used a priority_queue min heap (end_time, room_id))
     so if arrival_time > pq.top() end time --> then we could use this existing room 
@@ -332,6 +337,8 @@
 
 21. Reading Books {Excellent Problem}
     pure logic/observation based question
+    sort the arr and check if the sum of first n-1 elements < arr[n-1] i.e the largest element, ans will be 2*largest
+    else ans will be sum(all(arr))
 
 22. Sum of Three Values
     the pointer logic to update the sum only works if the array is sorted.
@@ -341,7 +348,10 @@
 
 23. Sum of Four values {Excellent Problem}
     Solution1 
-        TC: O(n^3) With the same approach in the above question  --> TLE
+        TC: 2pointer solution - > O(n^3) With the same approach in the above question  --> TLE
+        sol2: map based solution: track all the sum pairs till the ith index and then start building on the right hand side. If you dont find any pair, then include all the sum pairs that ends at ith index and move to the next I
+        TC: O(n^2)
+
 
     Solution 2: TC: O(n^2) using Maps 
         1. the array size must be atleast 4
@@ -400,6 +410,16 @@
     Exaclty same as above problem, only difference is arr[i] lies in range [-1e9,1e9]
     In above problem arr[i] was in range [0,1e9]
 
+    NOTE: There is a reason why sliding window and sets+prefix_sum work in case of all +ve elements and map+prefix_sum works in case of -ve elements only. Understaning that reason is Important
+    In case of only +ve elements(all > 0), the prefix sum will always increase and you will never get the same prefix sum. Hence when you check if prefix_sum - target exists in set, you are essentially looking for prefix_sum - target i.e counterpart of the current prefix sum.
+    assume prefix_sum is 9 and target is 7, and you;ve encountered 2 as prefix sum earlier. This means the subarray between (index at which prefix_sum 2 ends + 1 till current idx) has sum of target
+    -------------9
+    ----2    7
+         <-------->    
+    Same is the case for sliding window solution as well. We keep on expanding our window, until we reach a point where the sum of window elements >= target and then we start shrinking the window from left
+
+    In case of presense of -ve elements, the prefix sums may possibly repeat. Hence at a particular index when the prefix sum is p, we would want to have the #count of occurences of p-target that we've encountered in the past. All those will contribute in making a subarray of sum target.
+
 27. Subarray Divisibility {Excellent Problem}
     
     We need to count the number of subarrays whose sum is divisible by n. The key observation is:
@@ -427,6 +447,7 @@
     And the no of subarrays b/w indices i and j can be calculated using (j-i+1)
 
 29. Array Division {Excellent Problem}
+    classic binary search problem 
     You cannot sort the array, we want to divide the array into k subarrays such that the maximum sum in a subarray is as small as possible 
     Sorting will change the position of the elements.
     Intuition 

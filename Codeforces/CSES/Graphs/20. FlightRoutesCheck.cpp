@@ -95,7 +95,8 @@ void dfs2(int v, vector<int> &scc){
 }
 
 void kosaraju(){
-    // step1: sort the nodes based on their end time 
+    // step1: sort the nodes based on their end time. perform dfs, and once you reach a deadend push the nodes in the stack
+    // The node which ends last in the dfs will be at stack top. so nodes are arranged in descending order of their finish time
     stack<int> s;
     vis.resize(n+1, false);
     fore(i,1,n){
@@ -105,21 +106,26 @@ void kosaraju(){
     }
     
     // node at the stack's top is the one which finished the last in the dfs. Use that node to perform dfs on the reversed graph
+    // On the original graph, you'll be able to cover all the nodes from the starting node.
+    // But in the reversed graph(original graph with reversed edges) + if we have more than 1 SCCs, then by starting dfs from the starting node you'll not be able to cover all the nodes and this will give you a SCC.
+    // We need vis[] because while traversing over the reversed graph(to get the SCCs), we will only initiate dfs() calls from the vertices that are not covered.
 
     // step 3:  perform dfs on the reversed graph;
     forn(i,n+1) vis[i] = false;  
     
     vector<vector<int>> sccs; // maintains a list of all the scc's
     int cnt = 0; // represent the no of scc's
+    
     while(!s.empty()){
         int t = s.top();
         s.pop();
-        if(!vis[t]){
+        if(!vis[t]){    // if the vertex is not visited, start a dfs() from this --> This will get you one SCC. 
             vector<int> scc;
             dfs2(t,scc);
             sccs.push_back(scc);
             cnt++;
         }
+        // Keep on repeating the above process until all the nodes are exhausted 
     }
 
     if(cnt == 1){
@@ -137,6 +143,7 @@ void kosaraju(){
 }
 
 // Count the no of SCC. If we have only 1 SCC, then it means all the nodes in the graph are reachable to each other 
+// In a scc component, every pair of nodes are reachable from one another
 signed main() {
     initcode();
     int N,M; cin>>N>>M;
@@ -145,7 +152,7 @@ signed main() {
     rev_adj.resize(n+1);
     forn(i,M){
         int u,v; cin>>u>>v;
-        adj[u].push_back(v);
+        adj[u].push_back(v);        // directed edge
         rev_adj[v].push_back(u); // storing reverse graph
     }
 

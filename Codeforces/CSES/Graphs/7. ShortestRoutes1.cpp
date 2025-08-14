@@ -99,7 +99,7 @@ signed main() {
         int u = pq.top().second;
         pq.pop();
 
-        // process the node only if it is not visited yet
+        // process the node only if it is not visited yet - dont need visited array. Please refer to the latest/updated code of djkstra
         if(!visited[u]){
             visited[u] = true;
 

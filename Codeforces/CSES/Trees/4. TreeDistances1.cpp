@@ -148,6 +148,12 @@ signed main() {
 }
 
 
+//  we need to compute for each node the maximum distance (in terms of edges) to any other node in the tree.
+// 🔍 Key Observations
+// 	•	The farthest node from a node always lies on the diameter of the tree.
+// 	•	If we find the two endpoints of the diameter (u and v), then:
+// 	•	For any node x, the maximum distance to any other node is:
+// max(dist(x, u), dist(x, v)).
 
 
 

@@ -122,6 +122,10 @@ signed main(){
     vector<bool> vis(n+1,false);
 
     bool ans = true;
+
+    // NOTE: Graphs can be disconnected, hence we'd need to check all the components
+    // 2. A graph is bipartite only if all the components of the graphs are dual colarable(or bipartite)
+
 // Using DFS
     // fore(i,1,n){
     //     if(!vis[i]){

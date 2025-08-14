@@ -47,6 +47,17 @@ signed main()
 
 
 
+// Interesting part of this problem is either we can matrix mat of dimensions (n+1 X 31) or (31 X n+1) 
+// n <= 1e5
+// 2nd option (31 X n+1) is more optimised. This is because c++ stores the values of a row in a contigous manner and this makes the access much faster 
+// mat[i][j] denotes the 2^i th parent of node j 
+// Populate the 0th row since we already know the parent of each node
+// Now as part of the for loop populate the rest of the rows (mat will be filled in a row wise fashion)
+
+// The benefit of having 2^ith parent pre computed is we can efficiently find the kth parent of a node in log(k) time as compared to O(k) 
+// This works because every whole no can be reprensented in the powers of 2.
+
+
 
 // Similar implementation --> Just made code more modular
 

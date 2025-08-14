@@ -74,12 +74,17 @@ struct node{
 vector<node> dsuf;
 
 // union by rank and path compression
+// TC for find operation: O(alpha(n))
+// where α(n) is the inverse Ackermann function, which grows extremely slowly and is considered nearly constant for all practical input sizes.
+// This efficiency is achieved because the code uses path compression
+// Path compression flattens the structure of the tree whenever find is called, making future operations faster.
 int find(int v){
     if(dsuf[v].parent==-1){
         return v;
     }
     return dsuf[v].parent = find(dsuf[v].parent);
 }
+
 
 int union_op(int fromP, int toP){
     // modifying the union_op little bit to return the size of the component - initialised rank with 1 for all nodes 
@@ -127,6 +132,22 @@ signed main() {
 
     }
 }
+// check: what is the significance of the rank in this problem and in general in union find?
+// In this problem:
+// The rank is used to track the size of each connected component in the union-find data structure. 
+// When two components are merged, the rank of the new root is updated to reflect the total size. 
+// This allows you to efficiently keep track of the largest component size after each union operation.
+
+// In general (classic union-find):
+// The rank usually represents the approximate depth of the tree for each set. 
+// When merging two sets, the root with the smaller rank is attached to the root with the larger rank. 
+// When merging two sets in classic union-find, you attach the root with the smaller rank (shallower tree) to the root with the larger rank (deeper tree).
+// This keeps the overall tree as shallow as possible. Since the depth of the larger tree does not increase, you do not update its rank unless both ranks are equal. If both ranks are equal, then the depth increases by one, so you increment the rank of the new root.
+// This strategy helps keep the time complexity of find and union operations nearly constant.
+
+
+
+
 
 
 // We cannot use the below logic to compute the no of components and the size of the component. It will cause TLE 

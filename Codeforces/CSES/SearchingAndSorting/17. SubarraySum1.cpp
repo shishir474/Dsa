@@ -115,7 +115,7 @@ signed main(){
     int cnt = 0;
     int sum = 0;
 
-    // sliding window solution
+    // sliding window solution: keep on extending the window until the sum of the window is atleast x. and now start shrinking from the left. While shringking check if the sum == x increase the cnt, remove ith element and increase i
     // Sliding window solution wont work if the array contains -ve values
     int i=0,j=0;
     while(j < n){

@@ -63,6 +63,8 @@ signed main(){
     multiset<int> ms; // multiset set will store the lengths. ms.rbegin() will be our ans. 
     // Used multiset because the lengths are not guaranteed to be unique
     
+    // Instead of storing just the end points, we are also storing the differences. and since differences might not be unique, hence using multisets for those.
+    // end points 
     s.insert(0);
     s.insert(x);
     ms.insert(x);

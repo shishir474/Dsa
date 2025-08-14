@@ -65,29 +65,53 @@ void solve(string s, int idx, set<string> &ans){
 // This will be TLE
 
 // Hence came up with this 2 pointer approach
+// signed main(){
+//     int n,m,k; cin>>n>>m>>k;
+//     vector<int> a(n), b(m);
+//     forn(i,n) cin>>a[i];
+//     forn(i,m) cin>>b[i];
+//     sort(all(a));
+//     sort(all(b));
+    
+//     int i = 0;
+//     int j = 0;
+//     int cnt = 0;
+//     while(i < n){
+//         while(j < m and b[j] < a[i]-k) 
+//             j++;
+//         if(abs(b[j]-a[i]) <= k){
+//             cnt++;
+//             i++;
+//             j++;
+//         }
+//         else{
+//             i++;
+//         }
+
+//     }
+
+//     cout<<cnt<<endl;
+    
+// }
+
+
+
+// using multisets: 17/19 passed:
+// 2 WA
 signed main(){
     int n,m,k; cin>>n>>m>>k;
     vector<int> a(n), b(m);
     forn(i,n) cin>>a[i];
     forn(i,m) cin>>b[i];
-    sort(all(a));
-    sort(all(b));
-    
-    int i = 0;
-    int j = 0;
     int cnt = 0;
-    while(i < n){
-        while(j < m and b[j] < a[i]-k) 
-            j++;
-        if(abs(b[j]-a[i]) <= k){
+    multiset<int> ms;
+    for(auto it: b) ms.insert(it);
+    for(auto it: a){
+        auto it2 = ms.lower_bound(it-k); 
+        if(it2 != ms.end() and *it2 <= it+k){
             cnt++;
-            i++;
-            j++;
-        }
-        else{
-            i++;
-        }
-
+            ms.erase(it2);  // O(logn)
+        } 
     }
 
     cout<<cnt<<endl;

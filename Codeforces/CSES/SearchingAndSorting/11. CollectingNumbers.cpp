@@ -59,8 +59,8 @@ signed main(){
     vector<int> arr(n);
     mii mp;
     forn(i,n){
-        cin>>arr[i];
-        mp[arr[i]] = i;
+        cin>>arr[i];    // values
+        mp[arr[i]] = i; // values -> positions
     }
     
     int val = 2, pos = mp[1], rounds = 1;

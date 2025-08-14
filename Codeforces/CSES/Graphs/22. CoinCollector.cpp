@@ -93,6 +93,7 @@ vector<int> indegree;
 vector<int> dp;
 int N;
 
+// this dfs() captures the nodes in the descending order of their finish times in stack s
 void dfs(int sv){
 	vis[sv] = true;
 	for(auto nb: adj[sv]){
@@ -100,13 +101,13 @@ void dfs(int sv){
 			dfs(nb);
 		}
 	}
-	s.push(sv);
+	s.push(sv);	
 }
 
 void rev_dfs(int sv, int comp_id){
 	vis[sv] = true;
 	component_ids[sv] = comp_id;
-	for(auto nb: rev_adj[sv]){
+	for(auto nb: rev_adj[sv]){		// traversing on reversed_adj 
 		if(!vis[nb]){
 			rev_dfs(nb, comp_id);
 		}
@@ -208,6 +209,15 @@ int kosaraju(){
 	return ans;
 
 }
+
+// Reduce the input graph into scc's graph
+	// Find all the sccs. Each component will be treated as a node in the shrinked graph 
+// For first step, use kosaraju() to find all the sccs. Now we need to add edges between each scc node.
+// each edge will either connnect 2 vertices that are part of the same scc or those that are part of different components.
+// We only need to consider those edges that connect vertices across 2 different components. (For this we'll map each node to its component_id)
+// map<int, vector<int>> mp 		-- component_id -> vector of nodes in this component
+// Now we have a graph of scc's. We can use DP on this to find the optimal path(the path which gives us the max no of coins)
+// dp is the go to solution when you need to find optimal solutions.
 
 
 signed main() {

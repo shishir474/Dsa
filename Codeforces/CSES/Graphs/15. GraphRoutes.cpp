@@ -73,13 +73,13 @@ int N;
 // Initlly dp will be -1 for all sv
 // dp[sv] >= 0, 0 in case if there exists no path
 
-int dfs(int sv){
+int solve(int sv){
     if(sv == N) return 1;
     if(dp[sv] != -1) return dp[sv];
 
     int ans = 0;
     for(auto nb: adj[sv]){
-        int val = dfs(nb);
+        int val = solve(nb);
         ans = (ans + val)%mod;   
     }
 
@@ -92,21 +92,39 @@ int dfs(int sv){
 
 
 
-// In this problem, we have to count the no of paths from src to dest.
-// If there exists no path return 0
-
+// count the no of paths from src to dest.
+// If no path exists return 0.
 signed main() {
-	initcode();
+    // Strategy:
+    // assume node sv=1(our src) has 3 neighbours(a,b,c). #no of paths from source to dest will be 
+    // sum of #no of paths from a to dest + 
+    // sum of #no of paths from b to dest + 
+    // sum of #no of paths from c to dest.
+
+    // #count of paths from src to dest = sum of count of paths from its each neigbours to dest.
+    // If src == dest --> we just have 1 path (base case)
+    // dp[src] = dp[a] + dp[b] + dp[c], assuming a,b,c are the neightbours of src
+	
+    initcode();
+    
     int n,m; cin>>n>>m;
+    
     N = n;
+    
+    // Graph Input
     adj.resize(n+1);
+    
     dp.resize(n+1, -1);
+    
     forn(i,m){
         int u,v; cin>>u>>v;
-        adj[u].push_back(v);
+        adj[u].push_back(v);    // DG
     }
 
-    cout<<dfs(1)<<endl;
+
+    cout<<solve(1)<<endl;
+
+
 }
 
 

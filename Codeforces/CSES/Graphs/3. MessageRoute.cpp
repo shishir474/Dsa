@@ -77,9 +77,13 @@ void bfs(int src, int dest){
 
     bool found = false;
     vector<int> path;
+
+    // parent[] to track the parent of each node. initialised with -1 initally indicating the parents are not defined yet. 
+    // src parent does not exist, hence parent[src] = -2
     vector<int> parent(N+1,-1); 
     parent[src] = -2; // -2 indicates src does'nt have a parent
 
+    // standard bfs while loop
     while(!q.empty()){
         int sz = q.size();
         while(sz--){
@@ -98,6 +102,7 @@ void bfs(int src, int dest){
         }
     }
 
+    // if destination is reachable
     if(parent[dest] != -1){
         int curr = dest;
         while(curr != src){

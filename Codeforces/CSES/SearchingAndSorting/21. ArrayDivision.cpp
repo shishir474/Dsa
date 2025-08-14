@@ -65,7 +65,9 @@ bool isPossible(int mx, int arr[], int n, int k){
         if(i==n) break;
         part++;
     }
-    
+    // calculate the # of partitions required to accomodate all elements given that each subarray can atmost contain sum m
+    // if the # of partitions required <= k(which is our limit) -> then we can distribute the elements across k partition
+    // but if the required # of partitions is itself greater than k, then its not possible for current value of mid and we'll have to increase the value of mid
     return part<=k;
 }
 

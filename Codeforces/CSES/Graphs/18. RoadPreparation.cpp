@@ -145,6 +145,15 @@ int kruskal(edges edge_list[],int e, int v){
    
 }
 
+// We have a grpah with n nodes which is disconnected. In order to connect this graph, I need a min of n-1 edges.
+// Each edge has certain cost associated with it. Sort the edges based on the weights.
+// Before adding any edge(u,v), check if those vertices are already connected. This can be efficiently checked using disjoint sets(union and find functions). If the absolute parent of both nodes are same, then it means they are already connected.
+// If they have different absolute parents, then this nodes are not connected yet. So we add this edge and update their absolute parents via union operation
+// Both findAbsoluteParent(int node) and unionOperation(int absoluteParU, int absoluteParV) are amortised O(1). 
+// amortised means - ...
+// Actual complexity of both union() and find() functions is O(alpha(n)), α(n) is the inverse Ackermann function, which grows extremely slowly and is considered nearly constant for all practical input sizes.
+// findAbsolutePar() flattens the tree structure which effectively makes the future find() opeartions much efficient.
+
 signed main() {
 	initcode();
     int v,e;
@@ -167,4 +176,9 @@ signed main() {
 }
 
 // Direct Kruskal's implementation - use union find algo 
-// TIME COMPLEXITY: ELOGE+ELOGV;
+// TIME COMPLEXITY: The time complexity of this Kruskal's algorithm implementation is:
+// Sorting edges: O(E log E)
+// Union-Find operations: Each union/find is O(α(V)), so for all edges: O(E * α(V)) (α(V) is nearly constant)
+// Total time complexity:
+// O(E log E + E * α(V))
+// For practical purposes, this is usually written as O(E log E) since α(V) is very small.

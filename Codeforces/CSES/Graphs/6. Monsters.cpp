@@ -136,6 +136,7 @@ bool dfs(int x, int y, int d, string &s){
 // edge cases:
 // 1. No monsters present
 
+// You just have to determine if you can reach any boundary cell of the matrix
 
 signed main() {
    initcode();
@@ -185,6 +186,7 @@ signed main() {
     vis.resize(n,vector<bool>(m,false));            // understanding why vis is required here is the heart of the problem 
 
     string s = "";
+    // we just need to check if we can reach the boundary cells - run a dfs(you might reach a deadend so you'll need to backtrack as well.)
     if(dfs(startR, startC, 0, s)){      // starting cell, curr_dist, path string
         cout<<"YES"<<endl;
         cout<<s.length()<<endl;

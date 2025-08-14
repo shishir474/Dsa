@@ -84,6 +84,8 @@ signed main() {
             else mat[i][j] = 1e18;
     }
 
+    // NOTE: There can be multiple roads b/w 2 cities, hence we need to take the min cost of all the roads.
+    // This is generally not the case in most of the problems, but here we need to take care of this edge case.
     forn(i,m){
         int u,v,wt;
         cin>>u>>v>>wt;

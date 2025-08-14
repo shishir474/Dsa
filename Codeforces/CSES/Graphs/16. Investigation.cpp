@@ -110,6 +110,51 @@ void djkstra() {
     cout << total_dist << " " << total_paths << " " << minLen << " " << maxLen << endl;
 }
 
+
+// In this problem we have to find the below things
+// 1 What is the minimum cost of from src to dest.
+// 2. How many such minimum cost paths exists.
+// 3. What is the shortest length of the min cost path.
+// 4. What is the longest length of the min cost path.
+
+// NOTE: Everything is related to min cost path. and since all the edge weights are +ve, djkstra is the clear choice for us
+// Remeber edge weight either indicates distance from u to v or cost from u to v. Here we are calling it cost 
+
+// For djkstra, we need
+// 1. dist[] or cost[] which will track the minimum distance from src to ith vertex. This array will be initialsed with inf for all i's and dist[src] = 0 or cost[src] = 0 (basically distance of the src from itself is gonna be 0)
+// 2. we need a min heap or a priority queue to store the vertices in the ascending order of their distances/costs from the src. We'll track (dist,node)
+
+// Djkstra Logic:
+// 1. Initialise the dist[] or cost[]
+// 2. create a min heap and push the (0,src) into your heap
+// 3. Process until pq is not exhausted. Benefit of using a pq is this will always give you min dist vertex(). So you'll be processing the vertices in increasing order of their distance or cost from the src 
+// 4. each pq element will store 2 things dist/cost (d) & node. This d represents the distance with which we have reached the current node. This d <= distance[node] must hold true. If it doesnot, then it means we are reaching the current node with a distance which is > dist[node] and this will obviusly increase the cost of reaching node(so no need for processing this path) 
+// 5. At the end of this loop, you'll have your distance array[] populated
+
+// Here in addition to finding the min cost we also need to find a bunch of different things like count of paths, min length of the path, max length of the path
+// We can maintain a separate [] for tracking each of this.
+// For instance, when I'm at a certain node I've 2 things(node and distance(d) with which we reached that node).
+// Now while processing the neigbhours of this node, we check if d + edgeWeight <= dist[nb]. If this holds, we found a better path of reaching nb and thus we update dist[nb]
+// This condition can be broken down into 2 subconditions:
+// 1. if d + edgeWeight < dist[nb] (strictly less -- meaning we found a better path)
+// 2. If d + edgeWeight == dist[nb] (found one new path with the same distance, so count will be udpated )
+
+// In case 1:                   -- here we reset the values with the newer ones 
+    //  dist[v] = dist[u] + edgeWeight      -- update the dist[v] with better distance
+    //  countPaths[v] = countPaths[u]       -- reset the count of paths. no of ways of reaching v will be equal to no of ways of reaching u
+    //  minLen[v] = minLen[u] + 1           -- reset the length. minLen[u] stores min length of reaching u, v is at a distance of 1 from u
+    //  maxLen[v] = maxLen[u] + 1           -- reset the length. maxLen[u] stores max length of reaching u, v is at a distance of 1 from u
+// case 2:                      -- here we compare & update the values 
+    // distance remains the same        
+    // countPaths[v] += countPaths[u]       -- I'm reaching at the same cost, but my countPaths will increase
+    // minLen[v] = min(minLen[v],  minLen[u] + 1)                      -- compare with the existing value and update. 
+    // maxLen[v] = max(maxLen[v],  maxLen[u] + 1)                      -- compare with the existing value and update. 
+
+
+    // assuming I'm reaching u with 5 cost and their are 10 ways for acheiving this
+    // 
+
+
 signed main() {
     initcode();
     int n, m;

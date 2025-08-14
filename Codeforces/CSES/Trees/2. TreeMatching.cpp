@@ -209,5 +209,34 @@ signed main() {
 
 
 
+/*
+    Time and Space Complexity:
 
+    •	adj is an adjacency list representing a tree with n nodes.
+	•	dp[u][0] and dp[u][1] store two subproblem states for each node u.
+    	
+        dp[u][0] = result when u is not picked as the “special” node
+	•	dp[u][1] = result when u is picked, and we try to optimize among its children
+
+    🔹 Time Complexity
+	•	You are visiting each node and solving subproblems for its children.
+        Tus, total time = O(n)
+
+    However, the second case (when using prefix/suffix arrays) is tricky:
+        •	For each node sv, we loop over its children and then again over the children of that child.
+        •	This might make the worst-case time complexity O(n^2) in dense trees.
+
+    If the tree is balanced or constrained (e.g., binary tree), it’s closer to O(n).
+
+    🔹 Space Complexity
+	•	dp table: O(n)
+	•	Recursive stack: O(h), where h is height of the tree → worst-case O(n), average O(log n)
+	•	Temporary vectors like prefix, suffix: O(n) in total across all recursive calls
+
+    So, total space complexity is O(n)
+
+
+
+
+*/
 

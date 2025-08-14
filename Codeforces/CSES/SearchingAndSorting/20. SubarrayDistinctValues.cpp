@@ -91,3 +91,6 @@ signed main(){
 // atleast k distinct -- total subarrays - atmost(k-1)
 // exactly k distinct = atmostKDistinct(k) - atmostKDistinct(k-1) basically atmost(k) - atmost(k-1) will give us exactly k distinct
                  
+// At least k distinct subarrays = n(n+1) / 2 - Atmost(k-1)distinctsubarrays
+// This works because every subarray either has < k or ≥ k distinct elements — and no overlap.
+// #_of_subarrays_with_atleast(k) distinct elements + #_of_elements_with_atmost(k-1) distinct elements = #total no of subarrays

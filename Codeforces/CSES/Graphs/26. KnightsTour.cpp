@@ -69,6 +69,9 @@ bool dfs(int x, int y, int moves) {
     return false;
 }
 
+// definitely you can move in the random order and check if we can assign all 64 moves. 
+// But sorting the valid positions(based on x axis) ensures that we approach those cells first which has fewer onward moves 
+
 signed main() {
     int x, y;
     cin >> x >> y; // Read starting position (1-based index),  x is col and y is row

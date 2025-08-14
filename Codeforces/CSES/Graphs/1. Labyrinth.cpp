@@ -104,12 +104,6 @@ int Y[] = {0,1,0,-1};
 
 // }
 
-void dfs(int i, int j, vector<vector<char>> &mat, vector<vector<bool>> &vis, string &path, string &ans){
-
-    // Implement the BFS solution
-
-
-}
 
 // Learnings: 
 
@@ -123,35 +117,119 @@ void dfs(int i, int j, vector<vector<char>> &mat, vector<vector<bool>> &vis, str
 // Recursive one : DFS + backtracking which gives TLE and is not optimal
 // Using BFS: Since we need to find the shortest path, using BFS makes more sense
 
-signed main(){
-    initcode();
-    int n,m; cin>>n>>m;
-    vector<vector<char>> mat(n, vector<char>(m));
-    vector<vector<bool>> vis(n,vector<bool>(m,false));
 
-    int orig_x=-1, orig_y=-1;
+//  L  R  U D
+int X_dir[] = {0,0,-1,1};
+int Y_dir[] = {-1,1,0,0};
+ //             i,  i,  i-1, i+1
+//              j-1, j+1, j, j
+//              L,  R,   U,  D
+                                j 
+    //      0       1           2             3
+    //    0                    (i-1,j)
+    // i  1         (i,j-1)     (i,j)           (i,j+1)
+  //      2                     (i+1,j)    
+    //    3
+
+// in addition to finding the length of the shortest path, we also need to find the actual path that one must take
+// For this we need to track each and every move that user takes 
+// for the shortest path, obviously we'll use BFS
+
+ 
+void get_A_pos(vector<vector<char>> &mat, int &x, int &y){
+    int n=mat.size(), m = mat[0].size();
     forn(i,n){
         forn(j,m){
-            cin>>mat[i][j];
-            if(mat[i][j] == 'A'){
-                orig_x = i;
-                orig_y = j;
+            if(mat[i][j]=='A'){
+                x = i;
+                y = j;
+                break;
+            }
+        }
+        if(x!=-1) break;
+    }
+}
+ 
+bool bfs(int sr, int sc, vector<vector<char>> &mat,vector<vector<bool>> &vis, string &path){
+    int n=mat.size(), m=mat[0].size();
+ 
+    // this mat will help us in construcing the path
+    vector<vector<char>> temp(n, vector<char>(m,'$')); 
+ 
+    queue<pii> q;
+    q.push({sr,sc});
+    vis[sr][sc]=true;
+ 
+    while(!q.empty()){
+        pii f = q.front();
+        q.pop();
+        int x = f.first, y=f.second;
+        // cout<<x<<" "<<y<<endl;
+ 
+        if(mat[x][y]=='B'){
+            // construct path
+            int a=x,b=y;
+            while(1){
+                // cout<<a<<" "<<b<<endl;
+                path.pb(temp[a][b]);
+                if(temp[a][b]=='L') b++;
+                else if(temp[a][b]=='R') b--;
+                else if(temp[a][b]=='U') a++;
+                else if(temp[a][b]=='D') a--; 
+ 
+                if(a==sr and b==sc) break;
+            }
+     
+            return true;
+        }
+        forn(k,4){
+            int newx=x+X_dir[k];
+            int newy=y+Y_dir[k];
+            if(newx>=0 and newx<n and newy>=0 and newy<m and !vis[newx][newy] && (mat[newx][newy]=='.' || mat[newx][newy]=='B')){
+                vis[newx][newy]=true;
+                q.push({newx,newy});
+                if(k==0){temp[newx][newy]='L';}
+                else if(k==1){temp[newx][newy]='R';}
+                else if(k==2) {temp[newx][newy]='U';}
+                else if(k==3) {temp[newx][newy]='D';}
             }
         }
     }
-
-    string path = "",ans="";
-    // dfs(orig_x,orig_y,mat,vis,path,ans); 
-    bfs(orig_x,orig_y,mat,vis,path,ans)
-
-    if(ans == "") cout<<"NO"<<endl;
-    else{
-        cout<<"YES"<<endl;
-        cout<<ans.size()<<endl;
-        cout<<ans<<endl;
-    }
-   
-    
-
+ 
+    return false;
 }
-
+ 
+ 
+int32_t main()
+{   
+    initcode();
+    int n,m; cin>>n>>m;
+ 
+    vector<vector<char>> mat(n,vector<char>(m));
+ 
+    forn(i,n){
+        forn(j,m){
+            cin>>mat[i][j];
+        }
+    }
+    
+    vector<vector<bool>> vis(n, vector<bool>(m,false));
+ 
+    int x=-1,y=-1;
+    get_A_pos(mat,x,y);
+ 
+    string path="";
+    // bfs(x,y,mat,vis,path);
+    bool ans = bfs(x,y,mat,vis,path);
+   
+    if(ans){
+        cout<<"YES"<<endl;
+        cout<<path.length()<<endl;
+        reverse(path.begin(),path.end());
+        cout<<path<<endl;
+    }
+    else{
+        cout<<"NO"<<endl;
+    }
+ 
+}

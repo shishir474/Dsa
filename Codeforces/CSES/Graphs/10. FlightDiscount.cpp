@@ -173,7 +173,8 @@ signed main() {
 	// a to b cost is known ie wt/2
 
 	int final_cost = INF;
-	
+	// We'll try choosing each edge. For a certain edge(u,v), if we reduce its weight by half, and using djkstra we already know the distance between src to u and using reverse djkstra we know the distance between v to n 
+	// This will reduce the complexity of the below for loop to O(m)
 	for(auto edge: edges){
 		int a = edge[0], b = edge[1], wt = edge[2];
 		int cost = dist[a] + (wt/2) + distR[b];
