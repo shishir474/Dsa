@@ -38,22 +38,41 @@ void initcode() {
 //         return c1.distance > c2.distance;
 //     }
 // };
+                        pivot
+arr[] = {3, 5, 1, 2, 7, 8}
+        lo              hi
+
+int pivot = arr[hi];        // the last correct position is initialised with lo - 1 ---> arr[lo.. hi]
+int last_cor_pos = lo - 1;         // j signifies the last correct position at which the element was placed 
+for(int i = lo; i <= hi-1; i++){
+    if(arr[i] < pivot){
+        last_cor_pos++;
+        swap(arr[i], arr[last_cor_pos]);       // swap to bring arr[i] at its correct position jth index 
+    }
+}
+// pivot correct position in sorte arr would be last_cor_pos+1
+swap(arr[last_cor_pos + 1], arr[hi]);
+return last_cor_pos + 1;
 
 
 vector<int> arr;
 
-int partition(int l, int r){
-    int pivot = arr[r];
-    int i = l-1;
-    for(int j=l; j<r; j++){
-        if(arr[j] < pivot){
-            i++; swap(arr[i],arr[j]);
+int partition(int lo, int hi){
+    // arr[lo..hi]
+    int pivot = arr[hi];        // the last correct position is initialised with lo - 1 ---> arr[lo.. hi]
+    int last_cor_pos = lo - 1;         // j signifies the last correct position at which the element was placed 
+    for(int i = lo; i <= hi-1; i++){
+        if(arr[i] < pivot){
+            last_cor_pos++;
+            swap(arr[i], arr[last_cor_pos]);       // swap to bring arr[i] at its correct position jth index 
         }
     }
-    swap(arr[i+1],arr[r]);
-    return i+1;
-}
+    // bring the pivot to its correct position 
+    swap(arr[last_cor_pos + 1], arr[hi]);
+    return last_cor_pos + 1;
 
+}
+ 
 void quickSort(int l, int r){
     if(l >= r) return;          // base case : empty or single element -- already sorted
     int pi = partition(l,r);
