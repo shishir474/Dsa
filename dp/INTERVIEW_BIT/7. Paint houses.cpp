@@ -2,11 +2,6 @@ Paint House!
 
 Medium
 
-170
-
-4
-Asked In:
-LinkedIn
 Problem Description
 
 There are a row of N houses, each house can be painted with one of the three colors: red, blue or green.

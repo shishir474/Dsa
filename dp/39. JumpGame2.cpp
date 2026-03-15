@@ -2,6 +2,32 @@
 
 // https://www.youtube.com/watch?v=dJ7sWiOoK7g
 
+Given an array nums, where each element represents the maximum jump length from that position, find the minimum number of jumps needed to reach the last index.
+
+
+Greedy/BFS Window Intuition
+    Think of the array as a series of "levels" or "windows" you can reach with each jump.
+    At each step, you want to jump as far as possible within your current reach, to minimize the total number of jumps.
+    How the Algorithm Works
+
+Initialize two pointers:
+
+    l (left) and r (right) define the current window of indices you can reach with the current number of jumps.
+    Start with l = 0, r = 0 (you are at the start).
+    While you haven''t reached the end:
+
+    For every index k in the current window [l, r], calculate the farthest index you can reach: farthest = max(farthest, k + nums[k]).
+    After checking all indices in the current window, increment your jump count (res++).
+    Move to the next window: set l = r + 1, r = farthest.
+    Repeat until your window covers the last index.
+
+Why is this Greedy?
+At each jump, you always choose to jump to the farthest possible position within your current reach, ensuring you use the fewest jumps.
+
+Why is this O(n)?
+Each index is visited at most once as part of a window, so the total work is linear.
+
+
 
 // Sol1; Greedy 
 class Solution {
@@ -71,16 +97,28 @@ class Solution {
 public:
     int jump(vector<int>& nums) {
         int n = nums.size();
-        vector<int> dp(n);
-        dp[n-1] = 0;
-        for(int i=n-2;i>=0;i--){
-            int bestVal = INT_MAX;
-            for(int j=1; j<=nums[i] and i+j < n; j++){
-                bestVal = min(bestVal, dp[i+j]);
+
+        vector<int> dp(n); // dp[i]: min jumps needed to reach end from index i
+        
+        dp[n-1] = 0; // base case: already at the last index, need 0 jumps
+
+        // Fill dp from right to left
+        for(int i = n-2; i >= 0; i--) {
+            
+            int bestVal = INT_MAX; // initialize to max, will store min jumps from i
+            
+            // Try all possible jumps from current index i
+            for(int j = 1; j <= nums[i] && i + j < n; j++) {
+                bestVal = min(bestVal, dp[i + j]); // find the minimum jumps among all reachable positions
             }
-            dp[i] = (bestVal != INT_MAX) ? 1+bestVal : INT_MAX;     // to avoid overflow, we check if bestVal is INT_MAX, it means we can't reach the end from this index
+            
+            // If it's possible to reach the end from i, set dp[i] = 1 + bestVal
+            // Otherwise, keep it as INT_MAX (though problem guarantees reachability)
+            dp[i] = (bestVal != INT_MAX) ? 1 + bestVal : INT_MAX;
+        
         }
-        return dp[0];
+        
+        return dp[0]; // answer: min jumps needed from index 0
     }
 };
 

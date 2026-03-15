@@ -1,0 +1,291 @@
+# sorting in python
+
+nums.sort()
+- sorts the list in place 
+- returns None 
+- TC: O(nlogn)
+
+sorted(nums)
+- creates a new list, sorts it and returns the new sorted list 
+- Takes extra space
+- Original list remains intact
+
+# sort in descending order 
+
+nums.sort(reverse=True)
+sorted(nums, reverse=True)
+
+
+# sort part of list 
+arr[i:] = sorted(arr[i:])
+
+
+# sort with custom key
+
+-- sorts by second element
+nums.sort(key=lambda x: x[1])
+
+
+
+# reversing list in python
+
+nums.reverse()
+-- reverses the list in place 
+-- returns None 
+
+nums = nums[::-1]
+# returns a new reversed list. Original list remains intact
+
+reversed(nums)
+-- original list remain intact
+-- creates a new list, reverses it and returns an iterator
+-- returns iterator
+
+
+
+In Python, what you’re calling “maps” are called dictionaries (dict).
+They are the direct equivalent of C++ unordered_map (not map).
+
+creating an empty map 
+mp = {}
+A Python dict:
+    Stores key → value pairs
+    Keys are unique
+    Implemented using a hash table
+
+Python dict vs C++ maps
+
+Feature	       Python dict	                    C++ unordered_map	    C++ map
+
+Ordering	   Insertion-ordered (since 3.7)	❌ Unordered	            ✅ Sorted
+Avg lookup	    O(1)	                        O(1)	                O(log n)
+Worst lookup	O(n)	                        O(n)	                O(log n)
+Implementation	Hash table	                    Hash table	            Red-black tree
+
+👉 Important: Python has no built-in equivalent of C++ map (tree map).
+
+# Creating a map (dict)
+mp = {}
+mp = dict()
+mp = {"a": 1, "b": 2}
+
+# Insert / Update
+mp["x"] = 10
+mp["x"] += 1
+
+# Lookup
+if "x" in mp:
+    print(mp["x"])
+
+# ❌ KeyError vs Safe access
+mp["y"]      # ❌ KeyError if missing
+
+# Safe:
+mp.get("y", 0)
+# 🔥 Very common in frequency counting.
+
+# 🔁 Iterating over a map
+for key in mp:
+    print(key, mp[key])
+
+# or
+
+for key, val in mp.items():
+    print(key, val)
+
+
+# 🧠 Common DSA patterns using maps
+# 1️⃣ Frequency counting
+mp = {}
+for x in nums:
+    mp[x] = mp.get(x, 0) + 1
+
+# 4️⃣ Two Sum
+mp = {}
+for i, x in enumerate(nums):
+    if target - x in mp:
+        return [mp[target - x], i]
+    mp[x] = i
+
+# 🔥 Useful built-ins
+# collections.defaultdict
+from collections import defaultdict
+mp = defaultdict(int)
+
+mp[x] += 1   # no KeyError
+
+# collections.Counter
+from collections import Counter
+mp = Counter(nums)
+
+# ⚠️ Common mistakes (INTERVIEW TRAPS)
+
+# ❌ Using mutable keys: python lists are mutable and thus cannot be used as key. Instead use tuple
+
+mp[[1,2]] = 5   # ❌ list is unhashable
+
+
+# ✅ Use immutable keys:
+
+mp[(1,2)] = 5
+
+# Removing elements from a Python dict (map) is simple, but there are multiple ways, each with slightly different behavior.
+# 1️⃣ del — delete by key
+del mp["b"]
+
+# ✔ Removes key "b"
+# ❌ Raises KeyError if key doesn’t exist
+
+# Use when you’re sure the key exists.
+
+# 2️⃣ pop() — delete & return value (MOST USED)
+val = mp.pop("b")
+
+# ✔ Removes key
+# ✔ Returns its value
+# ❌ KeyError if key not present
+
+# Safe version:
+val = mp.pop("x", None)   # no error
+
+# clear() — remove everything
+mp.clear()
+
+# ✔ Dict becomes empty
+# ✔ O(n)
+
+# ⏱ Time complexity
+# Operation	Time
+del	        O(1) avg
+pop	        O(1) avg
+popitem	    O(1)
+clear	    O(n)
+
+# Worst-case: O(n) (hash collisions)
+
+# 🔥 Which should I use?
+# Scenario	                Best choice
+# Key definitely exists	       del
+# Might not exist	           pop(key, default)
+# Remove last element	       popitem()
+# Clear all                    clear()
+
+
+
+# 🔹 What is a set in Python?
+# A set is:
+    # An unordered collection
+    # Stores unique elements
+    # Implemented as a hash table
+
+s = set()
+
+# 🆚 Python set vs C++ unordered_set
+# Feature	            Python set	            C++ unordered_set
+# Duplicate elements	❌ Not allowed	        ❌ Not allowed
+# Order	                ❌ Unordered	            ❌ Unordered
+# Avg lookup	        O(1)	                 O(1)
+# Worst-case	        O(n)	                 O(n)
+
+# Creating sets
+s = set()
+s = {1, 2, 3}
+s = set([1, 2, 2, 3])   # duplicates removed
+
+
+# ⚠️ Empty set:
+
+s = {}      # ❌ this is a dict
+s = set()   # ✅ correct
+
+# ➕ Adding & removing elements
+s.add(4)
+s.remove(2)     # KeyError if not present
+s.discard(5)    # Safe (no error)
+
+# 🔍 Membership check (VERY FAST)
+if 3 in s:
+    print("found")
+
+# Average O(1) — perfect for visited / seen problems.
+
+# 🔁 Iterating
+for x in s:
+    print(x)
+
+# Order is not guaranteed.
+
+# 🧠 Common DSA patterns using sets
+# 1️⃣ Remove duplicates
+arr = list(set(arr))
+
+# 2️⃣ Detect duplicates
+seen = set()
+for x in arr:
+    if x in seen:
+        return True
+    seen.add(x)
+
+# 3️⃣ Two-sum style problems
+seen = set()
+for x in nums:
+    if target - x in seen:
+        return True
+    seen.add(x)
+
+# ⚠️ Common mistakes (interview traps)
+
+# ❌ Using mutable objects
+s.add([1,2])   # ❌ list is unhashable
+
+# ✅ Use tuples
+s.add((1,2))
+
+
+# ✅ Average / Amortized Case (what we assume in interviews)
+# Operation	        Syntax	                        Time
+# Insertion	        s.add(x)	                    O(1)
+# Deletion	        s.remove(x) / s.discard(x)	    O(1)
+# Lookup	            x in s	                        O(1)
+
+# ✔ Fast due to hashing
+# ✔ Automatic resizing keeps load factor low
+
+# ❌ Worst Case (rare, but theoretical)
+# Operation	                Time
+# Insert / Delete / Lookup	O(n)
+
+# Why?
+#     Hash collisions
+#     Many elements map to same hash bucket
+
+# Python mitigates this using:
+#     Randomized hashing
+#     Open addressing
+#     Rehashing on resize
+
+# ⚠️ Interview nuance (VERY important)
+# When stating complexity, always say:
+
+“O(1) average time, O(n) worst case.”
+
+
+Important concept related to for loops in python: 
+
+# Assume you make some updates to i in the for loop.
+# In Python, for i in range(...) ignores manual changes to i
+# The loop variable is overwritten by the next value from range
+# So your duplicate-skipping has NO effect
+
+
+# Why tuple instead of list in set?
+Because List are mutable -> which makes them unhashable
+whereas Tuples are immutable -> and thus they are hashable.
+
+
+# Also, No overflow worries in Python
+        #     You needed: long long in cpp
+        #     Python integers are arbitrary precision, so:
+        #     triplet_sum = nums[i] + nums[j] + nums[k]
+        #     is always safe.
+        

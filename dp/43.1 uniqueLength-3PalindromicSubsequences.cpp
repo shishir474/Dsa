@@ -71,6 +71,8 @@ public:
 
         int count = 0;        // counter variable to track # of unique 3 length palindromic subs
 
+        // since we only need to consider unique susbsequences, I'll iterate over the map & specifically over those char whose first and last occurence are not same( which also means their freq is atleast 2)
+        // THis loop will run atmost 26 times and during each time, we will do O(n) operation in the worst case while travelling between the first and last occurence. So overall freq will be O(26*N) and not O(n^2) of this nested for loops.
         for(auto it: mp){
             pair<int,int> p = it.second;
             if(p.first != p.second){    // char's freq is atleast 2, can be used as endpoints of my palindromic subs
@@ -84,6 +86,7 @@ public:
             
             }
         }
+
 
         return count;
 

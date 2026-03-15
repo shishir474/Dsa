@@ -1,5 +1,34 @@
-// Prefix sums on matrices
+3212. Count Submatrices With Equal Frequency of X and Y
 
+Given a 2D character matrix grid, where grid[i][j] is either 'X', 'Y', or '.', return the number of submatrices that contain:
+    grid[0][0]
+    an equal frequency of 'X' and 'Y'.
+    at least one 'X'.
+ 
+Example 1:
+
+Input: grid = [["X","Y","."],["Y",".","."]]
+
+Output: 3
+
+Explanation:
+
+
+
+Example 2:
+
+Input: grid = [["X","X"],["X","Y"]]
+
+Output: 0
+
+Explanation:
+
+No submatrix has an equal frequency of 'X' and 'Y'.
+
+
+
+
+// Prefix sums on matrices
 
 // logic: 
 1. compute the # of x till (i,j) i.e from (0,0) to (i,j)
@@ -82,6 +111,36 @@ public:
     }
 };
 
+
+// MORE CONSISE SOLUTION -- same logic but better code quality
+
+According to the problem description, we only need to calculate the prefix sums S[i][j][0] and S[i][j][1] for each position (i,j), 
+which represent the number of characters X and Y in the submatrix from (0,0) to (i,j), respectively. If S[i][j][0] > 0 and S[i][j][0] == S[i][j][1], it means the condition is met, and we increment the answer by one.
+
+After traversing all positions, return the answer.
+
+The time complexity is O(m×n), and the space complexity is O(m×n). Here, m and n represent the number of rows and columns of the matrix, respectively.
+
+class Solution {
+public:
+    int numberOfSubmatrices(vector<vector<char>>& grid) {
+        int m = grid.size(), n = grid[0].size();
+        vector<vector<vector<int>>> s(m + 1, vector<vector<int>>(n + 1, vector<int>(2)));
+        int ans = 0;
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                s[i][j][0] = s[i - 1][j][0] + s[i][j - 1][0] - s[i - 1][j - 1][0]
+                    + (grid[i - 1][j - 1] == 'X' ? 1 : 0);
+                s[i][j][1] = s[i - 1][j][1] + s[i][j - 1][1] - s[i - 1][j - 1][1]
+                    + (grid[i - 1][j - 1] == 'Y' ? 1 : 0);
+                if (s[i][j][0] > 0 && s[i][j][0] == s[i][j][1]) {
+                    ++ans;
+                }
+            }
+        }
+        return ans;
+    }
+};
 
 Follow Up
 1224. Maximum Equal Frequency

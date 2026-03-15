@@ -121,3 +121,25 @@ You might be picking up a palindrome that is entirely within word1 or entirely w
 what should be my ans if word1 = "abc" and word2 = "de"?
 ans would be 0, There is no palindrome that can be formed using at least one character from both word1 and word2.
 This example demonstrates why updating ans only in the if block is crucial. If you were to update ans in the else block, you might incorrectly count a palindrome that does not span both strings even if l < x and r >= x 
+
+
+Adding the below code in the else block. 
+What if I add the above condition in the else case. Then updating ans in else block makes sense right?
+
+int val1 = lps(s, l, r - 1, ans, x);
+int val2 = lps(s, l + 1, r, ans, x);
+if(val1 > val2){
+len = val1;
+if(l < x and r-1 >= x)
+ans = max(ans, len);
+}
+else{
+len = val2;
+if(l + 1 < x and r >= x)
+ans = max(ans, len);
+}
+}
+
+The check (l < x && r-1 >= x) or (l+1 < x && r >= x) only tells you that the current substring could span both strings, but it does not guarantee that the palindrome itself does. The palindrome could be entirely on one side, and you would still update ans incorrectly.
+Summary
+Updating ans in the else block, even with your additional checks, can still count palindromes that do not use both strings. Only update ans in the if (s[l] == s[r]) block with the cross-boundary check.
