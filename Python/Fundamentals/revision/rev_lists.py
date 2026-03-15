@@ -158,3 +158,134 @@ d = dict.fromkeys(range(5), True)
 fruits = ['apple', 'banana', 'cherry']
 d = {fruit: len(fruit) for fruit in fruits}
 # {'apple': 5, 'banana': 6, 'cherry': 6
+
+
+# Creating a list copy
+
+res = []
+path = [1,2,3]
+res.append(path)
+# Under the hood, res stores the reference of path. Now if you modify path, the changes will also reflect in res
+# Hence it's important to store the copy of path.
+res.append(path.copy())
+# or res.append(path[:])                # slicing always produces a new list
+# or res.append(list(path))
+
+# Important point here is: we are storing copy of temp_list.
+# There are multiple ways to create a copy of a list in python. All of them return a new list
+list(path)
+path.copy()
+path[:]     # recommended: because it is short and fast
+
+# ex:
+a = [1,2,3]
+b = a[:]        # slice the list from start to end
+
+print(a is b)       # False
+print(a == b)       # True
+
+# b has the same content, but is a different list object in memory. 
+# This matters in backtracking because if you don't store the copy, any changes made in the path, will reflect in the res as well.
+# Hence it is crucial that we store the copy of path.
+
+
+# Important nuance: Shallow copy
+a = [[1,2], [3,4]]
+b = a[:]            # this creates a shallow copy, only the outer container is copied, inner lists are still shared
+b[0].append(5)
+print(a)    # [[1,2,5], [3,4]]
+# because the inner lists are still shared.
+# Slicing copies the list container, but not nested objects
+
+# if you want to create a completely separate copy, use deepcopy() or list comprehension
+import copy
+b1 = copy.deepcopy(a)
+b1[0].append(5)
+print(a)    #  [[1,2], [3,4]]
+# now a and b1 are completely independent. b1 is a deep copy of a. Any changes made in either of them will not reflect in other
+
+b2 = [row[:] for row in a]      # copying each inner list individually
+b2[0].append(5)
+print(a)    #  [[1,2], [3,4]]
+
+
+# Rule of Thumb: Shallow Copy vs Deep Copy
+
+# If the list contains immutable elements
+
+# Use shallow copy.
+
+# Example elements:
+# int, float, string, tuple
+
+# Example:
+path = [1, 2, 3]
+res.append(path[:])
+# or
+res.append(path.copy())
+
+# Safe because integers cannot change.
+
+
+# If the list contains mutable elements
+# You usually need deep copy.
+# Mutable objects include:
+# list
+# dict
+# set
+# custom objects
+
+# Example:
+a = [[1,2], [3,4]]
+b = copy.deepcopy(a)
+
+
+# Why?
+# Immutable objects cannot change.
+# Example:
+a = [1,2,3]
+b = a[:]
+
+b[0] = 10
+print(a)
+
+[1,2,3] # Output:
+# Because integers are immutable.
+
+# Mutable objects can change internally.
+# Example:
+a = [[1,2], [3,4]]
+b = a[:]
+
+b[0].append(5)
+print(a)
+
+[[1,2,5],[3,4]] # Output:
+# Because both lists point to the same inner list.
+
+# Summary:
+# both path.copy() and path[:] create a shallow copy, not a deep copy
+
+path = [1,2,3]
+a = path.copy()
+b = path[:]
+# when we create copy like this, separate memory is allocated to both lists a & b.
+print(path is a)        # False, bcoz sepearate memory is allocated to path and a
+print(path == a)        # True, bcoz both path and a have the same content in same order
+print(a is b)           # False, bcoz sepearate memory is allocated to a and b
+print(a == b)           # True, bcoz both a and b have same content
+
+
+# when shallow copy will not work, when you have nested lists or you are storing mutable objects(like list, set, dict) inside a list
+path = [[1,2], [3,4]]
+import copy
+b = copy.deepcopy(path)
+b[0].append(5)
+print(path)     # [[1,2], [3,4]]
+# changes are not reflected in path, because b is a deep copy of a.
+
+b1 = path[:] # or path.copy() --> this creates a shallow copy.
+# meaning, only the outer container is copied, inner lists are still shared
+b1[0].append(5)
+print(path)     # [[1,2,5], [3,4]]
+# changes will reflect in path
