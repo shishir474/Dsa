@@ -21,6 +21,12 @@ Constraints:
 s consists of lowercase English letters only.
 
 
+// We have to find the longest palindromic prefix in the input string. The idea is to find the longest prefix which is a palindrome and then we can add the remaining string from the input in front by reversing it
+// In order to find the longest palindromic prefix,
+// use the concept of longest prefix suffix on the concatenated string s + "#" + reverse(s). -- This is how we find the longest palindromic prefix 
+
+// Brute force way would be to check for all prefixes of the string and see if they are palindrome or not. This would take O(N^2) time complexity.
+
 
 // Solved using Rabin karp algorithm
 

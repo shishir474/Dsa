@@ -2,9 +2,6 @@ Distinct Subsequences
 
 Medium
 
-251
-
-7
 Asked In:
 Google
 Given two sequences A, B, count number of unique ways in sequence A, to form a subsequence that is identical to the sequence B.
@@ -63,6 +60,12 @@ if (s1[i-1] != s2[i-2]){  phir toh definitely skip krna padega,I have No option
 }
 
 
+Which Pattern is "Distinct Subsequences"?
+This problem is a classic example of the "Subsequence Pattern" (also called "DP on Strings" or "LCS-style DP").
+
+Why?
+You are matching two strings, and at each step, you decide whether to match the current character or skip it.
+The recurrence is very similar to LCS, but instead of maximizing length, you are counting the number of ways.
 
 
 
@@ -103,3 +106,9 @@ int Solution::numDistinct(string A, string B) {
     //vector<vector<int> > dp(m, vector<int> (n,-1));
     // return solve(0,0,A,B,dp);
 }
+
+
+
+Follow Up
+    Number of Unique Good Subsequences
+    Hard

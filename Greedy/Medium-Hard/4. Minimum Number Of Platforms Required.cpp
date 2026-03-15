@@ -5,6 +5,18 @@ find the minimum number of platforms required for the railway station so that no
  Input: n = 6 
 arr[] = {0900, 0945, 0955, 1100, 1500, 1800}
 dep[] = {0920, 1200, 1130, 1150, 1900, 2000}
+
+sorting arrivals and departure arrays. Take 2 pointer i and j and perform steps for mergin 2 sorted arrays.
+
+                          i
+{0900, 0945, 0955, 1100, 1500, 1800}
+  
+        j
+{0920, 1130, 1150, 1200, 1900, 2000}
+
+cnt = 3
+
+
 Output: 3
 Explanation: 
 Minimum 3 platforms are required to 

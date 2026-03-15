@@ -86,7 +86,7 @@ Minimum Moves to Equal Array Elements           -- DONE
 Medium                                          
 Minimum Moves to Equal Array Elements II        -- DONE
 Medium                                          
-Minimum Cost to Make Array Equal
+2448. Minimum Cost to Make Array Equal
 Hard
 Sum of Distances
 Medium

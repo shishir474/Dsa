@@ -1,5 +1,60 @@
 DP Patterns Found so far:
 
+Popular DP Patterns
+1. Subsequence/Subarray Pattern
+    Description:
+    You are asked about subsequences or subarrays, often with choices to pick or skip elements.
+    
+    Examples:
+        Longest Common Subsequence (LCS)
+        Longest Increasing Subsequence (LIS)
+        Edit Distance
+        Distinct Subsequences (this problem)
+    
+    Typical Recurrence:
+        If characters match: 2 options (pick or skip)
+        If not: skip
+
+2. Knapsack Pattern
+    Description:
+    You have a set of items, each with a value and weight/cost, and you want to maximize/minimize something under constraints.
+    
+    Examples:
+        0/1 Knapsack
+        Subset Sum
+        Partition Equal Subset Sum
+    
+3. DP on Grids/Paths 
+    Description:
+        Move in a grid (up/down/left/right/diagonal), usually counting paths or minimizing/maximizing cost.
+    Examples:
+        Unique Paths
+        Minimum Path Sum
+        Dungeon Game
+
+4. Palindrome Pattern
+    Description:
+        Problems involving palindromic substrings or subsequences.
+    Examples:
+        Longest Palindromic Subsequence
+        Palindrome Partitioning
+
+5. DP on Trees/Graphs
+    Description:
+        DP where the state is defined on nodes of a tree or graph.
+    Examples:
+        House Robber III (tree)
+        Tree Diameter
+
+6. State Machine/Bitmask DP
+    Description:
+        DP where the state is represented by a bitmask or a finite state machine.
+    Examples:
+        Traveling Salesman Problem (TSP)
+        Counting ways to paint fence/houses
+
+
+
 1. Pick vs Non Pick (decide whether you choose ith element or not)
 2. Longest Palindromic Subsequence / Subarray
     Longest palindrome subarray/substring:
@@ -65,7 +120,7 @@ Longest Palindromic Substring       -- DONE
 Medium
 Palindromic Substrings              -- DONE         (count the # of palindromic substrings)
 Medium
-Count Different Palindromic Subsequences -- PENDING  (count the # of unique palindromic subsequences)
+730.Count Different Palindromic Subsequences -- PENDING  (count the # of unique palindromic subsequences)
 Hard
 Count Palindromic Subsequences       -- PENDING (count the # of palindromic subsequences of length 5, not necessarily be unique)
 Hard                 

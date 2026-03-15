@@ -2,17 +2,8 @@ Smallest sequence with given Primes
 
 Medium
 
-179
-
-4
-Asked In:
-Booking.Com
-Microsoft
-Directi
 Problem Description
  
- 
-
 Given three prime numbers A, B and C and an integer D.
 
 You need to find the first(smallest) D integers which only have A, B, C or a combination of them as their prime factors.
@@ -93,3 +84,59 @@ vector<int> Solution::solve(int A, int B, int C, int D) {
     return fans;
 
 }
+
+
+Follow Up:
+263. Ugly Number
+
+An ugly number is a positive integer which does not have a prime factor other than 2, 3, and 5.
+
+Given an integer n, return true if n is an ugly number.
+
+
+Example 1:
+
+Input: n = 6
+Output: true
+Explanation: 6 = 2 × 3
+Example 2:
+
+Input: n = 1
+Output: true
+Explanation: 1 has no prime factors.
+Example 3:
+
+Input: n = 14
+Output: false
+Explanation: 14 is not ugly since it includes the prime factor 7.
+ 
+
+Constraints:
+
+-2^31 <= n <= 2^31 - 1
+
+class Solution {
+public:
+    bool isUgly(int n) {
+        if(n <= 0) return false;
+        if(n == 1) return true;
+        while(n % 2 == 0) n /= 2;
+        while(n % 3 == 0) n /= 3;
+        while(n % 5 == 0) n /= 5;
+        return n == 1;
+
+        // how to get the prime factors of n?
+
+        pending...
+
+
+    }
+};
+
+
+
+
+Follow Ups      (check neetcode's solution)
+Ugly Number 1
+Ugly Number 2
+Super Ugly Number 

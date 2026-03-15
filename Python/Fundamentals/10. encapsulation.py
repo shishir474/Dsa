@@ -237,7 +237,7 @@ class A:
     
     # calling private method via another method
     def funUtil(self):
-        self.fun();
+        self.fun()
         self.__fun()
     
 obj = A()

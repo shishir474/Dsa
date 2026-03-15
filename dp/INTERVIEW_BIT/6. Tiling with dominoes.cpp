@@ -1,16 +1,5 @@
 Tiling With Dominoes
-
 Medium
-
-222
-
-9
-Asked In:
-Directi
-Uber Technologies Inc
-Problem Description
- 
- 
 
 Given an integer A you have to find the number of ways to fill a 3 x A board with 2 x 1 dominoes.
 
@@ -23,7 +12,6 @@ See the sample explanation for better understanding.
 
 Problem Constraints
 1 <= A <= 105
-
 
 
 const int mod = 1e9+7;
@@ -41,5 +29,5 @@ int Solution::solve(int n) {
 
 
 Variations:
-1. Tiling m*n floor with m*1 tiles
-2. Tiling 2*n floor with 2*1 tiles
+    1. Tiling m*n floor with m*1 tiles
+    2. Tiling 2*n floor with 2*1 tiles

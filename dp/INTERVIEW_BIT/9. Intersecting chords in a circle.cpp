@@ -1,15 +1,5 @@
 Intersecting Chords in a Circle
 
-Medium
-
-108
-
-8
-Asked In:
-Directi
-Google
-Software Ag
-more
 Given a number A, return number of ways you can draw A chords in a circle with 2 x A points such that no 2 chords intersect.
 
 Two ways are different if there exists a chord which is present in one way and not in other.
@@ -51,7 +41,28 @@ Explanation 2:
     {(1-2), (3-4)} and {(1-4), (2-3)}.
     So, we return 2.
 
+Intuition
+    You have 2*A points on a circle and want to draw A chords such that no two chords intersect.
+    The problem asks: In how many ways can you do this?
+Why Catalan Numbers?
+    The number of ways to draw non-intersecting chords between 2n points on a circle is the nth Catalan number.
+    Catalan numbers count many combinatorial structures, including:
+        Ways to correctly match parentheses
+        Ways to triangulate a polygon
+        Ways to draw non-intersecting chords in a circle
+How does the DP work?
+    Let dp[i] be the number of ways to draw non-intersecting chords with i pairs.
+    For each possible first chord (say, between point 1 and point 2k+2), the circle is split into two smaller circles:
+        One with k pairs inside the chord
+        One with i-1-k pairs outside the chord
+    The total number of ways is the sum over all possible splits:
+    dp[i] = sum_{k=0}^{i-1} dp[k] * dp[i-1-k]
 
+    This is the classic Catalan recurrence.
+
+Summary
+    The problem reduces to finding the nth Catalan number.
+    The DP builds up the answer using the Catalan recurrence, counting all ways to split the circle into smaller non-intersecting subproblems.
     
 const int mod = 1e9+7;
 typedef long long ll;

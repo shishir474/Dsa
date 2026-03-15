@@ -2,7 +2,15 @@
     "workbench.colorCustomizations": {
         "activityBar.background": "#003522",
         "titleBar.activeBackground": "#004B2F",
-        "titleBar.activeForeground": "#E8FFF7"
+        "titleBar.activeForeground": "#E8FFF7",
+        "titleBar.inactiveBackground": "#003522",
+        "titleBar.inactiveForeground": "#E8FFF7",
+        "statusBar.background": "#003522",
+        "statusBar.foreground": "#E8FFF7",
+        "statusBar.debuggingBackground": "#003522",
+        "statusBar.debuggingForeground": "#E8FFF7",
+        "statusBar.noFolderBackground": "#003522",
+        "statusBar.noFolderForeground": "#E8FFF7"
     },
     "files.associations": {
         "vector": "cpp",
@@ -31,7 +39,21 @@
         "algorithm": "cpp",
         "bitset": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "complex": "cpp",
+        "__node_handle": "cpp",
+        "atomic": "cpp",
+        "locale": "cpp",
+        "optional": "cpp",
+        "ratio": "cpp",
+        "scoped_allocator": "cpp",
+        "system_error": "cpp",
+        "tuple": "cpp",
+        "__memory": "cpp",
+        "future": "cpp",
+        "variant": "cpp",
+        "thread": "cpp",
+        "iterator": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
