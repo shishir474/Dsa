@@ -74,3 +74,18 @@ import numpy as np
 # │     └── Variables
 # │
 # └── Sub-packages
+
+
+
+# for loop behaviour with range
+# This is a unique behaviour of for loop. Ideally we would expect i's value to be 3 after the loop execution,
+# but the value is still 2.
+# Use while loops in this scenarios
+for i in range(3):
+    print(i)
+print('after for loop i is: ', i)
+
+# 0
+# 1
+# 2
+# after for loop i is:  2
