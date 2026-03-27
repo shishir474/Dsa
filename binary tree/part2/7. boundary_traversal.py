@@ -97,3 +97,7 @@ class Solution:
         
     # TC: O(3 * n)
     # SC: O(n)
+    
+# Tree examples:    
+# [1, 2, 3, null, 5, 6, null, 8, 9, null, 10]
+# [1, null, 3,  null, 4, null, 5]       --> skewed tree
