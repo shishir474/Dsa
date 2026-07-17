@@ -73,8 +73,8 @@ a[1] = 25
 
 # Removing elements from list 
 
-# remove(): Removes the first occurence of an element. If the item is not found, raises ValueError
-# pop(): Removes the element at a specific index or the last element if no index is specified
+# remove(val): Removes the first occurence of an element. If the item is not found, raises ValueError
+# pop(idx): Removes the element at a specific index or the last element if no index is specified
 # del statement: deletes an element at a specific index
 # clear() or del statement to remove all elements of the list
 
@@ -146,6 +146,8 @@ print(b)
 
 # using itertool.chain() --> returns a chain object
 # lets us combine multiple iterables into one.
+from ast import Return
+from hashlib import new
 from itertools import chain
 print(list(chain(*a)))
 
@@ -336,11 +338,11 @@ print(max(list1, key=list1.count))
 
 # sol2: naive solution
 max_freq = 0
-num = 0;
+num = 0
 for val in set(list1): # only iterating through unique element
     if list1.count(val) > max_freq:
         max_freq = list1.count(val)
-        num = val;
+        num = val
 print(num)
 
 
@@ -382,6 +384,14 @@ nums = [2,5,3,4,1]
 print(sorted(nums))
 
 # sort() -> None
+# Feature
+#               sorted()                                 .sort()
+# Action        Returns a new sorted list.                 Modifies the original list in-place.
+# Applicability Works on any iterable (lists, tuples, strings, dictionaries).  Works only on lists.
+# Return Value  The new sorted list.                  None.
+
+# Both methods support the same optional parameters for customization:reverse=True: Sorts the data in descending order.key: Accepts a function to transform elements before comparison (e.g., key=len to sort by length)
+
 # sorts the list inplace, unlike sorted(list) which returns a new list
 # key lets you customize the sorting order
 # reverse boolean lets you sort in descending order
@@ -396,7 +406,8 @@ print(sorted(t))
 
 # List reverse()
 
-# reversed(li) --> returns a reversed iterator
+# nums[::-1] --> returns a new list that is the reverse of nums
+# reversed(li) --> returns a reversed iterator, to get a list you must wrap it with list() function
 # li.reverse() --> None (reverses the list in place)
 
 

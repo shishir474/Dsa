@@ -5,7 +5,7 @@ class Solution {
         vis[sv]=true;
         for(auto i: adj[sv]){
             if(!vis[i]){
-                if(dfs(i,vis,adj,sv)) return true;
+                if(dfs(i,vis,adj,sv)) return true;      // if recursion returns true - we return true, cycle found
             }
             else if(i!=parent) return true;
         }
@@ -15,7 +15,7 @@ class Solution {
     
     bool isCycle(int V, vector<int> adj[]) {
         vector<bool> vis(V,false);
-        for(int i=0;i<V;i++){
+        for(int i=0;i<V;i++){       // I need to check for all the components
             if(!vis[i]){
                 if(dfs(i,vis,adj,-1)) return true;
             }

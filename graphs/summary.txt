@@ -1,0 +1,191 @@
+detecting cycles using dfs
+    UG:
+        Track parent: 
+            if nb node is already visited and it is not equivalent to its parent -- we have a cycle
+    DG:
+        Track path: 
+            if the nb node is already visited and is also part of my current path -- then we have a cycle
+
+detecting cycles using bfs(kahn's algo)
+    UG: 
+        Track (node,parent) -- same concept as dfs
+    DG:
+        Start with the nodes which has indegree 0. All those will be our starting point. Track the indegree of all the nodes
+        Reduce the indegree of each node by one, while exploring the neighbours.
+        If you are able to traverse through the entire graph i.e you got all V vertices, that means graph doesn't have any cycles.
+        The order in which you retrieve the nodes -- is the topological sort (which is actually the byproduct of this entire algo)
+
+topological sort 
+    NOTE: (topo sort only exists for directed acyclic graphs)
+
+    using dfs:
+        use a stack to store the deadends while performing dfs. 
+        But before we do this, we need the confirmation that the graph is a DAG. 
+
+    using bfs(kahn's algo)
+        track inorder
+        Here we don't need the confirmation of whether the graph is a DAG
+
+    If the question states find the topo sort of a graph and their is no guranteed that the graph is a DAG -->
+        most simple thing to do would be to use a bfs based approach. 
+        Ofcourse, the graph should be a DG (topo sort concept only applies to DG)
+        if we are able to cover / visit all the nodes, the graph has no cycles and the order in which we got all the nodes 
+        will be our topological sort
+
+        Can I use DFS? Yes, for sure.
+            use the same logic that we used for detecting cycles in DG. 
+            Add one more step -- to insert the deadend nodes into the stack.
+
+union find algo / disjoint sets
+    -- This algo is only applicable for UG's.
+    -- Using union find on DG's can give you False Positives. Reason -- because the union operation doesn't 
+    take into consideration the direction of edges. 
+    -- We start with the assumption that all the nodes are disconnected & then we start adding / analysing all the edges.
+    -- if for an edge u to v, if their absolute parents are same -- that means both u & v are part of the same component
+    -- else we do a union and establish a connectivity between them conceptually.
+    -- So, In essense -- we are analysing all the edges one by one.
+    -- find() -> O(alpha(V)) where alpha(V) is inverse ackerman function. This grows at a very low rate and is practically constant.
+    -- rank() -> O(1)
+    -- analysing all edges -> O(E.alpha(V))
+
+scc (strongly connected component)
+    a strongly connected component means you can go from any node to any other node. 
+    So there exists a path between every pair of nodes. 
+    But if there exists a path from u to v, but not from v to u --> then it's not a scc.
+
+    SCC concept only applies for DG. Why? 
+        because in UG's edges are bidirectional -- so the entire component is one scc. 
+        But in DG, each connected component can have multiple scc.
+
+        Below is one connected component - but it contains 3 scc's
+        scc's = [[1], [2,3,4], [5,6,7]]
+        NOTE: [2,3,4] & [5,6,7] is a cycle -- couldn't draw the edges perfectly.
+
+        1 --> 2 --> 3   6
+               \  /    / \
+                4---> 5<---7
+        
+    Implementation:
+        - sort the nodes on the basis of their ending times in dfs and store it in a stack
+        - create a new graph which has the edges in the reverse direction compared to the original one.
+        - Perform dfs, by picking each node from the stack (ofcoure, only the non visited ones)
+
+    Outcome:
+        By doing this -- you now know all the scc's within a component in a DG. 
+        If the graph has been a UG -- then the entire component would be one single scc.
+
+finding all bridges / tarzans's algorithm
+    detecting a bridge uses the standard dfs algo with few extra things.
+    we need to track tin[] and low[] for each node
+    tin[] is the time of insertion. It is the first time we reached a particular node
+    low[] is lowest possible time with which we can reach the curr node except parent.
+    low[node] = min(low[all adj nodes except parent])
+    vis[] used to keep track of visited vertices
+
+    during dfs call -- we need to to track - (node, parent)
+    mark node visited.
+    set it tin and low value.
+    Explore neighbours:
+        if neighbour not visited
+            call dfs on neighbour
+            post dfs call completion -- update low[node] as min(low[node], low[neighbour])
+            check whether edge node->neighbour is an edge
+            if low[neighbour] > tin[node]: it's a bridge
+        else:
+            if neighbour != parent      -- neighbour is visited, but should not be equivalent to node's parent
+                update low[node] as min(low[node], tin[neighbour])
+                since neighbour is already visited, we can reach the node in tin[neighbour]
+
+    Ofcoure, call dfs for each disconnected components to cover entire graph.
+
+bipartite graph 
+    - Its a special kind of graph, not an algorithm.
+    - the questoin that we're trying to answer here is -- can we divide the nodes into 2 subsets
+    such that all the edges are from set1 to set2 or vice-versa. 
+    - To detect, whether a graph is bipartite or not, we can simply try coloring the nodes.
+    -- DFS solution:
+        track (node,color) in recursion & colors[] to track the color of each node.
+        Initially all the nodes will uncolored or color[i] = -1
+        no need of vis[], color[] can be used to detect whether a particular node is visited or not.
+        Ofcourse, check for all the disconnected components. For a graph to be bipartite, all its components should be bipartitie
+    -- BFS solution:
+        replicate the same logic of dfs using bfs (queue) approach
+    
+Shortest Path Algorithms
+
+Shortest Path Using BFS
+    -- This works only if all the edges has the same weight / priority like for ex in undirected graphs.
+    -- So, if you use a BFS to find the shortest path, you will traverse level by level and keep track of the level count.
+    -- The moment you reach your destination, you can return that level right there.
+
+djkstra algo 
+    -- This is a SSSP (single source shortest path) algorithm
+    -- Goal here is to find the distance of the shorted path from 1 src to all the other nodes in the graph.
+    -- The only condition for this algo to work is, 
+        a. graph should be connected, because in order to find the shortest path from the source to all other nodes, 
+            makes sense only if the graph is connected.
+        b. The graph should have non-negative edge weights -- otherwise it stucks in an infinite cycle.
+    -- This algo works for all kind of graphs (UG/DG), but the graph should be connected and shouldn't contain any -ve edge weights.
+    -- If the edge weights are all same -- then we can use queue (becaue each edge has the same priority in that case)
+    -- TC:O(ElogV) which in worst case becomes O(V^2logV)
+
+TODO: https://www.geeksforgeeks.org/dsa/dijkstras-shortest-path-algorithm-greedy-algo-7/
+
+bellman_ford    
+    -- This is a sssp (Single Source Shortest Path) algo, used when we have -ve edge weights.
+    -- We try relaxing all the edge n times. if during the nth iteration, an edge still undergoes relaxatoin
+        it means we have a -ve wt cycle and thus the shortest path concept is not applicable. So we return -1.
+    -- Edge relaxation means -- suppose we have an edge from u to v. 
+        if dist[u] + edWt < dist[v]: update dist[v] with dist[u] + edWt.
+        ofcourse, dist[u] != float('inf')
+    -- why relaxing edges (v-1) times gives us sssp?
+        a shortest path between 2 vertices can atmost have (v-1) edges. It's not possible to have a simple path 
+        with more than (v-1) edges, otherwise it would form a cycle.
+    -- The algo is primarily built for DGs, but can be extended to UG's -- we are relaxing all edges N times. 
+        If the graph is a UG, then we need to consider all the edges (forward & backward direction) during relaxation.
+    -- TC: O(V*E), SC: O(V)
+    
+TODO: https://www.geeksforgeeks.org/dsa/bellman-ford-algorithm-dp-23/
+See the problems based mentioned here to get hold of the concept.
+
+Shortest Path Algorithms with Negative Weights for UGs
+    In a UG, any -ve edge (u,v) automatically creates a negative cycle (traversing u -> v -> u) yields a -ve total wt.
+    If negative edges are present in a UG, then the problem becomes equivalent to finding a shortest path 
+    in a graph with -ve cycles, which is typically NP-hard
+
+In a complete UG/ dense graph, the number of edges is 
+    E = (V * (V - 1)) / 2
+    which means E ~ V^2
+    meaning bellman's complexity which is O(V*E) becomes O(V^3) for dense graphs
+    for djkstra, tc becomes O(ElogV) ==> O(V^2logV)
+
+
+multi-source-bfs
+    -- rotten_oranges
+    
+Floyd Warshall Algo:
+    -- all pairs shortest path
+    -- TC: n^3, SC: O(1)
+    -- Eventually dist[i][j] stores the shortest distance between nodes i and j
+Hamiltonian Paths:
+    -- we start from a source vertex and perform dfs.
+    -- if at any instance, we have covered all the vertices in the graph --> found 1 hamiltoninan path.
+    -- in order to check if we have visited all the vertices in O(1) time, we are using a mask instead of vis[]. vis will require an O(n) time to check if all vertices are visited.
+    -- if mask == (1 << n) - 1 --> it means, we've visited all the vertices.
+    -- if the path starts and end at same point -> then its a hamiltonian cycle.
+    -- a graph which contains hamiltonian cycle is called hamiltonian graph.
+    -- all the nodes should be part of 1 single connected component.
+
+Todo:
+rat maze1: check the tc and sc. Should it be 4^(n^2) or 4.(n^2)
+
+
+
+https://cp-algorithms.com/graph/bridge-searching.html
+https://www.geeksforgeeks.org/dsa/floyd-warshall-algorithm-dp-16/
+checkout this site. Covers everything for graph -- all concepts.
+                      UG                  DG                           Usecases
+cycle_detection(dfs)  parent               recstack[]                    cycle detection
+cycle detection(bfs)  (node,parent)        kahn's algo(using indegree)   cycle detection + topo sort
+topo sort             X (not applicable) Applicable(dfs & bfs)          
+union find algo       applicable         X (not applicable)           cycle detection in ug, checking if 2 nodes are part of same components, Kruskals MST algo.

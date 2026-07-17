@@ -145,3 +145,50 @@ class Solution {
 
 // TC: O(V*E)
 // SC: O(V)
+
+
+// Bellman, Djktra both are single source shortest path algo meaning, you will be given a source 
+// and you have been asked to determine the shortest dist of all the nodes from that source.
+// if graph has -ve edge wts, djkstra fails. Why? becuase it stucks in an infinite loop, it keeps on reducing the dist value and will cause TLE.
+// Thus, we use Bellman for graph with -ve edge wts. Again the goal here is to find the sssp.
+// Bellman also helps you to detect -ve edge wt cycles, in which case the concept of dist[] is not valid anymore. 
+// You have a -ve edge wt cycle in your graph. So your distance will keep on reducing with each iteration
+// TC wise Djkstra take O(ElogV). in dense graph, E (number of edges) is equivalent to N^2. 
+// So overall complextiy in dense graph becomes O(V^2logV)
+// TC in bellman is O(E.V) -- we try relaxing each edge N times. Idea is: if the edge still undergoes 
+// relaxatoin in the Nth iteration -- then we have -ve edge wt cycle and concept of dist[] isn't valid anymore
+// In dense graph, where E becomes V^2, the overall complexity becomes O(V^3) in bellman.
+
+// In bellman, we are just straightaway analysing all the edges for N-1 time + 1 extra iteration to detect
+// -ve edge wt cycle. So there's no need of building and adj list (or graph). 
+// In djkstra, we are using pq to get min dist node each time & then exploring its neighbours. 
+// So we need to build the graph in this case.
+
+// One more point, in bellman we are doing edge wise procesing. So if you have been given an UG, 
+// you will have to consider each undirected edge as 2 directed edges with same wt in order to apply bellman.
+// In djkstra, it doesn't matter whether the graph is directed or undirected. You can apply the same algo for both cases.
+// because djkstra doesn't depend on the directionality of the edges, it only needs to know which nodes are reachable from a given node.
+
+
+// Floyd Warshall algo is used to find the shortest path between all pairs of nodes. 
+// It is a dynamic programming based algorithm that works on the principle of "relaxation". 
+// The algorithm iteratively updates a distance matrix that contains the shortest distances between all pairs of nodes.
+//  The time complexity of Floyd Warshall algorithm is O(V^3), where V is the number of vertices in the graph. It is particularly useful for dense graphs and can handle negative edge weights, but it does not work with negative weight cycles.
+
+// dist[][] of size n x n, where dist[i][j] represents the weight of the edge from node i to node j.
+// If there is no direct edge, dist[i][j] is set to INF (a large value i.e., 108).
+// The diagonal entries dist[i][i] are 0, since the distance from a node to itself is zero.
+// The graph may contain negative edge weights, but it does not contain any negative weight cycles.
+
+// the algorithm gradually updates these distances by checking if shorter paths exist through intermediate nodes.
+// This algorithm works for both the directed and undirected weighted graphs and can handle graphs with both positive and negative weight edges.
+// Note: It does not work for the graphs with negative cycles (where the sum of the edges in a cycle is negative).
+
+// Idea behind this algorithm is:
+// Suppose we have a graph dist[][] with V vertices from 0 to V-1. 
+// Now we have to evaluate a dist[][] where dist[i][j] represents the shortest path between vertex i to j.
+
+// Let us assume that vertices i to j have intermediate nodes. 
+// The idea behind Floyd Warshall algorithm is to treat each and every vertex k from 0 to V-1 as an intermediate node one by one.
+//  When we consider the vertex k, we must have considered vertices from 0 to k-1 already. So we use the shortest paths built by previous vertices to build shorter paths with vertex k included.
+

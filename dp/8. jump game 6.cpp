@@ -48,6 +48,10 @@ i = 1.  deque:  3,1
 i = 0.  deque:  1
         deque: 0
 
+// Idea is : at a given index, I would like to know the best possible value in the last k indices,
+// and this is why I'll use deque. 
+// deque front would give me the index of the maximum value in the last k indices, and I'll use that to calculate dp[i].
+
 dq.front() should be <= i+k
 store elements in descending order of values in deque
 dp[dq.back()] < dp[i] - we'll keep popping until we find a value that is greater than dp[i] or the deque is empty

@@ -72,6 +72,17 @@ public:
 // };
 
 
+// this is a shortest path problem in an unweighted graph, we can use bfs to solve it.
+// bfs guarantees the shortest path. 
+// dfs will explore all possible paths to find the shortest path, leads to exponential time complexity,
+//  massive recursion and is not really efficient. recommended approach is bfs.
+
+// one massive optimization 
+// we did that reduced the complexity from O(n^2) to O(n):
+// is we process the same value only once, and not for every index. 
+// iterating thru the for loop just to get rejected by !vis[pos] is not efficient, 
+// so we process the value only for the first time we encounter it, and then we erase it from the map, so that it is not processed again.
+
     int minJumps(vector<int>& arr) {
         int n = arr.size();
         // value -> positions map
